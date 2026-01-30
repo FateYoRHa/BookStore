@@ -5,6 +5,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import bookRoutes from "./routes/books_route.js";
 import userRoutes from "./routes/users_route.js";
+import authorRoutes from "./routes/author_route.js"
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 //routes
 app.use("/books", bookRoutes);
 app.use("/users", userRoutes);
+app.use("/authors", authorRoutes)
 
 connectDB().then(() => {
   app.listen(PORT, () => {

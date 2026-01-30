@@ -9,13 +9,14 @@ const bookSchema = new Schema(
   {
     bookId: { type: String, unique: true, index: true },
     title: { type: String, required: [true, "Title is required"] },
-    author: { type: String, required: [true, "Author is required"] },
+    author: { type: String },
     publisher: { type: String, required: [true, "Publisher is required"] },
     publicationDate: {
       type: Date,
       required: true,
       get: (publicationDate) => publicationDate.toLocaleDateString("en-US"),
     },
+    genre: { type: String, required: true },
     img: { type: String, required: true },
   },
   {
@@ -38,4 +39,3 @@ bookSchema.pre("save", async function () {
 });
 
 export default mongoose.model("Book", bookSchema);
-
