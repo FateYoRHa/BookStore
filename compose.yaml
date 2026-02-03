@@ -59,7 +59,6 @@ services:
     # environment:
     #   DB_URL: mongodb://db:27017/exercise_tracker_db
 
-
     # establish docker compose watch mode for the api service
     develop:
       # specify the files to watch for changes
