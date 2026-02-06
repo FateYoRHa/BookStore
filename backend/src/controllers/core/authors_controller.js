@@ -1,38 +1,29 @@
-import Author from "../model/Author.js";
-import Book from "../model/Book.js";
+import { Author, Book } from "../../model/index.js";
 
 export async function getAuthors(req, res) {
   try {
-    const authors = await Author.find();
+    const authors = await Author.find().select("penName bio");
     res.status(200).json(authors);
   } catch (error) {
-    console.log("Error finding authors", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
 export async function getAuthor(req, res) {
   try {
-    const author = await Author.findOne({ authorId: req.params.id });
-    if(!author) return res.status(404).json({message: "Author not found."})
-    const books = await Book.find({ author: req.params.id });
-    
+    const author = await Author.findOne({ authorCode: req.params.id });
+
+    if (!author) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    const books = await Book.find({ author: author._id })
+      .populate("categories", "name")
+      .select("title bookCode price");
+
     res.status(200).json({ author, books });
-    // nother way of doing join sql style
-    // const result = await Author.aggregate([
-    //   { $match: { authorId } },
-    //   {
-    //     $lookup: {
-    //       from: "books",
-    //       localField: "authorId",
-    //       foreignField: "authorId",
-    //       as: "books",
-    //     },
-    //   },
-    // ]);
   } catch (error) {
-    console.log("Error finding author", error);
-    res.status(404).json({ message: "Author not found" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
@@ -74,7 +65,10 @@ export async function deleteAuthor(req, res) {
   try {
     const books = await Book.find({ author: req.params.id });
     console.log(books.length > 0);
-    if(books.length > 0) return res.status(405).json({message: "Author has book/s linked to him/her."})
+    if (books.length > 0)
+      return res
+        .status(405)
+        .json({ message: "Author has book/s linked to him/her." });
     await Author.findOneAndDelete({ authorId: req.params.id });
     res.status(204).json({ message: "Author was deleted successfully" });
   } catch (error) {

@@ -1,18 +1,14 @@
-import User from "../model/User.js";
+import { User } from "../../model/index.js";
 
 export async function getUsers(req, res) {
-  try {
-    const users = await User.find();
-    res.status(200).json(users);
-  } catch (error) {
-    console.log("Error finding users.", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
+  const users = await User.find().select("email role createdAt");
+  res.status(200).json(users);
 }
+
 
 export async function getUser(req, res) {
   try {
-    const users = await User.findOne({ userId: req.params.id });
+    const users = await User.findById(req.params.id);
     res.status(200).json(users);
   } catch (error) {
     console.log("Error finding users.", error);
@@ -26,7 +22,6 @@ export async function addUser(req, res) {
     const newUser = new User({
       username,
       password,
-      address,
     });
     await newUser.save();
     res.status(201).json(newUser);
@@ -37,13 +32,12 @@ export async function addUser(req, res) {
 }
 export async function updateUser(req, res) {
   try {
-    const { username, password, address } = req.body;
-    const user = await User.findOneAndUpdate(
-      { userId: req.params.id },
+    const { username, password } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
       {
         username,
         password,
-        address,
       },
       { new: true },
     );
@@ -57,7 +51,7 @@ export async function updateUser(req, res) {
 
 export async function deleteUser(req, res) {
   try {
-    await User.findOneAndDelete({userId: req.params.id});
+    await User.findByIdAndDelete(req.params.id);
     res.status(204).json({ message: "User was deleted successfully" });
   } catch (error) {
     console.log("Error deleting user.", error);
