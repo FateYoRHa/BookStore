@@ -3,12 +3,14 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import { connectDB } from "./config/db.js";
-import authorRoutes from "./routes/author_route.js";
-import userRoutes from "./routes/users_route.js";
-import bookRoutes from "./routes/books_route.js";
-import customerRoutes from "./routes/customer_route.js";
-import orderRoutes from "./routes/orders_route.js";
 import rateLimit from "./middleware/rateLimiterer.js";
+
+import authorRoutes from "./routes/core/author_route.js";
+import userRoutes from "./routes/core/users_route.js";
+import bookRoutes from "./routes/core/books_route.js";
+import customerRoutes from "./routes/core/customer_route.js";
+import orderRoutes from "./routes/commerce/orders_route.js";
+import categoryRoutes from "./routes/core/category_route.js"
 
 dotenv.config();
 
@@ -22,6 +24,7 @@ app.use(rateLimit)
 
 //routes
 app.use("/users", userRoutes);
+app.use("/categories", categoryRoutes)
 app.use("/authors", authorRoutes);
 app.use("/books", bookRoutes);
 app.use("/customers", customerRoutes);
