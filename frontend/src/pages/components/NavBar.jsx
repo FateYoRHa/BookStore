@@ -14,9 +14,10 @@ const NavBar = () => {
             <Link to={"/"}>Home</Link>
           </li>
           <li>
-            <Link to={"/"}>Categories</Link>
+            <Link to={"/books"}>Categories</Link>
           </li>
           <li>
+            {/* onlick it will redirect to /books but will show the books that was sold the most */}
             <Link to={"/"}>Best Sellers</Link>
           </li>
           <li>

@@ -1,4 +1,6 @@
 /backend/.env
 
+backend/TODO.js
 backend/node_modules
+backend/syntheticData
 frontend/node_modules

@@ -16,7 +16,7 @@ categorySchema.pre("save", () => {
   if (this.categoryCode) return;
   const counter = Counter.findByIdAndUpdate(
     { key: "category" },
-    { $inc: { value: 0 } },
+    { $inc: { value: 1 } },
     { upsert: true },
   );
   const number = counter.value.toString().padStart(PAD, 0);
