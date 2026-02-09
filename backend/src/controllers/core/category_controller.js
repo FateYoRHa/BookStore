@@ -1,5 +1,5 @@
 import { Category } from "../../model/index.js";
-
+import * as categoryService from "../../services/core/category_services.js";
 export async function getCategories(req, res) {
   try {
     const categories = await Category.find();
@@ -26,13 +26,13 @@ export async function addCategory(req, res) {
     const exist = await Category.findOne({ name: name }).lean();
     if (exist)
       return res.status(409).json({ message: `${name} already exist` });
-    const category = new Category({
+    const category = new categoryService.addCategoryService({
       name,
       description,
       icon,
     });
 
-    await category.save();
+    res.status(201).json(category);
   } catch (error) {
     console.log("Error retrieving category", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -41,12 +41,17 @@ export async function addCategory(req, res) {
 export async function updateCategory(req, res) {
   try {
     const { name, description, icon } = req.body;
-    const category = await Category.findOneAndUpdate(
-      { catCode: req.params.id },
-      { name, description, icon },
-      { new: true },
-    );
-    res;
+    const catCode = req.params.id;
+    const exist = await Category.findOne({ name: name }).lean();
+    if (exist)
+      return res.status(409).json({ message: `${name} already exist` });
+    const category = await categoryService.updateCategoryService({
+      catCode: catCode,
+      name,
+      description,
+      icon,
+    });
+    res.status(200).json(category);
   } catch (error) {
     console.log("Error retrieving category", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -54,7 +59,7 @@ export async function updateCategory(req, res) {
 }
 export async function deleteCategory(req, res) {
   try {
-    await Category.findOneAndDelete({ catCode: req.params.id });
+    await categoryService.deleteCategoryService(req.params.id);
     res.status(200).json({ message: "Category was deleted successfully" });
   } catch (error) {
     console.log("Error retrieving category", error);
