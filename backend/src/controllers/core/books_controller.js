@@ -1,5 +1,7 @@
-import { Book, Author, Inventory, BookImage } from "../../model/index.js";
+import { Book, Author, Inventory } from "../../model/index.js";
+import * as bookService from "../../services/core/book_services.js";
 
+// TODO transfer to services, pass filters
 export async function getBooks(req, res) {
   try {
     const books = await Book.find({ status: "active" })
@@ -13,7 +15,7 @@ export async function getBooks(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
-
+// TODO transfer to services
 export async function getBook(req, res) {
   try {
     const book = await Book.findOne({ bookCode: req.params.id })
@@ -45,39 +47,18 @@ export async function addBook(req, res) {
       quantity,
     } = req.body;
 
-    // Resolve author via public code
-    const author = await Author.findOne({ authorCode: authorCode });
-    if (!author) {
-      return res.status(404).json({ message: "Author not found" });
-    }
-
-    const newBook = new Book({
+    const newBook = await bookService.createBookWithAssets({
       title,
-      author: author._id, // <-- ObjectId reference
+      authorCode,
       publisher,
       publicationDate,
-      categories: categoryIds,
-      images: [],
+      categoryIds,
+      images,
       price,
-      status: "active",
-    })
-    const savedBook = await newBook.save();
-    const image = await BookImage.insertMany(
-      images.map((url, index) => ({
-        book: savedBook._id,
-        url,
-        order: index,
-      })),
-    );
-    savedBook.images = image.map((img) => img._id);
-    const newInventory = new Inventory({
-      book: savedBook._id,
       quantity,
     });
-    await newBook.save();
-    await newInventory.save();
 
-    res.status(201).json({ newBook, newInventory });
+    res.status(201).json(newBook);
   } catch (error) {
     console.error("Error adding book", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -94,37 +75,21 @@ export async function updateBook(req, res) {
       images,
       price,
     } = req.body;
-    const book = await Book.findOneAndUpdate(
-      { bookCode: req.params.code },
-      {
-        title,
-        authorCode,
-        publisher,
-        publicationDate,
-        categoryIds,
-        images,
-        price,
-      },
-      { new: true },
-    );
+    const bookCode = req.params.id
+    const updatedBook = await bookService.updateBookService({
+      bookCode,
+      title,
+      authorCode,
+      publisher,
+      publicationDate,
+      categoryIds,
+      images,
+      price,
+    });
 
-    if (!book) {
-      return res.status(404).json({ message: "Book not found" });
-    }
-
-    res.status(200).json(book);
+    res.status(200).json(updatedBook);
   } catch (error) {
     console.error("Error updating book", error);
     res.status(500).json({ message: "Internal Server Error" });
-  }
-}
-
-export async function removeBook(req, res) {
-  try {
-    await Book.findByIdAndDelete(req.params.id);
-    res.status(204).json({ message: "Book was deleted successfully" });
-  } catch (error) {
-    console.log("Error deleting book.", error);
-    res.status(500).json({ message: "Internal server error." });
   }
 }
