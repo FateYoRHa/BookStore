@@ -29,9 +29,8 @@ const bookSchema = new Schema(
 
     images: [
       {
-        url: String,
-        alt: String,
-        isCover: Boolean,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "BookImage",
       },
     ],
 
