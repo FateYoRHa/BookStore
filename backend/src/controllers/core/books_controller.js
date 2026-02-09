@@ -1,4 +1,4 @@
-import { Book, Author } from "../../model/index.js";
+import { Book, Author, Inventory, BookImage } from "../../model/index.js";
 
 export async function getBooks(req, res) {
   try {
@@ -16,7 +16,7 @@ export async function getBooks(req, res) {
 
 export async function getBook(req, res) {
   try {
-    const book = await Book.findOne({ bookCode: req.params.code })
+    const book = await Book.findOne({ bookCode: req.params.id })
       .populate("author")
       .populate("categories");
 
@@ -42,10 +42,11 @@ export async function addBook(req, res) {
       categoryIds,
       images,
       price,
+      quantity,
     } = req.body;
 
     // Resolve author via public code
-    const author = await Author.findOne({ authorCode });
+    const author = await Author.findOne({ authorCode: authorCode });
     if (!author) {
       return res.status(404).json({ message: "Author not found" });
     }
@@ -56,13 +57,27 @@ export async function addBook(req, res) {
       publisher,
       publicationDate,
       categories: categoryIds,
-      images,
+      images: [],
       price,
       status: "active",
+    })
+    const savedBook = await newBook.save();
+    const image = await BookImage.insertMany(
+      images.map((url, index) => ({
+        book: savedBook._id,
+        url,
+        order: index,
+      })),
+    );
+    savedBook.images = image.map((img) => img._id);
+    const newInventory = new Inventory({
+      book: savedBook._id,
+      quantity,
     });
-
     await newBook.save();
-    res.status(201).json(newBook);
+    await newInventory.save();
+
+    res.status(201).json({ newBook, newInventory });
   } catch (error) {
     console.error("Error adding book", error);
     res.status(500).json({ message: "Internal Server Error" });
