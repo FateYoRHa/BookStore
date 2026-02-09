@@ -35,7 +35,7 @@ export async function createBookWithAssets(book) {
   });
   const savedBook = await newBook.save();
   if (images?.length) {
-    const imageIds = await mediaServices.attachImagesToBook(
+    const imageIds = await mediaServices.attachImagesToBookService(
       savedBook._id,
       images,
     );
@@ -73,7 +73,7 @@ export async function updateBookService(book) {
     { new: true },
   );
   if (images?.length) {
-    const imageIds = await mediaServices.attachImagesToBook(
+    const imageIds = await mediaServices.attachImagesToBookService(
       updateBook._id,
       images,
     );
