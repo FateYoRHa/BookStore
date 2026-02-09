@@ -1,5 +1,7 @@
 import { Author, Book } from "../../model/index.js";
+import * as authorService from "../../services/core/author_services.js";
 
+// TODO move to services with filters
 export async function getAuthors(req, res) {
   try {
     const authors = await Author.find().select("penName bio");
@@ -30,11 +32,8 @@ export async function getAuthor(req, res) {
 export async function addAuthor(req, res) {
   try {
     const { penName, bio } = req.body;
-    const newAuthor = new Author({
-      penName,
-      bio,
-    });
-    await newAuthor.save();
+    const newAuthor = await authorService.addAuthorService({ penName, bio });
+
     res.status(201).json(newAuthor);
   } catch (error) {
     console.log("Error adding author", error);
@@ -45,15 +44,13 @@ export async function addAuthor(req, res) {
 export async function updateAuthor(req, res) {
   try {
     const { penName, bio } = req.body;
-    const author = await Author.findOneAndUpdate(
-      { authorId: req.params.id },
-      {
-        penName,
-        bio,
-      },
-      { upsert: true, new: true },
-    );
-    if (!author) return res.status(404).json({ message: "Author not found" });
+    const authorCode = req.params.id;
+    const author = await authorService.updateAuthorService({
+      authorCode,
+      penName,
+      bio,
+    });
+
     res.status(200).json(author);
   } catch (error) {
     console.log("Error updating author.", error);
@@ -69,8 +66,8 @@ export async function deleteAuthor(req, res) {
       return res
         .status(405)
         .json({ message: "Author has book/s linked to him/her." });
-    await Author.findOneAndDelete({ authorId: req.params.id });
-    res.status(204).json({ message: "Author was deleted successfully" });
+    await authorService.deleteAuthorService(req.params.id);
+    res.status(200).json({ message: "Author was deleted successfully" });
   } catch (error) {
     console.log("Error deleting author.", error);
     res.status(500).json({ message: "Internal server error." });
