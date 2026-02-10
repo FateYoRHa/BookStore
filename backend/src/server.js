@@ -12,6 +12,7 @@ import customerRoutes from "./routes/core/customer_route.js";
 import orderRoutes from "./routes/commerce/orders_route.js";
 import categoryRoutes from "./routes/core/category_route.js"
 import contentRoutes from "./routes/content_routes.js";
+import engagementRoutes from "./routes/engagement_routes.js"
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use("/customers", customerRoutes);
 app.use("/orders", orderRoutes);
 
 app.use("/content/", contentRoutes)
+app.use("/engagement/",engagementRoutes)
 
 connectDB().then(() => {
   app.listen(PORT, () => {
