@@ -1,8 +1,20 @@
-import {Inventory} from "../../model/index.js";
+import { Inventory } from "../../model/index.js";
 
 export async function initializeInventory(bookId, quantity) {
   return Inventory.create({
     book: bookId,
     quantity,
   });
+}
+
+export async function updateInventoryService(items) {
+  return await Inventory.bulkWrite(
+    items.map((item) => ({
+      updateOne: {
+        filter: { book: item.bookId },
+        update: { $inc: { quantity: -item.quantity } },
+        new: true,
+      },
+    })),
+  );
 }
