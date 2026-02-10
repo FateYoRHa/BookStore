@@ -9,7 +9,7 @@ import authorRoutes from "./routes/core/author_route.js";
 import userRoutes from "./routes/core/users_route.js";
 import bookRoutes from "./routes/core/books_route.js";
 import customerRoutes from "./routes/core/customer_route.js";
-import orderRoutes from "./routes/commerce/orders_route.js";
+import commerceRoutes from "./routes/commerce_route.js";
 import categoryRoutes from "./routes/core/category_route.js"
 import contentRoutes from "./routes/content_routes.js";
 import engagementRoutes from "./routes/engagement_routes.js"
@@ -30,8 +30,10 @@ app.use("/categories", categoryRoutes)
 app.use("/authors", authorRoutes);
 app.use("/books", bookRoutes);
 app.use("/customers", customerRoutes);
-app.use("/orders", orderRoutes);
 
+// COMMERCE
+app.use("/commerce/", commerceRoutes);
+// CONTENT
 app.use("/content/", contentRoutes)
 app.use("/engagement/",engagementRoutes)
 
