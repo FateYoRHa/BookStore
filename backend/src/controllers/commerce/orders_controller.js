@@ -3,10 +3,9 @@ import * as orderService from "../../services/commerce/order_services.js";
 export async function addOrder(req, res) {
   try {
     // TODO items will come from cart
-    const { customerId, items, shippingAddress } = req.body;
+    const { customerId, shippingAddress } = req.body;
     const order = await orderService.addOrderService({
       customerId,
-      items,
       shippingAddress,
     });
 
