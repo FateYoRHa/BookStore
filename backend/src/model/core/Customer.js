@@ -26,6 +26,7 @@ const customerSchema = new Schema(
         isDefault: Boolean,
       },
     ],
+    image: { type: String, required: true, altText: String },
   },
   { timestamps: true },
 );
