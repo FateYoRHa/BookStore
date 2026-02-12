@@ -13,7 +13,6 @@ const customerSchema = new Schema(
 
     phone: {
       type: String,
-      required: true,
       unique: true,
     },
 
@@ -26,7 +25,7 @@ const customerSchema = new Schema(
         isDefault: Boolean,
       },
     ],
-    image: { type: String, required: true, altText: String },
+    image: { type: String, altText: String },
   },
   { timestamps: true },
 );
