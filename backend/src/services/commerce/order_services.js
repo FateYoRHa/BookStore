@@ -1,6 +1,12 @@
 import { Order, Book, Cart } from "../../model/index.js";
 import * as inventoryService from "../../services/core/inventory_services.js";
 
+export async function getOrderService(id) {
+  return await Order.find({ customer: id })
+    .populate("items.book", "title price")
+    .sort({ createdAt: -1 });
+}
+
 export async function addOrderService(orders) {
   // TODO items will come from cart
   const { customerId, shippingAddress } = orders;
