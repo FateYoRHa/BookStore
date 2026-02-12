@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Counter from "../../assets/counter.js";
+import bcrypt from "bcrypt";
 
 const { Schema } = mongoose;
 const PREFIX = "USER";
@@ -13,7 +14,6 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       lowercase: true,
-      match: [/.+\@.+\..+/, "Please enter a valid email address."],
     },
 
     password: { type: String, required: true },
@@ -23,9 +23,21 @@ const userSchema = new Schema(
       enum: ["customer", "admin"],
       default: "customer",
     },
+    isOAuth: {type:Boolean, default: false}
   },
   { timestamps: true },
 );
+
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return
+    // Only hash if the password has been modified
+    this.password = await bcrypt.hash(this.password, 12); // 12 is the salt rounds
+});
+// Method to compare the input password with the stored hash
+userSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
 
 //THIS ADDS PREFIX TO ID
 
