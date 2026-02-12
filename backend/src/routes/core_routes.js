@@ -8,25 +8,25 @@ import * as customer from "../controllers/core/customers_controller.js";
 const router = express.Router();
 
 // AUTHORS
-router.get("/core/authors/", author.getAuthors);
-router.get("/core/authors/:id", author.getAuthor);
-router.post("/core/authors/add", author.addAuthor);
-router.put("/core/authors/update/:id", author.updateAuthor);
-router.delete("/core/atuhors/delete/:id", author.deleteAuthor);
+router.get("/authors/", author.getAuthors);
+router.get("/authors/:id", author.getAuthor);
+router.post("/authors/add", author.addAuthor);
+router.put("/authors/update/:id", author.updateAuthor);
+router.delete("/atuhors/delete/:id", author.deleteAuthor);
 
 // BOOKS
-router.get("/core/books/", book.getBooks);
-router.get("/core/books/:id", book.getBook);
-router.post("/core/books/add", book.addBook);
-router.put("/core/books/update/:id", book.updateBook);
+router.get("/books/", book.getBooks);
+router.get("/books/:id", book.getBook);
+router.post("/books/add", book.addBook);
+router.put("/books/update/:id", book.updateBook);
 
 // CATEGORIES
-router.get("/core/categories/", category.getCategories);
-router.get("/core/categories/:id", category.getCategory);
-router.post("/core/categories/add", category.addCategory);
-router.put("/core/categories/update/:id", category.updateCategory);
-router.delete("/core/categories/delete/:id", category.deleteCategory);
+router.get("/categories/", category.getCategories);
+router.get("/categories/:id", category.getCategory);
+router.post("/categories/add", category.addCategory);
+router.put("/categories/update/:id", category.updateCategory);
+router.delete("/categories/delete/:id", category.deleteCategory);
 // CUSTOMERS
-router.get("/core/customers/:id", customer.getCustomer);
+router.get("/customers/:id", customer.getCustomer);
 
 export default router;
