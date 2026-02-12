@@ -5,7 +5,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import rateLimit from "./middleware/rateLimiterer.js";
 
-import userRoutes from "./routes/core/users_route.js";
+import authRoutes from "./auth/auth_routes.js";
 import commerceRoutes from "./routes/commerce_routes.js";
 import coreRoutes from "./routes/core_routes.js";
 import contentRoutes from "./routes/content_routes.js";
@@ -21,8 +21,9 @@ app.use(cors());
 app.use(express.json());
 app.use(rateLimit);
 
+// AUTH
+app.use("/auth/", authRoutes);
 //routes
-app.use("/users", userRoutes);
 
 app.use("/core/", coreRoutes);
 
