@@ -4,11 +4,23 @@ export async function register(req, res) {
   try {
     const { email, password } = req.body;
 
-    const user = await authService.registerService({ email, password });
-    res.status(201).json(user);
+    const { user, accessToken, refreshToken } =
+      await authService.registerService({ email, password });
+
+    res
+      .status(201)
+      .json({ access_token: accessToken, refresh_token: refreshToken });
   } catch (error) {
+      if (error.code === 11000) {
+        return res.status(400).json({
+          message: "Duplicate value detected.",
+        });
+      }
+
     console.log("Error register", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error" });
   }
 }
 
