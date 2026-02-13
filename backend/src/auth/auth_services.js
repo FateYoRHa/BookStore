@@ -59,15 +59,15 @@ export async function loginService(login) {
   return { accessToken, refreshToken };
 }
 
-export async function refreshService(refreshToken) {
+export async function refreshService(refToken) {
   try {
-    if (!refreshToken) {
+    if (!refToken) {
       const error = new Error("Token not recognized");
       error.status = 401;
       throw error;
     }
     // verify refresh token
-    const payload = verifyRefreshToken(refreshToken);
+    const payload = verifyRefreshToken(refToken);
     // find token using user id
     const token = await RefreshToken.findOne({ user: payload.sub });
     if (!token) {
@@ -81,14 +81,28 @@ export async function refreshService(refreshToken) {
       throw error;
     }
     // compare token with hashed token
-    const storedToken = await token.compareRefreshToken(refreshToken);
+    const storedToken = await token.compareRefreshToken(refToken);
+
     if (!storedToken) {
       const error = new Error("Token not recognized");
       error.status = 403;
       throw error;
     }
+    const tokens = await RefreshToken.find({ user: payload.sub });
+    if (!tokens) return;
+    let matchedToken = null;
+    // loop through to find correct token
+    for (const t of tokens) {
+      // compare each hash
+      const isMatch = await t.compareRefreshToken(refToken);
+      if (isMatch) {
+        // match correct one
+        matchedToken = t;
+        break;
+      }
+    }
     // REFRESH ROTATION
-    await RefreshToken.deleteOne({ token: storedToken });
+    await RefreshToken.deleteOne({ _id: matchedToken._id });
 
     // check db for user
     const user = await User.findById(payload.sub);
