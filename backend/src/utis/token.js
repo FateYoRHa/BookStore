@@ -8,7 +8,7 @@ export const signAccessToken = (user) => {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "15m",
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRES,
     },
   );
 };
@@ -20,7 +20,7 @@ export const signRefreshToken = (user) => {
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "7d",
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES,
     },
   );
 };
