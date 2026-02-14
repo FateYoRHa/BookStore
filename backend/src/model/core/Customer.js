@@ -1,4 +1,5 @@
 import { mongoose, Schema } from "mongoose";
+import Counter from "../../assets/counter.js";
 const customerSchema = new Schema(
   {
     customerCode: { type: String, unique: true, index: true },
@@ -13,7 +14,7 @@ const customerSchema = new Schema(
 
     phone: {
       type: String,
-      unique: true,
+      // unique: true,
     },
 
     address: [
@@ -29,4 +30,14 @@ const customerSchema = new Schema(
   },
   { timestamps: true },
 );
+customerSchema.pre("save", async function () {
+  if (this.customerCode) return;
+  const counter = await Counter.findOneAndUpdate(
+    { key: "customer" },
+    { $inc: { value: 1 } },
+    { upsert: true, new: true },
+  );
+  const number = counter.value.toString().padStart(4, 0);
+  this.customerCode = `CUST-${number}`;
+});
 export default mongoose.model("Customer", customerSchema);

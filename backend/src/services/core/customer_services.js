@@ -1,5 +1,6 @@
 import { Customer, Order } from "../../model/index.js";
 import * as orderService from "../../services/commerce/order_services.js";
+
 export async function getCustomerService(id) {
   try {
     const customer = await Customer.findOne({ user: id }).populate(
@@ -30,8 +31,7 @@ export async function updateCustomerProfileService(customer) {
 
 export async function createCustomerService(customer) {
   const { id, name } = customer;
-  return await Customer.create({
-    user: id,
-    name: name,
-  });
+  const newCustomer = new Customer({ user: id, name })
+
+  return await newCustomer.save(); 
 }
