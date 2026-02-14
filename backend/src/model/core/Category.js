@@ -12,12 +12,12 @@ const categorySchema = new Schema({
   sortOrder: { type: Number, default: 0 },
 });
 
-categorySchema.pre("save", () => {
+categorySchema.pre("save", async function () {
   if (this.categoryCode) return;
-  const counter = Counter.findByIdAndUpdate(
+  const counter = Counter.findOneAndUpdate(
     { key: "category" },
     { $inc: { value: 1 } },
-    { upsert: true },
+    { upsert: true, new: true },
   );
   const number = counter.value.toString().padStart(PAD, 0);
   this.categoryCode = `${PREFIX}-${number}`;
