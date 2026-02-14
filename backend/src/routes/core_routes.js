@@ -30,5 +30,5 @@ router.put("/categories/update/:id", authenticate, category.updateCategory);
 router.delete("/categories/delete/:id", authenticate, category.deleteCategory);
 // CUSTOMERS
 router.get("/customers", authenticate, customer.getCustomer);
-router.get("/customers", authenticate, customer.updateCustomerProfile);
+router.put("/customers/update", authenticate, customer.updateCustomerProfile);
 export default router;
