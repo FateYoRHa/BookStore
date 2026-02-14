@@ -7,10 +7,8 @@ export async function getOrderService(id) {
     .sort({ createdAt: -1 });
 }
 
-export async function addOrderService(orders) {
-  // TODO items will come from cart
-  const { customerId, shippingAddress } = orders;
-
+export async function addOrderService(customer) {
+  const { customerId, address } = customer;
   const cart = await Cart.findOne({ customer: customerId });
   if (!cart || cart.items.length === 0) {
     throw new Error("Cart is empty");
@@ -30,14 +28,13 @@ export async function addOrderService(orders) {
   const order = new Order({
     customer: customerId,
     items: orderItems,
-    shippingAddress,
+    shippingAddress: address,
     totalAmount,
   });
 
   await inventoryService.updateInventoryService(orderItems);
 
   await order.save();
-  // TODO checkout session
   // Clear cart
   cart.items = [];
   await cart.save();
