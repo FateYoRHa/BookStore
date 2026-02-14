@@ -27,7 +27,7 @@ export async function registerService(user) {
 
     return { accessToken, refreshToken };
   } catch (error) {
-    throw
+    throw error
   }
 }
 
