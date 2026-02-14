@@ -4,16 +4,18 @@ export async function register(req, res) {
   try {
     const { email, password } = req.body;
 
-    const { user, accessToken, refreshToken } =
-      await authService.registerService({ email, password });
+    const { accessToken, refreshToken } = await authService.registerService({
+      email,
+      password,
+    });
 
     res.status(201).json({
-      user: user,
       access_token: accessToken,
       refresh_token: refreshToken,
     });
   } catch (error) {
     if (error.code === 11000) {
+      console.log(error)
       return res.status(400).json({
         message: "Duplicate value detected.",
       });
@@ -54,7 +56,7 @@ export async function login(req, res) {
 export async function refresh(req, res) {
   try {
     // get refresh token from cookie and send to refresh service
-    const {accessToken, refreshToken} = await authService.refreshService(
+    const { accessToken, refreshToken } = await authService.refreshService(
       req.cookies.refreshToken,
     );
     // set new cookie
