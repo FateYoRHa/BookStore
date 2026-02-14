@@ -12,10 +12,20 @@ export async function getCustomerService(id) {
       error.status = 404;
       throw error;
     }
-    return {customer, orders};
+    return { customer, orders };
   } catch (error) {
-    throw error
+    throw error;
   }
+}
+
+export async function updateCustomerProfileService(customer) {
+  const { id, name, phone, address, image } = customer;
+  const updateCustomer = await Customer.findOneAndUpdate(
+    { user: id },
+    { name, phone, address, image },
+    { new: true },
+  );
+  return updateCustomer;
 }
 
 export async function createCustomerService(customer) {
