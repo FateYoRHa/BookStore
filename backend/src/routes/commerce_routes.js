@@ -12,8 +12,10 @@ const adminOnly = [authenticate, authorize("admin")];
 const customerOnly = [authenticate, authorize("customer")];
 
 // CARTS
-router.put("/cart/add", customerOnly, cart.addToCart);
-router.put("/cart/remove", customerOnly, cart.removeFromCart);
+router.get("/cart", customerOnly, cart.getCart)
+router.put("/addToCart", customerOnly, cart.addToCart);
+router.put("/removeFromCart", customerOnly, cart.removeFromCart);
+router.post("/checkout", customerOnly, cart.checkout)
 // ORDERS
 router.post("/orders", customerOnly, orders.addOrder);
 router.put("/orders/:id", adminOnly, orders.updateOrder);
