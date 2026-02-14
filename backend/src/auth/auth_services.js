@@ -9,22 +9,26 @@ import {
 import { createCustomerService } from "../services/core/customer_services.js";
 
 export async function registerService(user) {
-  const { email, password } = user;
-  const emailUsed = await User.findOne({ email: email });
-  if (emailUsed) {
-    const error = new Error("Email is already taken.");
-    error.status = 409;
-    throw error;
-  }
-  const registerUser = await User.create({ email, password });
-  const id = registerUser._id;
-  const name = email.split("@")[0];
-  // soft signup/create customer
-  await createCustomerService({ id, name });
-  const accessToken = signAccessToken(user);
-  const refreshToken = signRefreshToken(user);
+  try {
+    const { email, password } = user;
+    const emailUsed = await User.findOne({ email: email });
+    if (emailUsed) {
+      const error = new Error("Email is already taken.");
+      error.status = 409;
+      throw error;
+    }
+    const registerUser = await User.create({ email, password });
+    const id = registerUser._id;
+    const name = email.split("@")[0];
+    // soft signup/create customer
+    await createCustomerService({ id, name });
+    const accessToken = signAccessToken(registerUser);
+    const refreshToken = signRefreshToken(registerUser);
 
-  return { registerUser, accessToken, refreshToken };
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw
+  }
 }
 
 export async function loginService(login) {
