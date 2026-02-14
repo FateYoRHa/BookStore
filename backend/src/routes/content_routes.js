@@ -5,7 +5,12 @@ import * as featuredItem from "../controllers/content/featureditems_controller.j
 import * as media from "../controllers/content/media_controller.js";
 
 import { authenticate } from "../middleware/authenticate.js";
+import { authorize } from "../middleware/authorize.js";
+
 const router = express.Router();
+
+const adminOnly = [authenticate, authorize("admin")];
+const customerOnly = [authenticate, authorize("customer")];
 
 // Homepage Section
 router.get("/homepagesection/", homePageSection.getHomePageSections);
@@ -16,48 +21,44 @@ router.get(
 );
 router.post(
   "/homepagesection/add",
-  authenticate,
+  adminOnly,
   homePageSection.addHomePageSection,
 );
 router.put(
   "/homepagesection/update/:id",
-  authenticate,
+  adminOnly,
   homePageSection.updateHomePageSection,
 );
 router.delete(
   "/homepagesection/:id",
-  authenticate,
+  adminOnly,
   homePageSection.deleteHomePageSection,
 );
 
 // Banner
 router.get("/banners/", bannerSection.getBanners);
-router.post("/banners/add", authenticate, bannerSection.addBanner);
-router.put("/banners/update/:id", authenticate, bannerSection.updateBanner);
-router.delete(
-  "/banners/delete/:id",
-  authenticate,
-  bannerSection.deactivateBanner,
-);
+router.post("/banners", adminOnly, bannerSection.addBanner);
+router.put("/banners/:id", adminOnly, bannerSection.updateBanner);
+router.delete("/banners/:id", adminOnly, bannerSection.deactivateBanner);
 
 // Featured Item
 router.get("/featureditems/:section", featuredItem.getFeaturedItem);
-router.post("/featureditems/add", authenticate, featuredItem.addFeaturedItem);
+router.post("/featureditems", adminOnly, featuredItem.addFeaturedItem);
 router.put(
-  "/featureditems/update/:id",
-  authenticate,
+  "/featureditems/:id",
+  adminOnly,
   featuredItem.updateFeaturedItem,
 );
 router.delete(
-  "/featureditems/delete/:id",
-  authenticate,
+  "/featureditems/:id",
+  adminOnly,
   featuredItem.removeFeaturedItem,
 );
 
 // Media
 router.post(
   "/media/attachimagetobook/:bookId/images",
-  authenticate,
+  adminOnly,
   media.attachImagesToBook,
 );
 export default router;

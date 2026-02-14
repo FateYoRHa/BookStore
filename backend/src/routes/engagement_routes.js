@@ -3,18 +3,21 @@ import express from "express";
 import * as wishlist from "../controllers/engagement/wishlists_controller.js";
 import * as review from "../controllers/engagement/reviews_controller.js";
 import * as newsletter from "../controllers/engagement/newsletters_controller.js";
-import { authenticate } from "../middleware/authenticate.js";
-const router = express.Router();
 
+import { authenticate } from "../middleware/authenticate.js";
+import { authorize } from "../middleware/authorize.js";
+
+const router = express.Router();
+const customerOnly = [authenticate, authorize("customer")];
 // WISHLIST
-router.put("/wishlist/add/", authenticate, wishlist.addToWishlist);
-router.put("/wishlist/remove/", authenticate, wishlist.removeFromWishlist);
+router.put("/wishlist/", customerOnly, wishlist.addToWishlist);
+router.put("/wishlist/remove/", customerOnly, wishlist.removeFromWishlist);
 
 // REVIEW
-router.post("/review/create/", authenticate, review.addReview);
-router.put("/review/update/:id", authenticate, review.updateReview);
+router.post("/review/", customerOnly, review.addReview);
+router.put("/review/:id", customerOnly, review.updateReview);
 
 // NEWSLETTER
-router.post("/newsletter/create/", authenticate, newsletter.createNewsLetter);
+router.post("/newsletter/", newsletter.createNewsLetter);
 
 export default router;
