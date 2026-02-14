@@ -1,6 +1,11 @@
 import { Cart, Book, Customer } from "../../model/index.js";
 import { addOrderService } from "./order_services.js";
 
+export async function getCartService(user) {
+  const customer = await Customer.findOne({ user: user.id }, { _id: 1 });
+  return await Cart.findOne({ customer: customer });
+}
+
 export async function addToCartService(cart) {
   const { user, items } = cart;
   const customer = await Customer.findOne({ user: user }, { _id: 1 });
@@ -58,4 +63,12 @@ export async function removeFromCartService(cart) {
     { $pull: { items: { _id: item } } }, //remove from items where book = item
     { new: true },
   );
+}
+
+export async function checkoutService(id) {
+  const customer = await Customer.findOne({ user: id }, { _id: 1, address: 1 });
+  const customerId = customer.id;
+  const address = customer.address;
+  const orders = await addOrderService({ customerId, address });
+  return orders;
 }

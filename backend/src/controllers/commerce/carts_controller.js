@@ -1,5 +1,18 @@
 import * as cartService from "../../services/commerce/cart_services.js";
 
+export async function getCart(req, res) {
+  try {
+    // const customer = req.params.id;
+    const customerCart = await cartService.getCartService({
+      id: req.user.id,
+    });
+    res.status(200).json(customerCart);
+  } catch (error) {
+    console.log("Error getting cart", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 export async function addToCart(req, res) {
   try {
     const { items } = req.body;
@@ -29,3 +42,13 @@ export async function removeFromCart(req, res) {
   }
 }
 
+export async function checkout(req, res) {
+  try {
+    const id = req.user.id 
+    const orders = await cartService.checkoutService(id);
+    res.status(200).json({ orders });
+  } catch (error) {
+    console.log("Error checkout", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
