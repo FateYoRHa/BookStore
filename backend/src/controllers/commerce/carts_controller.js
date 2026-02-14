@@ -2,10 +2,11 @@ import * as cartService from "../../services/commerce/cart_services.js";
 
 export async function addToCart(req, res) {
   try {
-    const { customer, items } = req.body;
+    const { items } = req.body;
+    const user = req.user.id;
     // const customer = req.params.id;
     const customerCart = await cartService.addToCartService({
-      customer,
+      user,
       items,
     });
     res.status(200).json(customerCart);
@@ -17,11 +18,14 @@ export async function addToCart(req, res) {
 
 export async function removeFromCart(req, res) {
   try {
-    const { customer, item } = req.body
-    const cart = await cartService.removeFromCartService({ customer, item });
-    res.status(200).json({cart,message:"Book removed from wishlist"});
+    const { item } = req.body;
+    const user = req.user.id;
+
+    const cart = await cartService.removeFromCartService({ user, item });
+    res.status(200).json({ cart, message: "Book removed from cart" });
   } catch (error) {
-    console.log("Error adding to cart", error);
+    console.log("Error removing from cart", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
