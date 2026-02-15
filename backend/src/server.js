@@ -18,7 +18,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 //middleware
+// 1. Helmet for security headers
+app.use(helmet());
+// 2. CORS to allow cross-origin requests
 app.use(cors());
+// 3. Body parsers
 app.use(express.json());
 app.use(rateLimit);
 app.use(cookieParser());
