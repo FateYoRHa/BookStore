@@ -6,6 +6,7 @@ import * as inventoryService from "../../services/core/inventory_services.js";
 export async function createBookWithAssets(book) {
   const {
     title,
+    description,
     authorCode,
     publisher,
     publicationDate,
@@ -25,6 +26,7 @@ export async function createBookWithAssets(book) {
 
   const newBook = new Book({
     title,
+    description,
     author: author._id, // <-- ObjectId reference
     publisher,
     publicationDate,
@@ -52,6 +54,7 @@ export async function updateBookService(book) {
   const {
     bookCode,
     title,
+    description,
     authorCode,
     publisher,
     publicationDate,
@@ -63,6 +66,7 @@ export async function updateBookService(book) {
     { bookCode: bookCode },
     {
       title,
+      description,
       authorCode,
       publisher,
       publicationDate,

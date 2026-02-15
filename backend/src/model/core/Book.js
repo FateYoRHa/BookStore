@@ -9,7 +9,7 @@ const bookSchema = new Schema(
   {
     bookCode: { type: String, unique: true, index: true },
     title: { type: String, required: true },
-
+    description: { type: String, required: true },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Author",

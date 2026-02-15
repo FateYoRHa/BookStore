@@ -38,6 +38,7 @@ export async function addBook(req, res) {
   try {
     const {
       title,
+      description,
       authorCode,
       publisher,
       publicationDate,
@@ -49,6 +50,7 @@ export async function addBook(req, res) {
 
     const newBook = await bookService.createBookWithAssets({
       title,
+      description,
       authorCode,
       publisher,
       publicationDate,
@@ -68,6 +70,7 @@ export async function updateBook(req, res) {
   try {
     const {
       title,
+      description,
       authorCode,
       publisher,
       publicationDate,
@@ -79,6 +82,7 @@ export async function updateBook(req, res) {
     const updatedBook = await bookService.updateBookService({
       bookCode,
       title,
+      description,
       authorCode,
       publisher,
       publicationDate,
