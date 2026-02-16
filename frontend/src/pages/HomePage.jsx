@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router";
 
-import NavBar from "./components/NavBar";
-import RateLimitedUI from "./components/RateLimitedUI";
-import Carousel from "./components/Carousel";
+import NavBar from "../shared/components/NavBar";
+import RateLimitedUI from "../shared/components/RateLimitedUI";
+import Carousel from "../shared/components/Carousel";
 const HomePage = () => {
   const { isRateLimited, setIsRateLimited } = useState(true);
   return (
