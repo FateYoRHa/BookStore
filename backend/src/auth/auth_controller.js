@@ -15,7 +15,7 @@ export async function register(req, res) {
     });
   } catch (error) {
     if (error.code === 11000) {
-      console.log(error)
+      console.log(error);
       return res.status(400).json({
         message: "Duplicate value detected.",
       });
@@ -36,10 +36,17 @@ export async function login(req, res) {
       password,
     });
 
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: "strict",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false, //process.env.NODE_ENV === "production" use true in production
+      // sameSite: "strict", //use in production
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     return res.status(200).json({
@@ -60,10 +67,17 @@ export async function refresh(req, res) {
       req.cookies.refreshToken,
     );
     // set new cookie
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: "strict",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false, //process.env.NODE_ENV === "production" use true in production
+      // sameSite: "strict", //use in production
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     res.status(200).json({ access_token: accessToken });

@@ -1,3 +1,4 @@
+import helmet from "helmet";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -20,12 +21,18 @@ const PORT = process.env.PORT || 5000;
 //middleware
 // 1. Helmet for security headers
 app.use(helmet());
+
 // 2. CORS to allow cross-origin requests
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  }),
+);
 // 3. Body parsers
 app.use(express.json());
-app.use(rateLimit);
 app.use(cookieParser());
+app.use(rateLimit);
 // AUTH
 app.use("/auth/", authRoutes);
 //routes
