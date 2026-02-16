@@ -4,10 +4,11 @@ import * as bookService from "../../services/core/book_services.js";
 // TODO transfer to services, pass filters
 export async function getBooks(req, res) {
   try {
-    const books = await Book.find()
+    const books = await Book.find({ status: "active" })
       .populate("author", "penName") // JOIN authors
       .populate("categories", "name") // JOIN categories
       .select("-__v");
+
     res.status(200).json(books);
   } catch (error) {
     console.error("Error finding books", error);
