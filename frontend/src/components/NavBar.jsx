@@ -1,6 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
-
+import AuthPage from "@/features/auth/pages/AuthPage";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -10,7 +9,13 @@ import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -18,7 +23,12 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,9 +49,7 @@ export default function NavBar() {
         {/* LEFT SIDE: LOGO */}
         {/* ===================================== */}
 
-        <Link
-          to="/"
-          className="text-xl font-semibold tracking-tight text-primary">
+        <Link to="/" className="text-xl font-semibold tracking-tight text-primary">
           Leaf & Ledger
         </Link>
 
@@ -58,7 +66,7 @@ export default function NavBar() {
               <NavigationMenuItem>
                 <NavigationMenuLink
                   asChild // Use asChild if wrapping a framework's Link component
-                  className={`${navigationMenuTriggerStyle()} hover:text-primary hover:border-b-2 hover:border-primary transition-colors`}>
+                  className={`${navigationMenuTriggerStyle()} hover:border-b-2 hover:border-primary transition-colors`}>
                   <Link to="/books">Books</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -87,7 +95,7 @@ export default function NavBar() {
               <NavigationMenuItem>
                 <NavigationMenuLink
                   asChild // Use asChild if wrapping a framework's Link component
-                  className={`${navigationMenuTriggerStyle()} hover:text-primary hover:border-b-2 hover:border-primary transition-colors`}>
+                  className={`${navigationMenuTriggerStyle()}hover:border-b-2 hover:border-primary transition-colors`}>
                   <Link to="/best-sellers">Best Sellers</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -95,7 +103,7 @@ export default function NavBar() {
               <NavigationMenuItem>
                 <NavigationMenuLink
                   asChild // Use asChild if wrapping a framework's Link component
-                  className={`${navigationMenuTriggerStyle()} hover:text-primary hover:border-b-2 hover:border-primary transition-colors`}>
+                  className={`${navigationMenuTriggerStyle()} hover:border-b-2 hover:border-primary transition-colors`}>
                   <Link to="/authors">Authors</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -153,11 +161,22 @@ export default function NavBar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link to="/login">
-              <Button variant="outline" size="sm">
-                Login
-              </Button>
-            </Link>
+            // <Link to="/login">
+            //   <Button variant="outline" size="sm">
+            //     Login
+            //   </Button>
+            // </Link>
+
+            <Dialog>
+              <DialogTitle className="sr-only"></DialogTitle>
+              <DialogDescription className="sr-only"></DialogDescription>
+              <DialogTrigger asChild>
+                <Button variant="outline">Login</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-5xl">
+                <AuthPage />
+              </DialogContent>
+            </Dialog>
           )}
 
           {/* ===================================== */}
@@ -174,6 +193,7 @@ export default function NavBar() {
 
             {/* Drawer Content */}
             <SheetContent side="left" className="w-72">
+              <SheetTitle className="sr-only"></SheetTitle>
               {/* Mobile Search */}
               <div className="mb-6">
                 <Input placeholder="Search books..." />
