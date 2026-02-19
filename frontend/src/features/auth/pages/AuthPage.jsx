@@ -1,10 +1,5 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { motion } from "framer-motion";
-
-import { loginSchema } from "../schema.js";
-import { useLogin } from "../hooks/useLogin.js";
 
 import LoginForm from "./forms/LoginForm.jsx";
 import SignupForm from "./forms/SignupForm.jsx";
@@ -12,20 +7,6 @@ import { Button } from "@/components/ui/button";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const { mutate, isPending } = useLogin();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(loginSchema),
-  });
-
-  const onSubmit = (data) => {
-    mutate(data);
-  };
-
   return (
     <div className="flex items-center justify-center p-6">
       <div className="relative w-full max-w-4xl h-[600px] overflow-hidden rounded-2xl shadow-2xl">
@@ -42,14 +23,8 @@ export default function AuthPage() {
           {/* LOGIN PANEL */}
           <div className="w-1/2 flex">
             {/* Login Form Section */}
-            <div className="w-1/2 flex items-center justify-center p-10">
-              <LoginForm
-                onSubmit={handleSubmit(onSubmit)}
-                register={register}
-                errors={errors}
-                isPending={isPending}
-                className="w-full max-w-4xl"
-              />
+            <div className="w-1/2 flex items-center justify-center p-10 bg-secondary">
+              <LoginForm className="w-full max-w-4xl rounded-md border-none shadow-none" />
             </div>
 
             {/* Login Image Section */}
@@ -84,8 +59,8 @@ export default function AuthPage() {
             </div>
 
             {/* Register Form Section */}
-            <div className="w-1/2 flex items-center justify-center p-8">
-              <SignupForm />
+            <div className="w-1/2 flex items-center justify-center p-10 bg-secondary">
+              <SignupForm className="w-full max-w-4xl rounded-md border-none shadow-none" />
             </div>
           </div>
         </motion.div>
