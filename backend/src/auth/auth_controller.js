@@ -101,13 +101,6 @@ export async function refresh(req, res) {
 export async function logout(req, res) {
   try {
     await authService.logoutService(req.cookies.refreshToken);
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false, //process.env.NODE_ENV === "production" use true in production
-      // sameSite: "strict", //use in production
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
     return res.status(200).json({
       message: "Logged out successfully",
     });
