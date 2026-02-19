@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
+
+import { useAuthStore } from "@/features/auth/store/authStore";
+
 import AuthPage from "@/features/auth/pages/AuthPage";
+import { Logout } from "@/features/auth/pages/forms/Logout";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -39,9 +43,8 @@ import { Search, ShoppingCart, Menu } from "lucide-react";
 
 export default function NavBar() {
   // 🔹 In real app these come from Zustand or React Query
-  const isAuthenticated = false;
+  const user = useAuthStore((state) => state.user);
   const cartCount = 3;
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
@@ -49,7 +52,9 @@ export default function NavBar() {
         {/* LEFT SIDE: LOGO */}
         {/* ===================================== */}
 
-        <Link to="/" className="text-xl font-semibold tracking-tight text-primary">
+        <Link
+          to="/"
+          className="text-xl font-semibold tracking-tight text-primary">
           Leaf & Ledger
         </Link>
 
@@ -141,7 +146,7 @@ export default function NavBar() {
           </Link>
 
           {/* -------- Auth Dropdown -------- */}
-          {isAuthenticated ? (
+          {user ? (
             <DropdownMenu>
               {/* Avatar trigger */}
               <DropdownMenuTrigger asChild>
@@ -157,16 +162,12 @@ export default function NavBar() {
                 <DropdownMenuItem asChild>
                   <Link to="/orders">Orders</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Logout />
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            // <Link to="/login">
-            //   <Button variant="outline" size="sm">
-            //     Login
-            //   </Button>
-            // </Link>
-
             <Dialog>
               <DialogTitle className="sr-only"></DialogTitle>
               <DialogDescription className="sr-only"></DialogDescription>
