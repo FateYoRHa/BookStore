@@ -8,10 +8,19 @@ export async function register(req, res) {
       email,
       password,
     });
-
-    res.status(201).json({
-      access_token: accessToken,
-      refresh_token: refreshToken,
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false, //process.env.NODE_ENV === "production" use true in production
+      // sameSite: "strict", //use in production
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    // res.status(201).json({
+    //   access_token: accessToken,
+    //   refresh_token: refreshToken,
+    // });
+    return res.status(201).json({
+      accessToken,
     });
   } catch (error) {
     if (error.code === 11000) {
@@ -92,16 +101,17 @@ export async function refresh(req, res) {
 export async function logout(req, res) {
   try {
     await authService.logoutService(req.cookies.refreshToken);
-    res.clearCookie("refreshToken", {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false, //process.env.NODE_ENV === "production" use true in production
+      // sameSite: "strict", //use in production
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     return res.status(200).json({
       message: "Logged out successfully",
     });
   } catch (error) {
-    console.log("Error logout", error);
     res.status(500).json({ message: "Logout Failed" });
   }
 }

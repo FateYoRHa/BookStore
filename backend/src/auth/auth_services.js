@@ -18,6 +18,7 @@ export async function registerService(user) {
       throw error;
     }
     const registerUser = await User.create({ email, password });
+    clg
     const id = registerUser._id;
     const name = email.split("@")[0];
     // soft signup/create customer
@@ -25,9 +26,15 @@ export async function registerService(user) {
     const accessToken = signAccessToken(registerUser);
     const refreshToken = signRefreshToken(registerUser);
 
+    await RefreshToken.create({
+      user: registerUser._id,
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
     return { accessToken, refreshToken };
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
