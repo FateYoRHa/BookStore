@@ -2,48 +2,60 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-export const BookCard = ({ book, className, ...props }) => {
+import { ShoppingBasket } from "lucide-react";
+import BookSkeleton from "./BookSkeleton";
+export const BookCard = ({ book, className,isLoading, ...props }) => {
   return (
     // TODO onhover bookimages will carousel
-    <Card
-      className={cn(
-        "flex flex-col h-full hover:shadow-lg transition-shadow",
-        className,
-      )}
-      {...props}>
-      {/* 
+    <div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-stretch">
+          <BookSkeleton />
+        </div>
+      ) : (
+        <Card
+          className={cn(
+            "flex flex-col h-full hover:shadow-lg transition-shadow",
+            className,
+          )}
+          {...props}>
+          {/* 
       CardContent adds padding automatically
       p-4 ensures internal spacing
       */}
-      {/* Book Title */}
-      <CardTitle className="text-center">
-        <h3 className="font-semibold">{book.title}</h3>
-      </CardTitle>
-      <CardContent className="p-4 flex flex-col gap-4 flex-grow">
-        {/* Book Image Placeholder */}
-        <AspectRatio className="overflow-hidden rounded-md">
-          <img
-            className="aspect-[3/4] w-full h-full object-cover"
-            src={book.images[0].url}
-            alt={book.title}
-          />
-        </AspectRatio>
+          {/* Book Title */}
+          <CardTitle className="text-center">
+            <h3 className="font-semibold">{book.title}</h3>
+          </CardTitle>
+          <CardContent className="p-4 flex flex-col gap-4 flex-grow">
+            {/* Book Image Placeholder */}
+            <AspectRatio className="overflow-hidden rounded-md">
+              <img
+                className="aspect-[3/4] w-full h-full object-cover"
+                src={book.images[0].url}
+                alt={book.title}
+              />
+            </AspectRatio>
 
-        <p className="text-sm text-muted-foreground">
-          by: {book.author.penName}
-        </p>
-        {/* Author */}
-      </CardContent>
-      <CardFooter className="flex justify-between items-center mt-auto">
-        {/* 
+            <p className="text-sm text-muted-foreground">
+              by: {book.author.penName}
+            </p>
+            {/* Author */}
+          </CardContent>
+          <CardFooter className="flex justify-between items-center mt-auto">
+            {/* 
           mt-auto pushes this section to bottom
           (because parent is flex column)
         */}
 
-        {/* Price + Button Row */}
-        <span className="font-bold">${book.price}</span>
-        <Button size="sm">Add to Cart</Button>
-      </CardFooter>
-    </Card>
+            {/* Price + Button Row */}
+            <span className="font-bold">${book.price}</span>
+            <Button size="sm" className="bg-green-500">
+              <ShoppingBasket />
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
+    </div>
   );
 };
