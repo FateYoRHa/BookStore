@@ -82,7 +82,7 @@ const Books = () => {
 
           {/* BOOKS GRID */}
           <main className="md:col-span-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch transis">
               {data?.books?.map((book) => (
                 <BookCard
                   book={book}
