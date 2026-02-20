@@ -26,18 +26,20 @@ const bookSchema = new Schema(
         ref: "Category",
       },
     ],
-
-    images: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "BookImage",
-      },
-    ],
-
     price: { type: Number, required: true },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
+// VIRTUAL SCHEMA FOR IMAGE
+bookSchema.virtual("images", {
+  ref: "BookImage",
+  localField: "_id",
+  foreignField: "book",
+});
 
 //THIS ADDS PREFIX TO ID
 
