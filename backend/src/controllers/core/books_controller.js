@@ -39,21 +39,16 @@ export async function getBooks(req, res) {
   }
 }
 
-// TODO transfer to services
+
 export async function getBook(req, res) {
   try {
-    const book = await Book.findOne({ bookCode: req.params.id })
-      .populate("author")
-      .populate("categories");
-
-    if (!book) {
-      return res.status(404).json({ message: "Book not found" });
-    }
+    const book = await bookService.getBookService(req.params.id);
 
     res.status(200).json(book);
   } catch (error) {
-    console.error("Error finding book", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error" });
   }
 }
 
@@ -87,7 +82,9 @@ export async function addBook(req, res) {
     res.status(201).json(newBook);
   } catch (error) {
     console.error("Error adding book", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error" });
   }
 }
 export async function updateBook(req, res) {

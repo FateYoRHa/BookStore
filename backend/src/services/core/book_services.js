@@ -55,6 +55,24 @@ export async function getBooksService(filters) {
     throw error;
   }
 }
+export async function getBookService(id) {
+  try {
+    // const code = id
+    const book = await Book.findOne({ bookCode: id })
+      .populate("author", "penName")
+      .populate("categories", "name")
+      .populate("images");
+
+    if (!book) {
+      const error = new Error("Book not found.");
+      error.status = 401;
+      throw error;
+    }
+    return book;
+  } catch (error) {
+    throw error;
+  }
+}
 // FOR ADMINS ONLY
 export async function createBookWithAssets(book) {
   const {
