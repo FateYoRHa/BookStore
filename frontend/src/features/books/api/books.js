@@ -1,7 +1,10 @@
 import api from "../../../services/axios.js";
 
-export const getBooksRequest = async () => {
-  const response = await api.get("/core/books");
+export const getBooksRequest = async (filters) => {
+
+  const response = await api.get("/core/books", {
+    params: filters, // ✅ THIS IS REQUIRED
+  });
   return response.data;
 };
 
