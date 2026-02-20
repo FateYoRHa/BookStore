@@ -1,0 +1,49 @@
+import { cn } from "@/lib/utils";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+export const BookCard = ({ book, className, ...props }) => {
+  return (
+    // TODO onhover bookimages will carousel
+    <Card
+      className={cn(
+        "flex flex-col h-full hover:shadow-lg transition-shadow",
+        className,
+      )}
+      {...props}>
+      {/* 
+      CardContent adds padding automatically
+      p-4 ensures internal spacing
+      */}
+      {/* Book Title */}
+      <CardTitle className="text-center">
+        <h3 className="font-semibold">{book.title}</h3>
+      </CardTitle>
+      <CardContent className="p-4 flex flex-col gap-4 flex-grow">
+        {/* Book Image Placeholder */}
+        <AspectRatio className="overflow-hidden rounded-md">
+          <img
+            className="aspect-[3/4] w-full h-full object-cover"
+            src={book.images[0].url}
+            alt={book.title}
+          />
+        </AspectRatio>
+
+        <p className="text-sm text-muted-foreground">
+          by: {book.author.penName}
+        </p>
+        {/* Author */}
+      </CardContent>
+      <CardFooter className="flex justify-between items-center mt-auto">
+        {/* 
+          mt-auto pushes this section to bottom
+          (because parent is flex column)
+        */}
+
+        {/* Price + Button Row */}
+        <span className="font-bold">${book.price}</span>
+        <Button size="sm">Add to Cart</Button>
+      </CardFooter>
+    </Card>
+  );
+};
