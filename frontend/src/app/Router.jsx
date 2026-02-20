@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "../features/auth/pages/AuthPage";
 
-import HomePage from "@/features/HomePage";
+import HomePage from "@/features/homepage/pages/HomePage";
 
 import Books from "@/features/books/pages/Books";
 
