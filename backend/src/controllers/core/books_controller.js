@@ -7,6 +7,7 @@ export async function getBooks(req, res) {
     const books = await Book.find()
       .populate("author", "penName") // JOIN authors
       .populate("categories", "name") // JOIN categories
+      .populate("images")
       .select("-__v");
 
     res.status(200).json(books);
@@ -78,7 +79,7 @@ export async function updateBook(req, res) {
       images,
       price,
     } = req.body;
-    const bookCode = req.params.id
+    const bookCode = req.params.id;
     const updatedBook = await bookService.updateBookService({
       bookCode,
       title,
