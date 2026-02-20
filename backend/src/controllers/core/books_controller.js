@@ -4,41 +4,18 @@ import * as bookService from "../../services/core/book_services.js";
 // TODO transfer to services, pass filters
 export async function getBooks(req, res) {
   try {
-    // =========================
-    // 1️⃣ Extract query params
-    // =========================
-    const {
-      search,
-      category,
-      minPrice,
-      maxPrice,
-      sort,
-      page = 1, // default page = 1
-      limit = 12, // default 8 books per page
-    } = req.query;
-    const { books, total, pageNumber, pages } =
-      await bookService.getBooksService({
-        search,
-        category,
-        minPrice,
-        maxPrice,
-        sort,
-        page,
-        limit,
-      });
+    const books = await Book.find()
+      .populate("author", "penName") // JOIN authors
+      .populate("categories", "name") // JOIN categories
+      .populate("images")
+      .select("-__v");
 
-    res.status(200).json({
-      books,
-      total,
-      page: pageNumber,
-      totalPages: pages,
-    });
+    res.status(200).json(books);
   } catch (error) {
     console.error("Error finding books", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
-
 // TODO transfer to services
 export async function getBook(req, res) {
   try {
