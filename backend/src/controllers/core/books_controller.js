@@ -1,7 +1,6 @@
 import { Book, Author, Inventory } from "../../model/index.js";
 import * as bookService from "../../services/core/book_services.js";
 
-// TODO transfer to services, pass filters
 export async function getBooks(req, res) {
   try {
     // =========================
