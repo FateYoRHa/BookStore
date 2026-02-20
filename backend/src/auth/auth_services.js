@@ -18,7 +18,6 @@ export async function registerService(user) {
       throw error;
     }
     const registerUser = await User.create({ email, password });
-    clg
     const id = registerUser._id;
     const name = email.split("@")[0];
     // soft signup/create customer
