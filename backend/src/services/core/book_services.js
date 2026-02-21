@@ -61,7 +61,14 @@ export async function getBookService(id) {
     const book = await Book.findOne({ bookCode: id })
       .populate("author", "penName")
       .populate("categories", "name")
-      .populate("images");
+      .populate("images")
+      .populate({
+        path: "reviews", select:"rating comment",populate: {
+          path: "customer",
+          model: "Customer",
+          select: "name"
+      }})
+      .populate("inventory");
 
     if (!book) {
       const error = new Error("Book not found.");

@@ -37,12 +37,23 @@ const bookSchema = new Schema(
   },
 );
 // VIRTUAL SCHEMA FOR IMAGE
+bookSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "book",
+});
+// VIRTUAL SCHEMA FOR REVIEW
 bookSchema.virtual("images", {
   ref: "BookImage",
   localField: "_id",
   foreignField: "book",
 });
-
+// VS for inventory
+bookSchema.virtual("inventory", {
+  ref: "Inventory",
+  localField: "_id",
+  foreignField: "book",
+});
 //THIS ADDS PREFIX TO ID
 
 bookSchema.pre("save", async function () {
