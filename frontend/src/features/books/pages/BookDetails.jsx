@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useBook } from "../hooks/book_hooks.js";
 
-const BookPage = () => {
+const BookDetails = () => {
   const { id } = useParams();
   const { data: book, isLoading, error } = useBook(id);
 
@@ -16,4 +16,4 @@ const BookPage = () => {
     </div>
   );
 };
-export default BookPage;
+export default BookDetails;
