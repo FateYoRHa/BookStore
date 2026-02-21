@@ -1,13 +1,44 @@
 import { useSearchParams } from "react-router-dom";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useBooks } from "../hooks/book_hooks";
 import { BookCard } from "./components/BookCard";
 import BookFilterBar from "./BookFilterBar";
-
+import BookSkeleton from "./components/BookSkeleton";
+import { useDebounce } from "../hooks/useDebounce";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 const Books = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  //* Local input state (instant typing)
+  const initialSearch = searchParams.get("search") || "";
+  const [searchInput, setSearchInput] = useState(initialSearch);
+  //* Debounced version of search input
+  const debouncedSearch = useDebounce(searchInput, 400);
+
+  // * Sync debounced search to URL
+  // * This triggers React Query refetch
+  useEffect(() => {
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+
+      const current = params.get("search") || "";
+
+      if (debouncedSearch !== current) {
+        if (debouncedSearch) {
+          params.set("search", debouncedSearch);
+        } else {
+          params.delete("search");
+        }
+
+        params.set("page", "1"); // only reset when search changes
+      }
+
+      return params;
+    });
+  }, [debouncedSearch, setSearchParams]);
+
+  // *  Build filters object from URL
+  // *  Memoized to avoid unstable object reference
 
   const filters = useMemo(() => {
     return {
@@ -16,8 +47,10 @@ const Books = () => {
     };
   }, [searchParams]);
 
-  const { data, isLoading, error } = useBooks(filters);
-  // console.log(data?.totalPages)
+  //  Fetch books using React Query
+
+  const { data, isLoading, isFetching, error } = useBooks(filters);
+
   const updateParam = (key, value) => {
     setSearchParams((prev) => {
       const params = new URLSearchParams(prev);
@@ -77,21 +110,46 @@ const Books = () => {
         <div className="grid grid-cols-1 md:grid-cols-6 gap-2">
           {/* FILTER SIDEBAR */}
           <aside className="md:col-span-1">
-            <BookFilterBar />
+            <BookFilterBar
+              searchInput={searchInput}
+              setSearchInput={setSearchInput}
+            />
           </aside>
 
           {/* BOOKS GRID */}
-          <main className="md:col-span-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch transis">
-              {data?.books?.map((book) => (
-                <BookCard
-                  book={book}
-                  className="flex-1"
-                  key={book.bookCode}
-                  isLoading={isLoading}
-                />
-              ))}
-            </div>
+          <main className="md:col-span-5 relative">
+            {!isLoading && data?.books?.length === 0 && (
+              <div className="text-center py-20">
+                <p className="text-lg font-medium">No books found</p>
+                <p className="text-sm text-muted-foreground">
+                  Try adjusting your filters or search terms.
+                </p>
+              </div>
+            )}
+
+            {isLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <BookSkeleton key={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {data?.books?.map((book) => (
+                  <BookCard
+                    book={book}
+                    className="flex-1"
+                    key={book.bookCode}
+                  />
+                ))}
+              </div>
+            )}
+            {/* Background fetching overlay */}
+            {isFetching && !isLoading && (
+              <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+                <span className="animate-spin">Loading...</span>
+              </div>
+            )}
           </main>
         </div>
       </section>
