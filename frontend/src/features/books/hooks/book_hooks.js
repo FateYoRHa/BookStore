@@ -10,7 +10,10 @@ export const useBooks = (filters) => {
 
 export const useBook = (id) => {
   return useQuery({
-    queryKey: [ "books", id ],
-    queryFn: () => getBookRequest(id)
-  })
-}
+    queryKey: ["books", id],
+    queryFn: () => getBookRequest(id),
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: false,
+  });
+};
