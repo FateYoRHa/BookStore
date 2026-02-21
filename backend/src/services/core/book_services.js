@@ -85,6 +85,8 @@ export async function createBookWithAssets(book) {
     images,
     price,
     quantity,
+    pages,
+    language,
   } = book;
 
   // Resolve author via public code
@@ -102,23 +104,16 @@ export async function createBookWithAssets(book) {
     publisher,
     publicationDate,
     categories: categoryIds,
-    images: [],
     price,
-    status: "active",
+    pages,
+    language,
   });
   const savedBook = await newBook.save();
   if (images?.length) {
-    const imageIds = await mediaServices.attachImagesToBookService(
-      savedBook._id,
-      images,
-    );
-    savedBook.images = imageIds;
+    await mediaServices.attachImagesToBookService(savedBook._id, images);
   }
 
   await inventoryService.initializeInventory(savedBook._id, quantity);
-
-  await savedBook.save();
-
   return { book };
 }
 export async function updateBookService(book) {
@@ -132,6 +127,8 @@ export async function updateBookService(book) {
     categoryIds,
     images,
     price,
+    pages,
+    language,
   } = book;
   const updateBook = await Book.findOneAndUpdate(
     { bookCode: bookCode },
@@ -142,18 +139,14 @@ export async function updateBookService(book) {
       publisher,
       publicationDate,
       categoryIds,
-      images: [],
       price,
+      pages,
+      language,
     },
     { new: true },
   );
   if (images?.length) {
-    const imageIds = await mediaServices.attachImagesToBookService(
-      updateBook._id,
-      images,
-    );
-    updateBook.images = imageIds;
-    await updateBook.save();
+    await mediaServices.attachImagesToBookService(updateBook._id, images);
   }
   if (!book) {
     const error = new Error("Book not found");

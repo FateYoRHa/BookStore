@@ -1,7 +1,6 @@
 import { Book, Author, Inventory } from "../../model/index.js";
 import * as bookService from "../../services/core/book_services.js";
 
-// TODO transfer to services, pass filters
 export async function getBooks(req, res) {
   try {
     // =========================
@@ -39,7 +38,6 @@ export async function getBooks(req, res) {
   }
 }
 
-
 export async function getBook(req, res) {
   try {
     const book = await bookService.getBookService(req.params.id);
@@ -65,6 +63,8 @@ export async function addBook(req, res) {
       images,
       price,
       quantity,
+      pages,
+      language,
     } = req.body;
 
     const newBook = await bookService.createBookWithAssets({
@@ -77,6 +77,8 @@ export async function addBook(req, res) {
       images,
       price,
       quantity,
+      pages,
+      language,
     });
 
     res.status(201).json(newBook);
