@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const BookFilterBar = () => {
+const BookFilterBar = ({ searchInput, setSearchInput }) => {
   /**
    * useSearchParams lets us read & modify the URL query string
    * Example:
@@ -74,9 +74,9 @@ const BookFilterBar = () => {
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium">Search</label>
           <Input
-            value={search}
+            value={searchInput}
             placeholder="Search by title..."
-            onChange={(e) => updateParam("search", e.target.value)}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
 
