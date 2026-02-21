@@ -1,19 +1,140 @@
 import { useParams } from "react-router-dom";
 import { useBook } from "../hooks/book_hooks.js";
 
+import { Card, CardContent, CardFooter } from "@/components/ui/card.jsx";
+import { Button } from "@/components/ui/button.jsx";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Rating } from "@/components/rating";
+import { ShoppingCart } from "lucide-react";
+import { Separator } from "@/components/ui/separator.jsx";
+import { Textarea } from "@/components/ui/textarea";
+
+import BookDetailSkeleton from "./components/BookDetailSkeleton.jsx";
 const BookDetails = () => {
   const { id } = useParams();
   const { data: book, isLoading, error } = useBook(id);
 
-  if (isLoading) return <p>Loading...</p>;
+  const reviews = book?.reviews;
+  const ratings = reviews?.map((review) => review.rating);
+  const rating = ratings?.reduce((a, b) => a + b, 0) / ratings?.length;
   if (error) return <p>Error loading book.</p>;
 
   return (
-    <div>
-      <h1>{book?.title}</h1>
-      <img src={book?.images?.[0]?.url} alt={book?.title} />
-      <p>{book?.description}</p>
-    </div>
+    <main className="container relative max-w-7xl mx-auto px-6 py-16 md:py-24">
+      {isLoading ? (
+        <BookDetailSkeleton />
+      ) : (
+        <>
+          <Card className="grid grid-cols-1 md:grid-cols-[400px_1fr] gap-10">
+            <CardContent>
+              <AspectRatio
+                ratio={3 / 4}
+                className=" overflow-hidden rounded-md">
+                <img
+                  className="w-full h-full object-cover rounded-lg shadow-xl"
+                  src={book?.images?.[0].url}
+                  alt={book?.title}
+                />
+              </AspectRatio>
+            </CardContent>
+            <CardContent className="flex flex-col space-y-6">
+              <section className="text-3xl">
+                <h2 className="font-semibold font-serif">{book?.title}</h2>
+              </section>
+              {/* AUTHOR SECTION */}
+              <section className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarImage
+                    src="https://github.com/shadcn.png"
+                    alt="@shadcn"
+                    className="grayscale"
+                  />
+                </Avatar>
+                <span className="font-semibold">{book?.author.penName}</span>
+              </section>
+              {/* RATING SECTION */}
+              <section className="flex items-center gap-4">
+                <Rating
+                  rate={rating}
+                  showScore
+                  description={`from ${ratings?.length}+ reviews`}
+                  className="fill-yellow-400"
+                />
+              </section>
+              {/* DESCRIPTION */}
+              <section className="flex items-center gap-4">
+                <p className="max-w-2xl text-muted-foreground font-sans">
+                  {book?.description}
+                </p>
+              </section>
+              {/* META DATA GRID */}
+              <section className="grid grid-cols-2 gap-y-2 gap-x-6 text-sm">
+                <label className="font-semibold text-black">Publisher: </label>
+                <span className="text-muted-foreground">{book?.publisher}</span>
+                <label className="font-semibold text-black">ISBN:</label>
+                <span className="text-muted-foreground">{book?.bookCode}</span>
+                <label className="font-semibold text-black">Language:</label>
+                <span className="text-muted-foreground">{book?.language}</span>
+                <label className="font-semibold text-black">Pages:</label>
+                <span className="text-muted-foreground">{book?.pages}</span>
+              </section>
+              {/* Price + CTA Buttons */}
+              <CardFooter className="flex items-center justify-between gap-4">
+                <span className="text-2xl font-bold text-teal-800">
+                  ${book?.price}
+                </span>
+                <div className="gap-2 inline-flex">
+                  <Button className="px-6 py-2 rounded-xl bg-teal-800 text-white hover:bg-teal-700 transition">
+                    <ShoppingCart /> Add to Cart
+                  </Button>
+                </div>
+                {/* px-6 py-2 → padding inside button
+            rounded-xl → smooth rounded corners
+            bg-teal-800 → primary color
+            hover:bg-teal-700 → hover effect
+            transition → smooth hover transition */}
+              </CardFooter>
+            </CardContent>
+          </Card>
+          <Separator />
+          {/* Reviews Section */}
+          <Card className="space-y-6 mt-10">
+            <CardContent>
+              <h2 className="text-2xl font-semibold">Reviews</h2>
+              <Textarea placeholder="Write a review" />
+              <Button className="mt-5 float-end">Submit Review</Button>
+            </CardContent>
+            <CardContent className="space-y-4">
+              {reviews?.map((review) => (
+                <div
+                  key={review?.customer?._id}
+                  className="p-4 border border-gray-200 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Avatar>
+                        <AvatarImage
+                          src="https://github.com/shadcn.png"
+                          alt="@shadcn"
+                          className="grayscale"
+                        />
+                      </Avatar>
+                      <span className="font-medium">
+                        {review?.customer?.name}
+                      </span>
+                    </div>
+                    <span className="text-yellow-400">
+                      {"⭐".repeat(review?.rating)}
+                    </span>
+                  </div>
+                  <p className="">{review?.comment}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </>
+      )}
+    </main>
   );
 };
 export default BookDetails;
