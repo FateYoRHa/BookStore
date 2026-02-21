@@ -27,6 +27,8 @@ const bookSchema = new Schema(
       },
     ],
     price: { type: Number, required: true },
+    pages: { type: Number, required: true },
+    language: { type: String, required: true },
   },
   {
     timestamps: true,
