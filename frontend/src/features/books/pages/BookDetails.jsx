@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useRef } from "react";
 import { useBook } from "../hooks/book_hooks.js";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card.jsx";
@@ -9,34 +10,52 @@ import { Rating } from "@/components/rating";
 import { ShoppingCart } from "lucide-react";
 import { Separator } from "@/components/ui/separator.jsx";
 import { Textarea } from "@/components/ui/textarea";
-
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import BookDetailSkeleton from "./components/BookDetailSkeleton.jsx";
 const BookDetails = () => {
   const { id } = useParams();
   const { data: book, isLoading, error } = useBook(id);
 
+  const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
   const reviews = book?.reviews;
   const ratings = reviews?.map((review) => review.rating);
   const rating = ratings?.reduce((a, b) => a + b, 0) / ratings?.length;
   if (error) return <p>Error loading book.</p>;
-
   return (
     <main className="container relative max-w-7xl mx-auto px-6 py-16 md:py-24">
       {isLoading ? (
         <BookDetailSkeleton />
       ) : (
-        <>
+        <div>
           <Card className="grid grid-cols-1 md:grid-cols-[400px_1fr] gap-10">
             <CardContent>
-              <AspectRatio
-                ratio={3 / 4}
-                className=" overflow-hidden rounded-md">
-                <img
-                  className="w-full h-full object-cover rounded-lg shadow-xl"
-                  src={book?.images?.[0].url}
-                  alt={book?.title}
-                />
-              </AspectRatio>
+              <Carousel
+                plugins={[plugin.current]}
+                onMouseEnter={plugin.current.stop}
+                onMouseLeave={plugin.current.reset}>
+                <CarouselContent>
+                  {book?.images.map((image, i) => (
+                    <CarouselItem key={i}>
+                      <AspectRatio
+                        ratio={3 / 4}
+                        className="overflow-hidden rounded-md">
+                        <img
+                          className="w-full h-full object-cover rounded-lg shadow-xl"
+                          src={image?.url}
+                          alt={image?.altText}
+                        />
+                      </AspectRatio>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </CardContent>
             <CardContent className="flex flex-col space-y-6">
               <section className="text-3xl">
@@ -132,7 +151,7 @@ const BookDetails = () => {
               ))}
             </CardContent>
           </Card>
-        </>
+        </div>
       )}
     </main>
   );
