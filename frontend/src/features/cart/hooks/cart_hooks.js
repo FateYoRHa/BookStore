@@ -7,16 +7,15 @@ export const useCart = () => {
   const user = useAuthStore((state) => state.user);
   return useQuery({
     queryKey: ["carts"],
-    queryFn: () => getCartRequest(user),
+    queryFn: () => getCartRequest(),
     enabled: !!user, // only runs when logged in
   });
 };
 export const useAddCart = () => {
-  const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (items) => addToCartRequest(user, items),
+    mutationFn: (items) => addToCartRequest(items),
     onSuccess: () => {
       // Refetch cart after adding item
       queryClient.invalidateQueries(["carts"]);
