@@ -68,7 +68,7 @@ export async function getBookService(id) {
           model: "Customer",
           select: "name"
       }})
-      .populate("inventory");
+      .populate("inventory", "quantity status");
 
     if (!book) {
       const error = new Error("Book not found.");
