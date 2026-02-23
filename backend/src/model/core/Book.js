@@ -53,6 +53,7 @@ bookSchema.virtual("inventory", {
   ref: "Inventory",
   localField: "_id",
   foreignField: "book",
+  justOne: true
 });
 //THIS ADDS PREFIX TO ID
 
