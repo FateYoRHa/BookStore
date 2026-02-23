@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { useAuthStore } from "@/features/auth/store/authStore";
-
+import { useCart } from "@/features/cart/hooks/cart_hooks.js";
 import AuthPage from "@/features/auth/pages/AuthPage";
 import { Logout } from "@/features/auth/pages/forms/Logout";
 import {
@@ -42,9 +42,10 @@ import { Badge } from "@/components/ui/badge";
 import { Search, ShoppingCart, Menu } from "lucide-react";
 
 export default function NavBar() {
-  // 🔹 In real app these come from Zustand or React Query
+  // In real app these come from Zustand or React Query
   const user = useAuthStore((state) => state.user);
-  const cartCount = 3;
+  const cart = useCart();
+  const cartCount = cart?.data?.items.length;
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
@@ -133,12 +134,10 @@ export default function NavBar() {
         <div className="flex items-center gap-4">
           {/* -------- Cart Icon -------- */}
           <Link to="/cart" className="relative">
-            {/* // TODO connect cart */}
             <ShoppingCart className="h-5 w-5" />
 
             {/* Badge for item count */}
-            {/* // TODO connect cart count */}
-            {cartCount > 0 && (
+            {user && cartCount > 0 && (
               <Badge className="absolute -right-2 -top-2 px-1.5 text-xs">
                 {cartCount}
               </Badge>
