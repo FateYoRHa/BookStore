@@ -1,28 +1,25 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+
 const BookSkeleton = () => {
   return (
-    <Card
-      className=
-        "flex flex-col h-full hover:shadow-lg transition-shadow">
-      {/* Book Title */}
-      <CardTitle>
-        <Skeleton className="h-4 w-2/3 mx-auto" />
-      </CardTitle>
-      <CardContent>
+    <Card className="w-full">
+      {/* Title */}
+      <Skeleton className="h-4 w-3/4" />
+      <CardContent className="space-y-4">
         {/* Book Image Placeholder */}
-        <AspectRatio>
-          <Skeleton className="aspect-video w-full h-full" />
+        <AspectRatio ratio={3 / 4}>
+          <Skeleton className="w-full h-full rounded-md" />
         </AspectRatio>
 
-        <Skeleton className="h-4 w-1/2 mt-5" />
         {/* Author */}
+        <Skeleton className="h-4 w-1/2" />
       </CardContent>
-      <CardFooter className="flex justify-between items-center mt-auto">
-        {/* Price + Button Row */}
+
+      <CardFooter className="flex justify-between items-center">
         <Skeleton className="h-4 w-12" />
-        <Skeleton className="h-8 w-16 sm" />
+        <Skeleton className="h-8 w-20 rounded-md" />
       </CardFooter>
     </Card>
   );
