@@ -15,7 +15,7 @@ export async function getCart(req, res) {
 
 export async function addToCart(req, res) {
   try {
-    const { items } = req.body;
+    const items = req.body;
     const user = req.user.id;
     // const customer = req.params.id;
     const customerCart = await cartService.addToCartService({
@@ -31,7 +31,7 @@ export async function addToCart(req, res) {
 
 export async function removeFromCart(req, res) {
   try {
-    const { item } = req.body;
+    const item = req.body;
     const user = req.user.id;
 
     const cart = await cartService.removeFromCartService({ user, item });
@@ -44,7 +44,7 @@ export async function removeFromCart(req, res) {
 
 export async function checkout(req, res) {
   try {
-    const id = req.user.id 
+    const id = req.user.id;
     const orders = await cartService.checkoutService(id);
     res.status(200).json({ orders });
   } catch (error) {

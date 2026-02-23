@@ -4,7 +4,7 @@ import * as bookService from "../../services/core/book_services.js";
 export async function getBooks(req, res) {
   try {
     // =========================
-    // 1️⃣ Extract query params
+    // Extract query params
     // =========================
     const {
       search,
@@ -13,7 +13,7 @@ export async function getBooks(req, res) {
       maxPrice,
       sort,
       page = 1, // default page = 1
-      limit = 12, // default 8 books per page
+      limit = 12, // default 12 books per page
     } = req.query;
     const { books, total, pageNumber, pages } =
       await bookService.getBooksService({
