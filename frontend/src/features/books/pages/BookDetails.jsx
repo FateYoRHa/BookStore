@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useRef } from "react";
 import { useBook } from "../hooks/book_hooks.js";
+import { useAddCart } from "@/features/cart/hooks/cart_hooks.js";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card.jsx";
 import { Button } from "@/components/ui/button.jsx";
@@ -22,11 +23,21 @@ import BookDetailSkeleton from "./components/BookDetailSkeleton.jsx";
 const BookDetails = () => {
   const { id } = useParams();
   const { data: book, isLoading, error } = useBook(id);
+  const { mutate: addToCart, isPending } = useAddCart();
 
+  const inventory = book?.inventory;
   const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
   const reviews = book?.reviews;
   const ratings = reviews?.map((review) => review.rating);
   const rating = ratings?.reduce((a, b) => a + b, 0) / ratings?.length;
+
+  const handleAdd = () => {
+    addToCart({
+      book: book?._id,
+      quantity: 2,
+    });
+  };
+
   if (error) return <p>Error loading book.</p>;
   return (
     <main className="container relative max-w-7xl mx-auto px-6 py-16 md:py-24">
@@ -97,6 +108,12 @@ const BookDetails = () => {
                 <span className="text-muted-foreground">{book?.language}</span>
                 <label className="font-semibold text-black">Pages:</label>
                 <span className="text-muted-foreground">{book?.pages}</span>
+                <label className="font-semibold text-black">Stock: </label>
+                <span className="text-muted-foreground">
+                  {inventory?.status === "out-of-stock"
+                    ? inventory?.status
+                    : inventory?.quantity}
+                </span>
               </section>
               {/* Price + CTA Buttons */}
               <CardFooter className="flex items-center justify-between gap-4">
@@ -104,8 +121,12 @@ const BookDetails = () => {
                   ${book?.price}
                 </span>
                 <div className="gap-2 inline-flex">
-                  <Button className="px-6 py-2 rounded-xl bg-teal-800 text-white hover:bg-teal-700 transition">
-                    <ShoppingCart /> Add to Cart
+                  <Button
+                    onClick={handleAdd}
+                    className="px-6 py-2 rounded-xl bg-teal-800 text-white hover:bg-teal-700 transition"
+                    >
+                    <ShoppingCart />
+                    {isPending ? "Adding to Card..." : "Add to Cart"}
                   </Button>
                 </div>
                 {/* px-6 py-2 → padding inside button
