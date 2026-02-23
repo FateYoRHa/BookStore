@@ -72,7 +72,7 @@ services:
         # it'll watch for changes in the backend directory and sync the changes with the container real time
         - path: ./backend
           target: /app
-          action: sync
+          action: sync+restart
 
   # define the db service
   # MongoDB container
