@@ -31,9 +31,8 @@ export async function addToCart(req, res) {
 
 export async function removeFromCart(req, res) {
   try {
-    const item = req.body;
+    const { item } = req.body;
     const user = req.user.id;
-
     const cart = await cartService.removeFromCartService({ user, item });
     res.status(200).json({ cart, message: "Book removed from cart" });
   } catch (error) {

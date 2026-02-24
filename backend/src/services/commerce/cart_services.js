@@ -49,8 +49,8 @@ export async function removeFromCartService(cart) {
   const { user, item } = cart;
   const customer = await Customer.findOne({ user: user });
   return await Cart.findOneAndUpdate(
-    { customer: customer },
-    { $pull: { items: { _id: item } } }, //remove from items where book = item
+    { customer: customer._id },
+    { $pull: { items: { book: item } } }, //remove from items where book = item
     { new: true },
   );
 }
