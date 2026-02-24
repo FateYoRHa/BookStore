@@ -1,18 +1,15 @@
 import { useCart } from "@/features/cart/hooks/cart_hooks.js";
+
+import CartItem from "./CartItem";
 const Cart = () => {
   const { data: cart, isPending } = useCart();
   const items = cart?.items;
-  console.log(cart);
   return (
     <div>
       {isPending
         ? "Loading..."
         : items?.map((item) => (
-            <div key={item.book}>
-              <label>Books: {item.book}</label>
-              <span>Quantity: {item.quantity}</span>
-              <span>Price: {item.priceSnapshot}</span>
-            </div>
+          <CartItem key={item?.book.bookCode} item={item} />
           ))}
     </div>
   );
