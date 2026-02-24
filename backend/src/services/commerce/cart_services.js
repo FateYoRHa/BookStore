@@ -3,10 +3,14 @@ import { addOrderService } from "./order_services.js";
 
 export async function getCartService(user) {
   const customer = await Customer.findOne({ user: user.id }, { _id: 1 });
-  return await Cart.findOne({ customer: customer }).populate(
-    "items.book",
-    "bookCode title price",
-  );
+  return await Cart.findOne({ customer: customer }).populate({
+    path: "items.book",
+    select: "bookCode title price",
+    populate: [
+      { path: "images", match: { type: "cover" } },
+      { path: "inventory", select: "quantity" },
+    ],
+  });
 }
 
 export async function addToCartService(cart) {
