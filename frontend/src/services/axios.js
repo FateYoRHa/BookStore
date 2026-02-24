@@ -12,7 +12,7 @@ const api = axios.create({
 });
 // Injects "Authorization" header automatically
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().user?.accessToken;
+  const token = useAuthStore.getState().accessToken;
   // If accessToken exists, attach to header
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -32,16 +32,11 @@ api.interceptors.response.use(
 
       try {
         // Call refresh endpoint
-        const res = await axios.post(
-          "http://localhost:5000/api/auth/refresh",
-          {},
-          { withCredentials: true },
-        );
+        const res = await api.post("/auth/refresh");
 
-        const newAccessToken = res?.data?.accessToken;
-
+        const newAccessToken = res.data.accessToken;
         // Save new token in Zustand
-        useAuthStore.getState().user(newAccessToken);
+        useAuthStore.getState().setAccessToken(newAccessToken);
 
         // Update header for retry
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -58,6 +53,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
 
 export default api;
