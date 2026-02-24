@@ -9,3 +9,14 @@ export const addToCartRequest = async (items) => {
   const response = await api.put("/commerce/addToCart", items);
   return response.data;
 };
+export const removeFromCartRequest = async (item) => {
+  // console.log(item)
+  const response = await api.put("/commerce/removeFromCart", item);
+  return response.data;
+};
+
+export const checkoutRequest = async () => {
+  const response = await api.post("/commerce/checkout");
+  return response.data;
+};
+
