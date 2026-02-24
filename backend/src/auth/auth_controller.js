@@ -89,7 +89,7 @@ export async function refresh(req, res) {
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    res.status(200).json({ access_token: accessToken });
+    res.status(200).json({ accessToken });
   } catch (error) {
     console.log("Error refresh", error.message || error);
     res
