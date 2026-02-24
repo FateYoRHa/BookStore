@@ -15,8 +15,26 @@ const cartSchema = new Schema(
       },
     ],
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 cartSchema.index({ customer: 1 }, { unique: true });
+
+cartSchema.virtual("images", {
+  ref: "BookImage",
+  localField: "_id",
+  foreignField: "book",
+  justOne: true,
+});
+
+cartSchema.virtual("inventory", {
+  ref: "Inventory",
+  localField: "_id",
+  foreignField: "book",
+  justOne: true,
+});
 
 export default mongoose.model("Cart", cartSchema);
