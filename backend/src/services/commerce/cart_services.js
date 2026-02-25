@@ -75,4 +75,11 @@ export async function checkoutService(id) {
   return orders;
 }
 
-
+export async function clearCartService(user) {
+  const customer = await Customer.findOne({ user: user }); 
+  return await Cart.findOneAndUpdate(
+    { customer: customer._id },
+    { $set: { items: [] } }, // clear cart
+    { new: true },
+  );
+}
