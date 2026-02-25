@@ -28,7 +28,7 @@ export const useAddCart = () => {
     onSuccess: () => {
       // Refetch cart after adding item
       queryClient.invalidateQueries([ "carts" ]);
-      toast.success("Item added from cart.")
+      toast.success("Cart updated.")
     },
   });
 };
