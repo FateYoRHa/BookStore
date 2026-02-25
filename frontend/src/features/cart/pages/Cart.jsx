@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -17,10 +15,8 @@ const Cart = () => {
   return (
     <div className="container p-4 lg:p-8">
       <Card className="mx-auto max-w-7xl p-6">
-
         {/* MAIN GRID LAYOUT */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-
+        <CardContent className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* LEFT SIDE — CART ITEMS */}
           <div className="lg:col-span-2 space-y-6">
             {/* lg:col-span-2 → takes 2/3 width on desktop */}
@@ -52,10 +48,10 @@ const Cart = () => {
           {/* ========================= */}
           {/* RIGHT SIDE — ORDER SUMMARY */}
           {/* ========================= */}
-          <div className="lg:sticky lg:top-24 h-fit">
+          <div className="lg:sticky lg:top-45 h-fit">
             <OrderSummary items={items} />
           </div>
-        </div>
+        </CardContent>
       </Card>
     </div>
   );
