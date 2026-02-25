@@ -90,8 +90,11 @@ const Cart = () => {
             {/* ========================= */}
             {/* RIGHT SIDE — ORDER SUMMARY */}
             {/* ========================= */}
-            <div className="mb-auto h-fit">
-              <Checkout items={items} />
+            <div className="mb-auto h-fit space-y-6">
+              <h1 className="text-2xl font-semibold">Checkout</h1>
+              <div className="space-y-4">
+                <Checkout items={items} />
+              </div>
             </div>
           </div>
         )}
