@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-const OrderSummary = ({ items }) => {
+const Checkout = ({ items }) => {
   const subtotal =
     items?.reduce((acc, item) => acc + item.priceSnapshot, 0) ||
     0;
@@ -34,4 +34,4 @@ const OrderSummary = ({ items }) => {
     </div>
   );
 };
-export default OrderSummary;
+export default Checkout;

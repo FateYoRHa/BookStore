@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useCart, useClearCart } from "@/features/cart/hooks/cart_hooks.js";
 
-import OrderSummary from "./OrderSummary";
+import Checkout from "../../orders/pages/components/Checkout";
 
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -12,9 +12,14 @@ const Cart = () => {
   const { data: cart, isPending } = useCart();
   const { mutate: clearCart, isLoading } = useClearCart();
   const items = cart?.items;
+  const subtotal =
+    items?.reduce((acc, item) => acc + item.priceSnapshot, 0) || 0;
+
+  const shipping = 5;
+  const total = subtotal + shipping;
   return (
     <div className="container p-4 lg:p-8">
-      <Card className="mx-auto max-w-7xl p-6">
+      <Card className=" mx-auto max-w-7xl p-6">
         {/* MAIN GRID LAYOUT */}
         {!isLoading && items?.length === 0 ? (
           <div className="text-center mx-auto py-20">
@@ -32,9 +37,9 @@ const Cart = () => {
             </div>
           </div>
         ) : (
-          <CardContent className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 lg:grid-cols-3">
             {/* LEFT SIDE — CART ITEMS */}
-            <div className="lg:col-span-2 space-y-6">
+            <CardContent className="lg:col-span-2 space-y-6">
               {/* lg:col-span-2 → takes 2/3 width on desktop */}
 
               <h1 className="text-2xl font-semibold">Shopping Cart</h1>
@@ -48,6 +53,23 @@ const Cart = () => {
                     <CartItem key={item?.book.bookCode} item={item} />
                   ))
                 )}
+              </div>
+              {/* Price Breakdown */}
+              <div className="border-t space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>${subtotal.toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span>${shipping.toFixed(2)}</span>
+                </div>
+
+                <div className="border-t pt-3 flex justify-between font-semibold text-base">
+                  <span>Total</span>
+                  <span>${total.toFixed(2)}</span>
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -63,15 +85,15 @@ const Cart = () => {
                   {isLoading ? "Clearing cart..." : "Clear Cart"}
                 </Button>
               </div>
-            </div>
+            </CardContent>
 
             {/* ========================= */}
             {/* RIGHT SIDE — ORDER SUMMARY */}
             {/* ========================= */}
-            <div className="lg:sticky lg:top-45 h-fit">
-              <OrderSummary items={items} />
+            <div className="mb-auto h-fit">
+              <Checkout items={items} />
             </div>
-          </CardContent>
+          </div>
         )}
       </Card>
     </div>
