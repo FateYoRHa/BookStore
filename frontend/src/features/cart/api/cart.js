@@ -20,3 +20,7 @@ export const checkoutRequest = async () => {
   return response.data;
 };
 
+export const clearCartRequest = async () => {
+  const response = await api.put("/commerce/clearCart");
+  return response.data;
+};
