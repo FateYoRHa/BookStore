@@ -51,3 +51,14 @@ export async function checkout(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export async function clearCart(req, res) {
+  try {
+    const user = req.user.id;
+    const cart = await cartService.clearCartService(user);
+    res.status(200).json({ cart });
+  } catch (error) {
+    console.log("Error checkout", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
