@@ -4,6 +4,7 @@ import {
   addToCartRequest,
   removeFromCartRequest,
   checkoutRequest,
+  clearCartRequest,
 } from "../api/cart.js";
 import { useAuthStore } from "@/features/auth/store/authStore";
 
@@ -45,3 +46,15 @@ export const useRemoveCart = () => {
     },
   });
 };
+
+export const useClearCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => clearCartRequest(),
+    onSuccess: () => {
+      // Refetch cart after clearing item
+      queryClient.invalidateQueries(["carts"]);
+      toast.success("Cart cleared.");
+    }
+  })
+}
