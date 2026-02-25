@@ -15,6 +15,7 @@ const customerOnly = [authenticate, authorize("customer")];
 router.get("/cart", customerOnly, cart.getCart)
 router.put("/addToCart", customerOnly, cart.addToCart);
 router.put("/removeFromCart", customerOnly, cart.removeFromCart);
+router.put("/clearCart", customerOnly, cart.clearCart)
 router.post("/checkout", customerOnly, cart.checkout)
 // ORDERS
 router.post("/orders", customerOnly, orders.addOrder);
