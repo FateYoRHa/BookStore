@@ -21,29 +21,41 @@ export async function addToCartService(cart) {
     customerCart = await Cart.create({ customer, items: [] });
   }
   // find book
-  const book = await Book.findById(items.book);
+  const book = await Book.findById(items.book, { _id: 1, price: 1 });
   if (!book) {
     const error = new Error("Book not found");
     error.status = 404;
     throw error;
   }
-  const existingItem = customerCart.items.find((i) =>
-    i.book.equals(items.book),
-  );
-  if (existingItem) {
-    existingItem.quantity = items.quantity;
-    existingItem.priceSnapshot = book.price * items.quantity;
+  const exists = customerCart.items.find((i) => i.book.equals(items.book));
+  if (exists) {
+    customerCart = await Cart.findOneAndUpdate(
+      { customer: customer, "items.book": exists.book },
+      {
+        $set: {
+          "items.$.quantity": items.quantity,
+          "items.$.priceSnapshot": items.quantity * book.price,
+        },
+      },
+      { new: true },
+    );
   } else {
-    customerCart.items.push({
-      book: items.book,
-      quantity: items.quantity,
-      priceSnapshot: book.price * items.quantity,
-    });
+    customerCart = await Cart.findOneAndUpdate(
+      { customer: customer },
+      {
+        $addToSet: {
+          items: {
+            book: items.book,
+            quantity: items.quantity,
+            priceSnapshot: items.quantity * book.price,
+          },
+        },
+      },
+      { new: true },
+    );
   }
 
-  await customerCart.save();
   return customerCart;
-  // }
 }
 export async function removeFromCartService(cart) {
   const { user, item } = cart;
@@ -62,3 +74,5 @@ export async function checkoutService(id) {
   const orders = await addOrderService({ customerId, address });
   return orders;
 }
+
+
