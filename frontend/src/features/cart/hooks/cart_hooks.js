@@ -3,7 +3,6 @@ import {
   getCartRequest,
   addToCartRequest,
   removeFromCartRequest,
-  checkoutRequest,
   clearCartRequest,
 } from "../api/cart.js";
 import { useAuthStore } from "@/features/auth/store/authStore";

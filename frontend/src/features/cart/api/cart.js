@@ -15,11 +15,6 @@ export const removeFromCartRequest = async (item) => {
   return response.data;
 };
 
-export const checkoutRequest = async () => {
-  const response = await api.post("/commerce/checkout");
-  return response.data;
-};
-
 export const clearCartRequest = async () => {
   const response = await api.put("/commerce/clearCart");
   return response.data;
