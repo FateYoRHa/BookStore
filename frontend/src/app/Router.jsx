@@ -9,6 +9,7 @@ import BookDetails from "@/features/books/pages/BookDetails";
 import Cart from "@/features/cart/pages/Cart";
 
 import Author from "@/features/authors/pages/Author";
+import Profile from "@/features/customers/pages/Profile";
 
 export default function AppRouter() {
   return (
@@ -16,6 +17,8 @@ export default function AppRouter() {
       <Route path="/" element={<HomePage />} />
 
       <Route path="/login" element={<LoginPage />} />
+
+      <Route path="/profile" element={<Profile />} />
 
       <Route path="/cart" element={<Cart />} />
 
