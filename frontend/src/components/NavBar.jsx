@@ -44,6 +44,7 @@ import { Search, ShoppingCart, Menu } from "lucide-react";
 export default function NavBar() {
   // In real app these come from Zustand or React Query
   const user = useAuthStore((state) => state.user);
+  const customer = useAuthStore((state) => state.customer).customer;
   const cart = useCart();
   const cartCount = cart?.data?.items.length;
   return (
@@ -150,7 +151,7 @@ export default function NavBar() {
               {/* Avatar trigger */}
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarFallback>{customer?.name}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
 
