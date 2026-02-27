@@ -20,6 +20,7 @@ import { EditingContext } from "../../context/customer_context";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { updateCustomer } from "../../customerSchema";
 import { useUpdateCustomer } from "../../hooks/customer_hooks";
+import { Skeleton } from "@/components/ui/skeleton";
 const PersonalInfoTab = () => {
   const { isEditing, setEditing } = useContext(EditingContext);
   const customer = useAuthStore((state) => state.customer).customer;
@@ -59,136 +60,187 @@ const PersonalInfoTab = () => {
       },
     });
   };
-  const handleClick = () => {
-    if (!isPending) return;
-  };
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Personal Information</CardTitle>
-        <CardDescription>
-          Update your personal details and profile information.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                {...register("name")}
-                id="name"
-                defaultValue={customer?.name}
-                disabled={!isEditing}
-                className={cn(
-                  errors?.name && "border-red-500 focus-visible:ring-red-500",
-                )}
-              />
-              <FormFieldError error={errors.name} helper="" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                // {...register("email")}
-                id="email"
-                type="email"
-                defaultValue={customer?.user?.email}
-                disabled
-                // className={cn(
-                //   errors?.email && "border-red-500 focus-visible:ring-red-500",
-                // )}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                {...register("phone")}
-                id="phone"
-                defaultValue={customer?.phone}
-                disabled={!isEditing}
-                className={cn(
-                  errors?.phone && "border-red-500 focus-visible:ring-red-500",
-                )}
-              />
-              <FormFieldError error={errors.phone} helper="" />
-            </div>
-          </div>
+      {isPending ? (
+        <>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-72" />
+          </CardHeader>
 
-          <Separator />
-          {/* ADDRESS */}
-          <h2 className="font-semibold">Address</h2>
+          <CardContent className="space-y-6">
+            {/* Name + Email + Phone */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-10 w-full" />
+              </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="street">Street</Label>
-              <Input
-                {...register("address.street")}
-                id="street"
-                defaultValue={address?.street}
-                disabled={!isEditing}
-                className={cn(
-                  errors?.address?.street &&
-                    "border-red-500 focus-visible:ring-red-500",
-                )}
-              />
-              <FormFieldError error={errors?.address?.street} helper="" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-10 w-full" />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              <Input
-                {...register("address.city")}
-                id="city"
-                defaultValue={address?.city}
-                disabled={!isEditing}
-                className={cn(
-                  errors?.address?.city &&
-                    "border-red-500 focus-visible:ring-red-500",
-                )}
-              />
-              <FormFieldError error={errors?.address?.city} helper="" />
+
+            <Separator />
+
+            {/* Address Section */}
+            <Skeleton className="h-5 w-24" />
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              ))}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="zipCode">ZipCode</Label>
-              <Input
-                {...register("address.zipCode")}
-                id="zipCode"
-                type="text"
-                inputMode="numeric"
-                pattern="\d*"
-                defaultValue={address?.zipCode}
-                disabled={!isEditing}
-                className={`[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none appearance-none ${
-                  errors?.address?.zipCode &&
-                  "border-red-500 focus-visible:ring-red-500"
-                }`}
-              />
-              <FormFieldError error={errors?.address?.zipCode} helper="" />
+
+            {/* Save Button */}
+            <div className="flex justify-end">
+              <Skeleton className="h-10 w-24 rounded-md" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
-              <Input
-                {...register("address.country")}
-                id="country"
-                defaultValue={address?.country}
-                disabled={!isEditing}
-                className={cn(
-                  errors?.address?.country &&
-                    "border-red-500 focus-visible:ring-red-500",
-                )}
-              />
-              <FormFieldError error={errors?.address?.country} helper="" />
-            </div>
-          </div>
-          <div
-            className="float-right justify-end"
-            hidden={!isEditing}
-            // onClick={handleClick}
-          >
-            <Button type="submit">{isPending ? "Updating..." : "Save"}</Button>
-          </div>
-        </form>
-      </CardContent>
+          </CardContent>
+        </>
+      ) : (
+        <>
+          <CardHeader>
+            <CardTitle>Personal Information</CardTitle>
+            <CardDescription>
+              Update your personal details and profile information.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    {...register("name")}
+                    id="name"
+                    defaultValue={customer?.name}
+                    disabled={!isEditing}
+                    className={cn(
+                      errors?.name &&
+                        "border-red-500 focus-visible:ring-red-500",
+                    )}
+                  />
+                  <FormFieldError error={errors.name} helper="" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    // {...register("email")}
+                    id="email"
+                    type="email"
+                    defaultValue={customer?.user?.email}
+                    disabled
+                    // className={cn(
+                    //   errors?.email && "border-red-500 focus-visible:ring-red-500",
+                    // )}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    {...register("phone")}
+                    id="phone"
+                    defaultValue={customer?.phone}
+                    disabled={!isEditing}
+                    className={cn(
+                      errors?.phone &&
+                        "border-red-500 focus-visible:ring-red-500",
+                    )}
+                  />
+                  <FormFieldError error={errors.phone} helper="" />
+                </div>
+              </div>
+
+              <Separator />
+              {/* ADDRESS */}
+              <h2 className="font-semibold">Address</h2>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="street">Street</Label>
+                  <Input
+                    {...register("address.street")}
+                    id="street"
+                    defaultValue={address?.street}
+                    disabled={!isEditing}
+                    className={cn(
+                      errors?.address?.street &&
+                        "border-red-500 focus-visible:ring-red-500",
+                    )}
+                  />
+                  <FormFieldError error={errors?.address?.street} helper="" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    {...register("address.city")}
+                    id="city"
+                    defaultValue={address?.city}
+                    disabled={!isEditing}
+                    className={cn(
+                      errors?.address?.city &&
+                        "border-red-500 focus-visible:ring-red-500",
+                    )}
+                  />
+                  <FormFieldError error={errors?.address?.city} helper="" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="zipCode">ZipCode</Label>
+                  <Input
+                    {...register("address.zipCode")}
+                    id="zipCode"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="\d*"
+                    defaultValue={address?.zipCode}
+                    disabled={!isEditing}
+                    className={`[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none appearance-none ${
+                      errors?.address?.zipCode &&
+                      "border-red-500 focus-visible:ring-red-500"
+                    }`}
+                  />
+                  <FormFieldError error={errors?.address?.zipCode} helper="" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Input
+                    {...register("address.country")}
+                    id="country"
+                    defaultValue={address?.country}
+                    disabled={!isEditing}
+                    className={cn(
+                      errors?.address?.country &&
+                        "border-red-500 focus-visible:ring-red-500",
+                    )}
+                  />
+                  <FormFieldError error={errors?.address?.country} helper="" />
+                </div>
+              </div>
+              <div
+                className="float-right justify-end"
+                hidden={!isEditing}
+                // onClick={handleClick}
+              >
+                <Button type="submit">
+                  {isPending ? "Updating..." : "Save"}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </>
+      )}
     </Card>
   );
 };
