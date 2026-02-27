@@ -36,7 +36,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
 import { Search, ShoppingCart, Menu } from "lucide-react";
@@ -44,7 +44,11 @@ import { Search, ShoppingCart, Menu } from "lucide-react";
 export default function NavBar() {
   // In real app these come from Zustand or React Query
   const user = useAuthStore((state) => state.user);
-  const customer = useAuthStore((state) => state.customer).customer;
+  const getCustomer = useAuthStore((state) => state.customer);
+  let customer = null;
+  if (user) {
+    customer = getCustomer?.customer;
+  }
   const getInitials = (name) => {
     if (!name) return "";
 
@@ -159,6 +163,10 @@ export default function NavBar() {
               {/* Avatar trigger */}
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
+                  <AvatarImage
+                    src={customer?.image?.url}
+                    alt={customer?.name}
+                  />
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
