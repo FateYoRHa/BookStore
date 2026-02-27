@@ -31,6 +31,13 @@ export const useAuthStore = create(
           user: null, // Clears user
           customer: null, // clear customer
         }),
+      
+      setCustomer: async () => {
+        const res = await api.get("/core/customers/me");
+        set({
+          customer: res.data,
+        });
+      },
 
       setAccessToken: (token) => {
         const decoded = jwtDecode(token); // decode accesstoken
