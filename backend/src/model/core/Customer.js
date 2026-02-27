@@ -14,7 +14,7 @@ const customerSchema = new Schema(
 
     phone: {
       type: String,
-      // unique: true,
+      unique: true,
     },
 
     address: [
@@ -26,7 +26,10 @@ const customerSchema = new Schema(
         isDefault: Boolean,
       },
     ],
-    image: { type: String, altText: String },
+    image: {
+      url: String,
+      public_id: String,
+    },
   },
   { timestamps: true },
 );
