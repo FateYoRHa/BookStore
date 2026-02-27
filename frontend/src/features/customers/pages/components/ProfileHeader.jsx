@@ -7,10 +7,18 @@ import { Camera, Calendar, Mail, MapPin } from "lucide-react";
 import { EditingContext } from "../../context/customer_context";
 import { useAuthStore } from "@/features/auth/store/authStore";
 const ProfileHeader = () => {
-  const { setEditing } = useContext(EditingContext);
+  const { isEditing, setEditing } = useContext(EditingContext);
   const customerData = useAuthStore((state) => state.customer);
-  const customer = customerData?.customer
+  const customer = customerData?.customer;
   const dateObj = new Date(customer?.createdAt);
+  const getInitials = (name) => {
+    if (!name) return "";
+
+    const words = name.split(" ");
+    const firstLetters = words.map((word) => word.charAt(0));
+    return firstLetters.join("");
+  };
+  const initials = getInitials(customer?.name).toUpperCase();
   const date = dateObj.toLocaleDateString(undefined, {
     year: "numeric",
     month: "long",
@@ -24,9 +32,7 @@ const ProfileHeader = () => {
           <div className="relative">
             <Avatar className="h-24 w-24">
               <AvatarImage src={customer?.image} alt={customer?.name} />
-              <AvatarFallback className="text-2xl">
-                {customer?.name}
-              </AvatarFallback>
+              <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
             </Avatar>
             <Button
               size="icon"
@@ -55,8 +61,11 @@ const ProfileHeader = () => {
               </div>
             </div>
           </div>
-          <Button variant="default" onClick={() => setEditing(true)}>
-            Edit Profile
+          <Button
+            variant="default"
+            onClick={() => setEditing(true)}
+            disabled={isEditing}>
+            {isEditing ? "Editing..." : "Edit Profile"}
           </Button>
         </div>
       </CardContent>
