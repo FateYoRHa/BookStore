@@ -1,4 +1,8 @@
-import { getCustomerRequest, updateCustomerRequest } from "../api/customer";
+import {
+  getCustomerRequest,
+  updateCustomerRequest,
+  updateProfileRequest,
+} from "../api/customer";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import toast from "react-hot-toast";
@@ -23,6 +27,20 @@ export const useUpdateCustomer = () => {
     onSuccess: () => {
       customer();
       toast.success("Profile updated successfully");
+    },
+  });
+};
+
+export const useUploadPicture = () => {
+  const customer = useAuthStore((state) => state.setCustomer);
+  return useMutation({
+    mutationFn: updateProfileRequest,
+    onSuccess: () => {
+      customer();
+      toast.success("Profile picture uploaded successfully");
+    },
+    onError: (errors) => {
+      toast.error(errors.message || "Invalid image.");
     },
   });
 };
