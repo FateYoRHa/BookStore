@@ -1,25 +1,59 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { getCartRequest, addToCartRequest } from "../api/cart.js";
+import {
+  getCartRequest,
+  addToCartRequest,
+  removeFromCartRequest,
+  clearCartRequest,
+} from "../api/cart.js";
 import { useAuthStore } from "@/features/auth/store/authStore";
+
+import toast from "react-hot-toast";
 
 export const useCart = () => {
   // get user
   const user = useAuthStore((state) => state.user);
   return useQuery({
     queryKey: ["carts"],
-    queryFn: () => getCartRequest(user),
+    queryFn: () => getCartRequest(),
     enabled: !!user, // only runs when logged in
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: false,
   });
 };
 export const useAddCart = () => {
-  const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (items) => addToCartRequest(user, items),
+    mutationFn: (items) => addToCartRequest(items),
     onSuccess: () => {
       // Refetch cart after adding item
-      queryClient.invalidateQueries(["carts"]);
+      queryClient.invalidateQueries([ "carts" ]);
+      toast.success("Cart updated.")
     },
   });
 };
+
+export const useRemoveCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (item) => removeFromCartRequest(item),
+    onSuccess: () => {
+      // Refetch cart after adding item
+      queryClient.invalidateQueries([ "carts" ]);
+      
+      toast.success("Item removed from cart.");
+    },
+  });
+};
+
+export const useClearCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => clearCartRequest(),
+    onSuccess: () => {
+      // Refetch cart after clearing item
+      queryClient.invalidateQueries(["carts"]);
+      toast.success("Cart cleared.");
+    }
+  })
+}

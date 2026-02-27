@@ -34,7 +34,7 @@ const BookDetails = () => {
   const handleAdd = () => {
     addToCart({
       book: book?._id,
-      quantity: 2,
+      quantity: 1,
     });
   };
 
