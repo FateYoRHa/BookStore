@@ -7,6 +7,7 @@ import * as customer from "../controllers/core/customers_controller.js";
 
 import { authenticate } from "../middleware/authenticate.js";
 import { authorize } from "../middleware/authorize.js";
+import { uploadImage, requireFile } from "../middleware/upload.js";
 
 const router = express.Router();
 
@@ -44,4 +45,12 @@ router.get(
 router.get("/customers", adminOnly, customer.getCustomers);
 // update profile (current user)
 router.put("/customers", customerOnly, customer.updateCustomerProfile);
+// update profile pic
+router.patch(
+  "/profile/image",
+  customerOnly,
+  uploadImage.single("image"),
+  requireFile("Image"),
+  customer.updateProfileImage,
+);
 export default router;

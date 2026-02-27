@@ -40,3 +40,22 @@ export async function updateCustomerProfile(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export const updateProfileImage = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const file = req.file;
+
+    const image = await customerService.updateCustomerImageService({
+      userId,
+      file,
+    });
+
+    res.status(200).json({
+      message: "Profile image updated successfully.",
+      data: image,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

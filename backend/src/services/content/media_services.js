@@ -1,4 +1,5 @@
 import { BookImage } from "../../model/index.js";
+import cloudinary from "../../config/cloudinary.js";
 
 export async function attachImagesToBookService(bookId, images) {
   if (!Array.isArray(images) || images.length === 0) {
@@ -21,3 +22,28 @@ export async function attachImagesToBookService(bookId, images) {
 
   return insertedImages.map((img) => img._id);
 }
+
+export const uploadToCloudinary = async (
+  buffer,
+  folder,
+  filename,
+  transformation = [],
+) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: `bookstore/${folder}`,
+        public_id: filename,
+        resource_type: "image",
+        overwrite: true,
+        transformation,
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      },
+    );
+
+    stream.end(buffer);
+  });
+};
