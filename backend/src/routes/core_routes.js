@@ -36,7 +36,7 @@ router.delete("/categories/:id", adminOnly, category.deleteCategory);
 // CUSTOMERS
 
 router.get(
-  "/customers/me",
+  "/customers/profile",
   customerOnly,
   customer.getCustomer, //ID will be based from req.user.id
 );
@@ -47,7 +47,7 @@ router.get("/customers", adminOnly, customer.getCustomers);
 router.put("/customers", customerOnly, customer.updateCustomerProfile);
 // update profile pic
 router.patch(
-  "/profile/image",
+  "/customers/profile/image",
   customerOnly,
   uploadImage.single("image"),
   requireFile("Image"),
