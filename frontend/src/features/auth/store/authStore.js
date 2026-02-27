@@ -19,8 +19,8 @@ export const useAuthStore = create(
           accessToken: data.accessToken,
           user: decoded, // set decoded accessToken as user
         });
-        
-        const res = await api.get("/core/customers/me");
+
+        const res = await api.get("/core/customers/profile");
         set({
           customer: res.data,
         });
@@ -31,9 +31,9 @@ export const useAuthStore = create(
           user: null, // Clears user
           customer: null, // clear customer
         }),
-      
+
       setCustomer: async () => {
-        const res = await api.get("/core/customers/me");
+        const res = await api.get("/core/customers/profile");
         set({
           customer: res.data,
         });
