@@ -52,8 +52,8 @@ export async function updateCustomerImageService(params) {
     throw new Error("Customer not found.");
   }
   // Delete old image if exists
-  if (user.image?.public_id) {
-    await cloudinary.uploader.destroy(user.image.public_id);
+  if (customer.image?.public_id) {
+    await cloudinary.uploader.destroy(customer.image.public_id);
   }
   const result = await uploadToCloudinary(
     file.buffer,
