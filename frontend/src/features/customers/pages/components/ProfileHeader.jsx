@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,8 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Calendar, Mail, MapPin } from "lucide-react";
 import { EditingContext } from "../../context/customer_context";
 import { useAuthStore } from "@/features/auth/store/authStore";
+import { useUploadPicture } from "../../hooks/customer_hooks";
+import toast from "react-hot-toast";
 const ProfileHeader = () => {
   const { isEditing, setEditing } = useContext(EditingContext);
+  const { mutate, isPending } = useUploadPicture();
   const customerData = useAuthStore((state) => state.customer);
   const customer = customerData?.customer;
   const dateObj = new Date(customer?.createdAt);
@@ -25,21 +28,45 @@ const ProfileHeader = () => {
     day: "numeric",
   });
   const address = customer?.address[0];
+
+  const fileInputRef = useRef(null);
+  const onSubmit = () => {
+    const file = fileInputRef.current?.files?.[0];
+
+    if (!file) {
+      toast.error("Image is required");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    mutate(formData);
+  };
+  console.log(customer?.image);
   return (
     <Card>
       <CardContent>
         <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
           <div className="relative">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={customer?.image} alt={customer?.name} />
+              <AvatarImage src={customer?.image?.url} alt={customer?.name} />
               <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
             </Avatar>
             <Button
               size="icon"
               variant="outline"
-              className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full">
+              className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full"
+              onClick={() => fileInputRef?.current?.click()}>
               <Camera />
             </Button>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={onSubmit}
+              className="hidden"
+            />
           </div>
           <div className="flex-1 space-y-2">
             <div className="flex flex-col gap-2 md:flex-row md:items-center">
