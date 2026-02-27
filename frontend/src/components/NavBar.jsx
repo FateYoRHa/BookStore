@@ -45,6 +45,14 @@ export default function NavBar() {
   // In real app these come from Zustand or React Query
   const user = useAuthStore((state) => state.user);
   const customer = useAuthStore((state) => state.customer).customer;
+  const getInitials = (name) => {
+    if (!name) return "";
+
+    const words = name.split(" ");
+    const firstLetters = words.map((word) => word.charAt(0));
+    return firstLetters.join("");
+  };
+  const initials = getInitials(customer?.name).toUpperCase();
   const cart = useCart();
   const cartCount = cart?.data?.items.length;
   return (
@@ -151,7 +159,7 @@ export default function NavBar() {
               {/* Avatar trigger */}
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
-                  <AvatarFallback>{customer?.name}</AvatarFallback>
+                  <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
 
