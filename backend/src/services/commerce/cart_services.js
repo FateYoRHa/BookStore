@@ -34,7 +34,7 @@ export async function addToCartService(cart) {
       {
         $set: {
           "items.$.quantity": items.quantity,
-          "items.$.priceSnapshot": items.quantity * book.price,
+          "items.$.priceSnapshot": book.price,
         },
       },
       { new: true },
@@ -47,7 +47,7 @@ export async function addToCartService(cart) {
           items: {
             book: items.book,
             quantity: items.quantity,
-            priceSnapshot: items.quantity * book.price,
+            priceSnapshot: book.price,
           },
         },
       },
@@ -76,7 +76,7 @@ export async function checkoutService(id) {
 }
 
 export async function clearCartService(user) {
-  const customer = await Customer.findOne({ user: user }); 
+  const customer = await Customer.findOne({ user: user });
   return await Cart.findOneAndUpdate(
     { customer: customer._id },
     { $set: { items: [] } }, // clear cart
