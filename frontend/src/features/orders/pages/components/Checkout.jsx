@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { useForm, FormProvider } from "react-hook-form";
@@ -20,11 +20,16 @@ import AddressFields from "./AddressFields";
 import PaymentFields from "./PaymentFields";
 import ShippingFields from "./ShippingFields";
 
+import { ShippingContext } from "../../context/customer_context";
+import { useCheckout } from "../../hooks/orders_hook";
+
 import { customerInfoSchema } from "../../ordersSchema";
-const Checkout = ({ items }) => {
+const Checkout = () => {
   const [checkout, setCheckout] = useState(false);
+  const { shipping } = useContext(ShippingContext);
   const customer = useAuthStore((state) => state.customer).customer;
   const address = customer?.address[0];
+  const { mutate } = useCheckout();
   const methods = useForm({
     resolver: zodResolver(customerInfoSchema),
     defaultValues: {
@@ -61,52 +66,52 @@ const Checkout = ({ items }) => {
   const handleOnValueChange = (value) => {
     setActiveAccordion(value);
   };
-  const subtotal =
-    items?.reduce((acc, item) => acc + item.priceSnapshot, 0) || 0;
 
-  const shipping = 5;
-  const total = subtotal + shipping;
-  const pay = () => {
-    // Prepare the data that would normally be sent to backend
-    const orderPayload = {
-      userId: customer._id,
-      items: items,
-      totalAmount: total,
-      paymentMethod: "GCash",
-      status: "pending",
+  const pay = (data) => {
+    const order = {
+      shippingFee: shipping.fee,
+      address: data.address,
+      paymentMethod: data.payment,
     };
-
-    // Pass a real async function to toast.promise
-    toast.promise(
-      new Promise((resolve, reject) => {
-        //  Simulate API latency (like calling backend)
-        setTimeout(() => {
-          try {
-            // This is where you would call:
-            // await createOrderMutation.mutateAsync(orderPayload)
-
-            console.log("📦 Sending to backend:", orderPayload);
-
-            // Simulate backend response
-            resolve({
-              orderId: "ORD-123456",
-              amount: orderPayload.totalAmount,
-            });
-          } catch (err) {
-            reject(err);
-          }
-        }, 3000);
-      }),
-      {
-        loading: "Processing payment...",
-        success: (data) => {
-          // Update UI state
-          setCheckout(true);
-          return `Payment successful! Order #${data.orderId} created.`;
-        },
-        error: "Payment failed. Please try again.",
+    toast.promise(mutate(order), {
+      loading: "Processing payment...",
+      success: () => {
+        // Update UI state
+        setCheckout(true);
+        return `Payment successful!`;
       },
-    );
+      error: "Payment failed. Please try again.",
+    });
+    // toast.promise(
+    //   new Promise((resolve, reject) => {
+    //     //  Simulate API latency (like calling backend)
+    //     setTimeout(() => {
+    //       try {
+    //         // This is where you would call:
+    //         // await createOrderMutation.mutateAsync(orderPayload)
+
+    //         console.log("Sending to backend:", orderPayload);
+
+    //         // Simulate backend response
+    //         resolve({
+    //           orderId: "ORD-123456",
+    //           amount: orderPayload.totalAmount,
+    //         });
+    //       } catch (err) {
+    //         reject(err);
+    //       }
+    //     }, 3000);
+    //   }),
+    //   {
+    //     loading: "Processing payment...",
+    //     success: (data) => {
+    //       // Update UI state
+    //       setCheckout(true);
+    //       return `Payment successful! Order #${data.orderId} created.`;
+    //     },
+    //     error: "Payment failed. Please try again.",
+    //   },
+    // );
   };
 
   return (
@@ -188,7 +193,10 @@ const Checkout = ({ items }) => {
                 <AccordionContent className="px-1 pb-7">
                   <div className="space-y-7">
                     <PaymentFields customer={customer} />
-                    <Button type="button" className="w-full" onClick={pay}>
+                    <Button
+                      type="button"
+                      className="w-full"
+                      onClick={handleSubmit(pay)}>
                       Pay Now
                     </Button>
                   </div>
