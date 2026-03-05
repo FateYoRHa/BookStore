@@ -45,6 +45,7 @@ export const customerInfoSchema = z.object({
   }),
 
   payment: z.discriminatedUnion("type", [
+    z.object({type: z.literal("cod")}),
     z.object({
       type: z.literal("gcash"),
       accountName: z.string().min(2, "Must have atleast 2 characters"),
