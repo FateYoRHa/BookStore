@@ -128,7 +128,7 @@ const PaymentFieldMethod = () => {
               Account Number
             </FieldLabel>
             <Input
-              {...register("bank.accountNumber")}
+              {...register("payment.accountNumber")}
               className={cn(
                 errors?.payment?.accountNumber &&
                   "border-red-500 focus-visible:ring-red-500",
