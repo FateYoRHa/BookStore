@@ -1,4 +1,9 @@
 import { mongoose, Schema } from "mongoose";
+import {
+  PAYMENT_PROVIDERS,
+  PAYMENT_STATUSES,
+  PAYMENT_METHODS,
+} from "../../constants/constant_values.js";
 const paymentSchema = new Schema(
   {
     order: {
@@ -6,13 +11,26 @@ const paymentSchema = new Schema(
       ref: "Order",
       required: true,
     },
-    provider: { type: String, required: true }, // Stripe, PayPal, etc.
-    transactionId: { type: String, required: true },
+    provider: {
+      type: String,
+      required: true,
+      default: "paymongo"
+    },
+    method: {
+      type: String,
+      enum: Object.values(PAYMENT_METHODS),
+      required: true,
+    },
+    transactionId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     amount: { type: Number, required: true },
     status: {
       type: String,
-      enum: ["pending", "paid", "failed", "refunded"],
-      default: "pending",
+      enum: Object.values(PAYMENT_STATUSES),
+      default: PAYMENT_STATUSES.PENDING,
     },
     paidAt: Date,
   },
