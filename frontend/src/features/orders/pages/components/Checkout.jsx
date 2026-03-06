@@ -29,7 +29,7 @@ const Checkout = () => {
   const { shipping } = useContext(ShippingContext);
   const customer = useAuthStore((state) => state.customer).customer;
   const address = customer?.address[0];
-  const { mutate } = useCheckout();
+  const { mutateAsync } = useCheckout();
   const methods = useForm({
     resolver: zodResolver(customerInfoSchema),
     defaultValues: {
@@ -73,12 +73,12 @@ const Checkout = () => {
       address: data.address,
       paymentMethod: data.payment,
     };
-    toast.promise(mutate(order), {
+    toast.promise(mutateAsync(order), {
       loading: "Processing payment...",
       success: () => {
         // Update UI state
         setCheckout(true);
-        return `Payment successful!`;
+        return `Redirecting to payment...`;
       },
       error: "Payment failed. Please try again.",
     });
