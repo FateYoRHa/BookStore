@@ -67,7 +67,7 @@ export async function payment(req, res) {
   try {
     const { shippingFee, address, paymentMethod } = req.body;
     const id = req.user.id;
-    const orders = await cartService.checkoutService({
+    const orders = await cartService.paymentService({
       id,
       address,
       shippingFee,
