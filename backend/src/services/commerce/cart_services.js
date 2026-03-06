@@ -83,3 +83,19 @@ export async function clearCartService(user) {
     { new: true },
   );
 }
+export async function paymentService(checkout) {
+  const { id, shippingFee, address, paymentMethod } = checkout;
+  const customer = await Customer.findOne({ user: id }, { _id: 1, address: 1 });
+  const customerId = customer.id;
+  const { order, paymentIntentId, clientKey } = await addOrderService({
+    customerId,
+    address,
+    shippingFee,
+    paymentMethod,
+  });
+  return {
+    orderId: order,
+    paymentIntentId: paymentIntentId,
+    clientKey: clientKey,
+  };
+}

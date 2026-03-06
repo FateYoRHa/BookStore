@@ -62,3 +62,20 @@ export async function clearCart(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export async function payment(req, res) {
+  try {
+    const { shippingFee, address, paymentMethod } = req.body;
+    const id = req.user.id;
+    const orders = await cartService.checkoutService({
+      id,
+      address,
+      shippingFee,
+      paymentMethod,
+    });
+    res.status(200).json({ orders });
+  } catch (error) {
+    console.log("Error checkout", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
