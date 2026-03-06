@@ -1,5 +1,12 @@
-import { Order, Book, Cart } from "../../model/index.js";
+import { Order, Payment, Cart } from "../../model/index.js";
 import * as inventoryService from "../../services/core/inventory_services.js";
+import {
+  ORDER_STATUSES,
+  PAYMENT_METHODS,
+  PAYMENT_PROVIDERS,
+  PAYMENT_STATUSES,
+} from "../../constants/constant_values.js";
+import axios from "axios";
 
 export async function getOrderService(id) {
   return await Order.find({ customer: id })
@@ -8,7 +15,7 @@ export async function getOrderService(id) {
 }
 
 export async function addOrderService(customer) {
-  const { customerId, address } = customer;
+  const { customerId, address, shippingFee, paymentMethod } = customer;
   const cart = await Cart.findOne({ customer: customerId });
   if (!cart || cart.items.length === 0) {
     throw new Error("Cart is empty");
@@ -29,17 +36,60 @@ export async function addOrderService(customer) {
     customer: customerId,
     items: orderItems,
     shippingAddress: address,
-    totalAmount,
+    totalAmount: totalAmount + shippingFee,
   });
 
   await inventoryService.updateInventoryService(orderItems);
 
-  await order.save();
-  // Clear cart
-  cart.items = [];
-  await cart.save();
+  const savedOrder = await order.save();
+  const paymentIntentResponse = await axios.post(
+    "https://api.paymongo.com/v1/payment_intents",
+    {
+      data: {
+        attributes: {
+          amount: Math.round(totalAmount * 100), // PHP cents
+          currency: "PHP",
+          payment_method_allowed: ["gcash", "card", "qrph"],
+          payment_method_options: { card: { request_three_d_secure: "any" } },
+          metadata: { orderId: savedOrder._id.toString() },
+        },
+      },
+    },
+    { auth: { username: process.env.PAYMONGO_SECRET_KEY, password: "" } },
+  );
 
-  return order;
+  const paymentIntent = paymentIntentResponse.data.data;
+
+  let method = null;
+
+  for (const key in PAYMENT_METHODS) {
+    if (PAYMENT_METHODS[key] === paymentMethod.type) {
+      method = PAYMENT_METHODS[key];
+      break; // Stop the loop once a match is found
+    }
+  }
+
+  const payment = await Payment.create({
+    order: savedOrder._id,
+    provider: "paymongo",
+    method: method,
+    transactionId: paymentIntent.id,
+    amount: savedOrder.totalAmount,
+    status: PAYMENT_STATUSES.PENDING,
+  });
+  console.log(paymentIntent.id);
+
+  order.payment = payment._id;
+  await order.save();
+  const orderId = order._id;
+  const paymentIntentId = paymentIntent.id;
+  const clientKey = paymentIntent.attributes.client_key;
+
+  return {
+    orderId,
+    paymentIntentId,
+    clientKey,
+  };
 }
 
 export async function updateOrderService(order) {
@@ -51,3 +101,4 @@ export async function updateOrderService(order) {
   );
   return updateOrder;
 }
+
