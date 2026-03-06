@@ -28,12 +28,3 @@ export async function updateOrder(req, res) {
   }
 }
 
-export async function paymentWebhook(req, res) {
-  try {
-    const event = req.body;
-    await orderService.paymentWebhookService(event);
-    return res.sendStatus(200);
-  } catch (error) {
-    res.sendStatus(error.status || 500);
-  }
-}
