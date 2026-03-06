@@ -6,48 +6,52 @@ import {
   FieldTitle,
 } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useContext } from "react";
+
+import { SHIPPING_OPTIONS } from "../../constant_values";
+import { ShippingContext } from "../../context/customer_context";
+
 const ShippingField = () => {
+  const { shipping, setShipping } = useContext(ShippingContext);
+
   return (
     <Field>
       <RadioGroup
-        // name={field.name}
-        // value={field.value}
-        // onValueChange={field.onChange}
-        className="flex max-sm:flex-col">
-        <FieldLabel htmlFor="checkout-shippingMethod-1">
-          <Field orientation="vertical">
-            <FieldContent>
-              <FieldTitle>UPS</FieldTitle>
-              <FieldDescription>Delivery: Tomorrow</FieldDescription>
-            </FieldContent>
-            <div className="flex gap-3.5">
-              <p className="text-sm">$10.00</p>
-              <RadioGroupItem
-                value="UPS"
-                id="checkout-shippingMethod-1"
-                // aria-invalid={fieldState.invalid}
-              />
-            </div>
-          </Field>
-        </FieldLabel>
-        <FieldLabel htmlFor="checkout-shippingMethod-2">
-          <Field orientation="vertical">
-            <FieldContent>
-              <FieldTitle>FedEx</FieldTitle>
-              <FieldDescription>Delivery: Next Week</FieldDescription>
-            </FieldContent>
-            <div className="flex gap-3.5">
-              <p className="text-sm">$2.99</p>
-              <RadioGroupItem
-                value="FedEx"
-                id="checkout-shippingMethod-2"
-                // aria-invalid={fieldState.invalid}
-              />
-            </div>
-          </Field>
-        </FieldLabel>
+        value={shipping?.id}
+        onValueChange={(selectedId) => {
+          const selected = SHIPPING_OPTIONS.find(
+            (option) => option.id === selectedId,
+          );
+
+          if (selected) {
+            setShipping(selected);
+          }
+        }}
+        className="flex max-sm:flex-col gap-4">
+        {SHIPPING_OPTIONS.map((option) => (
+          <FieldLabel key={option.id} htmlFor={`shipping-${option.id}`}>
+            <Field
+              orientation="vertical"
+              className="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition">
+              {/* LEFT SIDE — SHIPPING INFO */}
+              <FieldContent>
+                <FieldTitle>{option.name}</FieldTitle>
+                <FieldDescription>{option.description}</FieldDescription>
+              </FieldContent>
+
+              {/* RIGHT SIDE — PRICE + RADIO */}
+              <div className="flex items-center gap-3.5">
+                <p className="text-sm font-medium">${option.fee.toFixed(2)}</p>
+
+                <RadioGroupItem
+                  value={option.id}
+                  id={`shipping-${option.id}`}
+                />
+              </div>
+            </Field>
+          </FieldLabel>
+        ))}
       </RadioGroup>
-      {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
     </Field>
   );
 };

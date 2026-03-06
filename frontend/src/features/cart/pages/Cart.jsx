@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { useCart, useClearCart } from "@/features/cart/hooks/cart_hooks.js";
 
 import Checkout from "../../orders/pages/components/Checkout";
@@ -8,15 +9,20 @@ import Checkout from "../../orders/pages/components/Checkout";
 import { Card, CardContent } from "@/components/ui/card";
 
 import CartItem from "./CartItem";
+import { ShippingContext } from "@/features/orders/context/customer_context";
 const Cart = () => {
   const { data: cart, isPending } = useCart();
   const { mutate: clearCart, isLoading } = useClearCart();
+  const [shipping, setShipping] = useState({
+    id: null,
+    fee: 0,
+    name: "",
+  });
   const items = cart?.items;
   const subtotal =
     items?.reduce((acc, item) => acc + item.priceSnapshot, 0) || 0;
 
-  const shipping = 5;
-  const total = subtotal + shipping;
+  const total = subtotal + shipping.fee;
   return (
     <div className="container p-4 lg:p-8">
       <Card className=" mx-auto max-w-7xl p-6">
@@ -63,7 +69,7 @@ const Cart = () => {
 
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>${shipping.toFixed(2)}</span>
+                  <span>${shipping?.fee.toFixed(2)}</span>
                 </div>
 
                 <div className="border-t pt-3 flex justify-between font-semibold text-base">
@@ -93,7 +99,9 @@ const Cart = () => {
             <div className="mb-auto h-fit space-y-6">
               <h1 className="text-2xl font-semibold">Checkout</h1>
               <div className="space-y-4">
-                <Checkout items={items} />
+                <ShippingContext value={{ shipping, setShipping }}>
+                  <Checkout items={items} />
+                </ShippingContext>
               </div>
             </div>
           </div>

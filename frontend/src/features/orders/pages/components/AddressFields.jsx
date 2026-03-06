@@ -1,94 +1,77 @@
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { useFormContext } from "react-hook-form";
+import FormFieldError from "@/components/forms/FormFieldError";
 const AddressField = () => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
   return (
     <FieldGroup className="gap-3.5">
       <Field>
-        <FieldLabel className="text-sm font-normal" htmlFor="checkout-country">
-          Country
-        </FieldLabel>
-        <Input
-        // {...field}
-        // id="checkout-country"
-        // aria-invalid={fieldState.invalid}
-        />
-        {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
-      </Field>
-      <div className="flex gap-3.5 max-sm:flex-col">
-        <Field>
-          <FieldLabel
-            className="text-sm font-normal"
-            htmlFor="checkout-firstName">
-            First Name
-          </FieldLabel>
-          <Input
-          // {...field}
-          // id="checkout-firstName"
-          // aria-invalid={fieldState.invalid}
-          />
-          {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
-        </Field>
-        <Field>
-          <FieldLabel
-            className="text-sm font-normal"
-            htmlFor="checkout-lastName">
-            Last Name
-          </FieldLabel>
-          <Input
-          // {...field}
-          // id="checkout-lastName"
-          // aria-invalid={fieldState.invalid}
-          />
-          {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
-        </Field>
-      </div>
-      <Field>
         <FieldLabel className="text-sm font-normal" htmlFor="checkout-address">
-          Address
+          Street
         </FieldLabel>
         <Input
-        // {...field}
-        // id="checkout-address"
-        // aria-invalid={fieldState.invalid}
+          id="street"
+          {...register("address.street")}
+          className={cn(
+            errors?.address?.street &&
+              "border-red-500 focus-visible:ring-red-500",
+          )}
         />
-        {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
+        <FormFieldError error={errors?.address?.street} helper="" />
       </Field>
       <div className="flex gap-3.5 max-sm:flex-col">
-        <Field>
-          <FieldLabel
-            className="text-sm font-normal"
-            htmlFor="checkout-postalCode">
-            Postal Code
-          </FieldLabel>
-          <Input
-          // {...field}
-          // id="checkout-postalCode"
-          // aria-invalid={fieldState.invalid}
-          />
-          {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
-        </Field>
         <Field>
           <FieldLabel className="text-sm font-normal" htmlFor="checkout-city">
             City
           </FieldLabel>
           <Input
-          // {...field}
-          // id="checkout-city"
-          // aria-invalid={fieldState.invalid}
+            id="city"
+            {...register("address.city")}
+            className={cn(
+              errors?.address?.city &&
+                "border-red-500 focus-visible:ring-red-500",
+            )}
           />
-          {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
+          <FormFieldError error={errors?.address?.city} helper="" />
+        </Field>
+        <Field>
+          <FieldLabel
+            className="text-sm font-normal"
+            htmlFor="checkout-postalCode">
+            Zip Code
+          </FieldLabel>
+          <Input
+            id="zipCode"
+            type="text"
+            inputMode="numeric"
+            pattern="\d*"
+            {...register("address.zipCode")}
+            className={cn(
+              errors?.address?.zipCode &&
+                "border-red-500 focus-visible:ring-red-500",
+            )}
+          />
+          <FormFieldError error={errors?.address?.zipCode} helper="" />
         </Field>
       </div>
       <Field>
-        <FieldLabel className="text-sm font-normal" htmlFor="checkout-phone">
-          Phone
+        <FieldLabel className="text-sm font-normal" htmlFor="checkout-country">
+          Country
         </FieldLabel>
         <Input
-        // {...field}
-        // id="checkout-phone"
-        // aria-invalid={fieldState.invalid}
+          id="address"
+          {...register("address.country")}
+          className={cn(
+            errors?.address?.country &&
+              "border-red-500 focus-visible:ring-red-500",
+          )}
         />
-        {/* {fieldState.invalid && <FieldError errors={[fieldState.error]} />} */}
+        <FormFieldError error={errors?.address?.country} helper="" />
       </Field>
     </FieldGroup>
   );

@@ -1,7 +1,29 @@
+import { useFormContext } from "react-hook-form";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import FormFieldError from "@/components/forms/FormFieldError";
+
 const DateInput = () => {
-  // const form = useFormContext();
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
+
+  const handleExpiryChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // remove non-digits
+
+    if (value.length > 4) value = value.slice(0, 4);
+
+    if (value.length >= 3) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    }
+
+    setValue("payment.expiryDate", value, {
+      shouldValidate: true,
+    });
+  };
 
   return (
     <Field>
@@ -10,33 +32,22 @@ const DateInput = () => {
         htmlFor="checkout-payment-expiryDate">
         Expiry Date
       </FieldLabel>
-    <Input
-              /* // {...field}
-            onChange={(e) => {
-              let val = e.target.value;
-              val = val.replace(/[^0-9/]/g, "");
 
-              const prev = field.value ?? "";
-              const isDeleting = val.length < prev.length;
+      <Input
+        id="checkout-payment-expiryDate"
+        placeholder="MM/YY"
+        maxLength={5}
+        {...register("payment.expiryDate")}
+        onChange={handleExpiryChange}
+        className={cn(
+          errors?.payment?.expiryDate &&
+            "border-red-500 focus-visible:ring-red-500",
+        )}
+      />
 
-              if (!isDeleting) {
-                if (val.length === 2 && !val.includes("/")) {
-                  val = val + "/";
-                }
-              }
-
-              if (val.length > 5) {
-                val = val.slice(0, 5);
-              }
-
-              field.onChange(val);
-            }}
-            pattern="^(0[1-9]|1[0-2])/[0-9]{2}$"
-            placeholder="MM/YY"
-            id="checkout-payment-expiryDate"
-            aria-invalid={fieldState.invalid} */
-          />
+      <FormFieldError error={errors?.payment?.expiryDate} />
     </Field>
   );
 };
+
 export default DateInput;
