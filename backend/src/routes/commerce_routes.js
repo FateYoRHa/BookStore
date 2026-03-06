@@ -2,6 +2,7 @@ import express from "express";
 
 import * as orders from "../controllers/commerce/orders_controller.js";
 import * as cart from "../controllers/commerce/carts_controller.js";
+import * as payment from "../controllers/commerce/payments_controller.js";
 
 import { authenticate } from "../middleware/authenticate.js";
 import { authorize } from "../middleware/authorize.js";
@@ -21,6 +22,9 @@ router.post("/checkout", customerOnly, cart.checkout);
 router.post("/orders", customerOnly, orders.addOrder);
 router.put("/orders/:id", adminOnly, orders.updateOrder);
 // PAYMENT
-router.post("/payment", customerOnly, cart.payment);
+router.post("/payment", customerOnly, payment.checkout);
+router.post("/payment/webhook", payment.paymentWebhook);
+router.get("/checkout/success", payment.checkoutSuccess);
+router.get("/checkout/success", payment.checkoutFail);
 
 export default router;
