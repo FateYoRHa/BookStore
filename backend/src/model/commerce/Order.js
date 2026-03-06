@@ -1,5 +1,6 @@
 import { Schema, mongoose } from "mongoose";
 import Counter from "../../assets/counter.js";
+import { ORDER_STATUSES } from "../../constants/constant_values.js";
 
 const PREFIX = "ORD";
 const PAD = 4;
@@ -32,14 +33,19 @@ const orderSchema = new Schema(
       postalCode: String,
       country: String,
     },
-    // 
+    //
     status: {
       type: String,
-      enum: ["pending", "paid", "shipped", "delivered", "cancelled"],
-      default: "pending",
+      enum: Object.values(ORDER_STATUSES),
+      default: ORDER_STATUSES.PENDING,
     },
 
     totalAmount: { type: Number, required: true },
+
+    payment: {
+      type: Schema.Types.ObjectId,
+      ref: "Payment",
+    },
   },
   { timestamps: true },
 );
