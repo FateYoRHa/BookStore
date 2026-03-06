@@ -102,3 +102,52 @@ export async function updateOrderService(order) {
   return updateOrder;
 }
 
+export async function paymentWebhookService(event) {
+  const paymentData = event?.data?.attributes?.data?.attributes;
+  if (!paymentData) {
+    const error = new Error();
+    error.status = 400;
+    throw error;
+  }
+  const orderId = paymentData.metadata.orderId;
+  const transactionId = paymentData.id;
+
+  // Find Payment record
+  const payment = await Payment.findOne({ transactionId });
+  if (!payment) {
+    const error = new Error();
+    error.status = 400;
+    throw error;
+  }
+  // Update payment & order based on event type
+  switch (event.data.attributes.type) {
+    case "checkout_session.payment.paid":
+    case "payment.paid":
+      payment.status = PAYMENT_STATUSES.PAID;
+      payment.paidAt = new Date();
+      await payment.save();
+
+      await Order.findByIdAndUpdate(orderId, {
+        status: ORDER_STATUSES.PAID,
+        paymentStatus: PAYMENT_STATUSES.PAID,
+      });
+
+      // Optional: clear cart
+      const order = await Order.findById(payment.order);
+      await Cart.findOneAndUpdate({ customer: order.customer }, { items: [] });
+      break;
+
+    case "qrph.expired":
+    case "payment.failed":
+      payment.status = "failed";
+      await payment.save();
+
+      await Order.findByIdAndUpdate(orderId, {
+        status: ORDER_STATUSES.FAILED,
+        paymentStatus: PAYMENT_STATUSES.FAILED,
+      });
+      break;
+  }
+
+  return;
+}
