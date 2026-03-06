@@ -67,21 +67,24 @@ const Checkout = () => {
     setActiveAccordion(value);
   };
 
-  const pay = (data) => {
+  const pay = async (data) => {
     const order = {
       shippingFee: shipping.fee,
       address: data.address,
       paymentMethod: data.payment,
     };
-    toast.promise(mutateAsync(order), {
-      loading: "Processing payment...",
-      success: () => {
-        // Update UI state
-        setCheckout(true);
-        return `Redirecting to payment...`;
-      },
-      error: "Payment failed. Please try again.",
-    });
+    try {
+      toast.promise(mutateAsync(order), {
+        loading: "Redirecting to secure payment...",
+        success: (result) => {
+          window.location.href = result.checkoutUrl;
+          return "Redirecting...";
+        },
+        error: "Payment failed. Please try again.",
+      });
+    } catch (error) {
+      console.log(error);
+    }
     // toast.promise(
     //   new Promise((resolve, reject) => {
     //     //  Simulate API latency (like calling backend)
