@@ -1,5 +1,5 @@
 import { Order, Payment, Cart, Customer } from "../../model/index.js";
-import * as inventoryService from "../../services/core/inventory_services.js";
+
 
 export async function getOrderService(id) {
   return await Order.find({ customer: id })
@@ -8,7 +8,7 @@ export async function getOrderService(id) {
 }
 
 export async function addOrderService(customer) {
-  const { id, address, shippingFee, paymentMethod } = customer;
+  const { id, address, shippingFee } = customer;
   const customerId = await Customer.findOne({ user: id }, { _id: 1 });
   const cart = await Cart.findOne({ customer: customerId });
   if (!cart || cart.items.length === 0) {
@@ -33,7 +33,6 @@ export async function addOrderService(customer) {
     totalAmount: totalAmount + shippingFee,
   });
 
-  await inventoryService.updateInventoryService(orderItems);
 
   const savedOrder = await order.save();
 
