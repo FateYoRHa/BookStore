@@ -14,7 +14,7 @@ const paymentSchema = new Schema(
     provider: {
       type: String,
       required: true,
-      default: "paymongo"
+      default: "paymongo",
     },
     method: {
       type: String,
@@ -22,6 +22,10 @@ const paymentSchema = new Schema(
       required: true,
     },
     transactionId: {
+      type: String,
+      // unique: true,
+    },
+    checkoutSessionId: {
       type: String,
       required: true,
       unique: true,
