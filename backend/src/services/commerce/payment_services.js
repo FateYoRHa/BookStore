@@ -1,17 +1,24 @@
-import { Order, Payment } from "../../model/index.js";
+import { Cart, Order, Payment } from "../../model/index.js";
+import * as inventoryService from "../../services/core/inventory_services.js";
 import {
   PAYMENT_STATUSES,
   PAYMENT_METHODS,
+  ORDER_STATUSES,
 } from "../../constants/constant_values.js";
 import axios from "axios";
 
 export async function createCheckoutSessionService(orderId, paymentMethod) {
-  const order = await Order.findById(orderId);
+  const order = await Order.findById(orderId).populate("items.book");
 
   if (!order) {
     throw new Error("Order not found");
   }
-
+  const lineItems = order.items.map((item) => ({
+    name: item.book.title, // from populated book
+    amount: Math.round(item.priceSnapshot * 100), // PayMongo uses cents
+    currency: "PHP",
+    quantity: item.quantity,
+  }));
   const response = await axios.post(
     "https://api.paymongo.com/v1/checkout_sessions",
     {
@@ -21,20 +28,13 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
           show_description: true,
           show_line_items: true,
           payment_method_types: ["gcash", "card", "qrph"],
-          line_items: [
-            {
-              currency: "PHP",
-              amount: Math.round(order.totalAmount * 100),
-              name: "Bookstore Order",
-              quantity: 1,
-            },
-          ],
-
+          line_items: lineItems,
           success_url: `${process.env.FRONTEND_URL}/commerce/checkout/success`,
           cancel_url: `${process.env.FRONTEND_URL}/commerce/checkout/cancel`,
 
           metadata: {
             orderId: order._id.toString(),
+            customerId: order.customer.toString(),
           },
         },
       },
@@ -56,12 +56,11 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
       break; // Stop the loop once a match is found
     }
   }
-
   const payment = await Payment.create({
     order: order._id,
     provider: "paymongo",
     method: method,
-    transactionId: checkoutSession.id,
+    checkoutSessionId: checkoutSession.id,
     amount: order.totalAmount,
     status: PAYMENT_STATUSES.PENDING,
   });
@@ -91,48 +90,58 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
 // }
 
 export async function paymentWebhookService(event) {
-  const paymentData = event?.data?.attributes?.data?.attributes;
+  const eventType = event.data.attributes.type;
+  const session = event?.data?.attributes?.data;
+  const paymentData = session?.attributes;
   if (!paymentData) {
     const error = new Error();
     error.status = 400;
     throw error;
   }
-  const orderId = paymentData.metadata.orderId;
-  const transactionId = paymentData.id;
-
+  const orderId = paymentData?.metadata?.orderId;
+  const checkoutId = session.id;
   // Find Payment record
-  const payment = await Payment.findOne({ transactionId });
+  const payment = await Payment.findOne({
+    checkoutSessionId: checkoutId,
+  });
   if (!payment) {
-    const error = new Error();
+    const error = new Error("Payment not found.");
     error.status = 400;
     throw error;
   }
+
+  // find order
+  const order = await Order.findById(payment.order);
+  if (order.status === ORDER_STATUSES.PAID) {
+    return; // already processed
+  }
+  const paymentId = paymentData.payments[0].id;
   // Update payment & order based on event type
-  switch (event.data.attributes.type) {
+  switch (eventType) {
     case "checkout_session.payment.paid":
     case "payment.paid":
+      payment.transactionId = paymentId;
       payment.status = PAYMENT_STATUSES.PAID;
+      payment.method = paymentData.payment_method_used;
       payment.paidAt = new Date();
+
       await payment.save();
 
-      await Order.findByIdAndUpdate(orderId, {
-        status: ORDER_STATUSES.PAID,
-        paymentStatus: PAYMENT_STATUSES.PAID,
-      });
-
+      order.status = ORDER_STATUSES.PAID;
+      await order.save();
       // Optional: clear cart
-      const order = await Order.findById(payment.order);
+      await inventoryService.updateInventoryService(order.items);
       await Cart.findOneAndUpdate({ customer: order.customer }, { items: [] });
       break;
 
     case "qrph.expired":
     case "payment.failed":
-      payment.status = "failed";
+      payment.status = PAYMENT_STATUSES.FAILED;
+      payment.method = paymentData.payment_method_used;
       await payment.save();
 
       await Order.findByIdAndUpdate(orderId, {
         status: ORDER_STATUSES.FAILED,
-        paymentStatus: PAYMENT_STATUSES.FAILED,
       });
       break;
   }
