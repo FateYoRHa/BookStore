@@ -24,11 +24,10 @@ export async function checkout(req, res) {
 
 export async function paymentWebhook(req, res) {
   try {
-    const event = req.body;
-    await paymentWebhookService(event);
-    return res.sendStatus(200);
+    await paymentWebhookService(req.body);
+    return res.status(200);
   } catch (error) {
-    res.sendStatus(error.status || 500);
+    res.status(error.status || 500).json({ message: error.message });
   }
 }
 
