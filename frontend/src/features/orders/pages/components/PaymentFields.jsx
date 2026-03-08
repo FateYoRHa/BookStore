@@ -75,7 +75,7 @@ const PaymentFields = () => {
                     <FieldTitle>Online Bank Transfer</FieldTitle>
                   </FieldContent>
                   <RadioGroupItem
-                    value="bank"
+                    value="qrph"
                     id="checkout-payment-method-3"
                     // aria-invalid={fieldState.invalid}
                   />

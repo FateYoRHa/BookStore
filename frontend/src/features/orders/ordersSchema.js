@@ -54,7 +54,7 @@ export const customerInfoSchema = z.object({
       //   .regex(/^(09|\+639)\d{9}$/, "Invalid phone/account number."),
     }),
     z.object({
-      type: z.literal("bank"),
+      type: z.literal("qrph"),
       // bankName: z.string().min(2),
       // accountNumber: z.string().regex(/^\d{8,17}$/),
     }),
