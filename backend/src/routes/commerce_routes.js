@@ -25,6 +25,6 @@ router.put("/orders/:id", adminOnly, orders.updateOrder);
 router.post("/payment", customerOnly, payment.checkout);
 router.post("/payment/webhook", payment.paymentWebhook);
 router.get("/checkout/success", payment.checkoutSuccess);
-router.get("/checkout/success", payment.checkoutFail);
+router.get("/checkout/cancel", payment.checkoutFail);
 
 export default router;
