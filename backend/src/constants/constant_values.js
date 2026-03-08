@@ -26,4 +26,5 @@ export const ORDER_STATUSES = {
   SHIPPED: "shipped",
   DELIVERED: "delivered",
   CANCELLED: "cancelled",
+  FAILED: "payment failed",
 };
