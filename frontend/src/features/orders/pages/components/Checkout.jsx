@@ -56,18 +56,6 @@ const Checkout = () => {
   }, [errors]);
   const [activeAccordion, setActiveAccordion] = useState("contact");
   const onSubmit = (data) => {
-    console.log(`Submitted Data:\n`, JSON.stringify(data, null, 2));
-  };
-
-  const onContinue = (value) => {
-    setActiveAccordion(value);
-  };
-
-  const handleOnValueChange = (value) => {
-    setActiveAccordion(value);
-  };
-
-  const pay = async (data) => {
     const order = {
       shippingFee: shipping.fee,
       address: data.address,
@@ -85,6 +73,18 @@ const Checkout = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onContinue = (value) => {
+    setActiveAccordion(value);
+  };
+
+  const handleOnValueChange = (value) => {
+    setActiveAccordion(value);
+  };
+
+  const pay = async () => {
+    setCheckout(true);
     // toast.promise(
     //   new Promise((resolve, reject) => {
     //     //  Simulate API latency (like calling backend)
@@ -199,8 +199,9 @@ const Checkout = () => {
                     <Button
                       type="button"
                       className="w-full"
-                      onClick={handleSubmit(pay)}>
-                      Pay Now
+                      onClick={handleSubmit(pay)}
+                      hidden={checkout}>
+                      Proceed to Checkout
                     </Button>
                   </div>
                 </AccordionContent>
