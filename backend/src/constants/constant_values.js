@@ -7,10 +7,10 @@ export const PAYMENT_PROVIDERS = {
 
 export const PAYMENT_METHODS = {
   COD: "CoD",
-  CARD: "credit_card",
+  CARD: "card",
   PAYPAL: "paypal",
   GCASH: "gcash",
-  BANK: "bank_transfer",
+  BANK: "qrph",
 };
 
 export const PAYMENT_STATUSES = {
