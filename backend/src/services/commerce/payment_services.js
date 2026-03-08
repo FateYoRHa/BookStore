@@ -19,6 +19,14 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
     currency: "PHP",
     quantity: item.quantity,
   }));
+  let method = null;
+
+  for (const key in PAYMENT_METHODS) {
+    if (PAYMENT_METHODS[key] === paymentMethod.type) {
+      method = PAYMENT_METHODS[key];
+      break; // Stop the loop once a match is found
+    }
+  }
   const response = await axios.post(
     "https://api.paymongo.com/v1/checkout_sessions",
     {
@@ -27,7 +35,7 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
           send_email_receipt: true,
           show_description: true,
           show_line_items: true,
-          payment_method_types: ["gcash", "card", "qrph"],
+          payment_method_types: [method],
           line_items: lineItems,
           success_url: `${process.env.FRONTEND_URL}/commerce/checkout/success`,
           cancel_url: `${process.env.FRONTEND_URL}/commerce/checkout/cancel`,
@@ -48,14 +56,7 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
   );
 
   const checkoutSession = response.data.data;
-  let method = null;
 
-  for (const key in PAYMENT_METHODS) {
-    if (PAYMENT_METHODS[key] === paymentMethod.type) {
-      method = PAYMENT_METHODS[key];
-      break; // Stop the loop once a match is found
-    }
-  }
   const payment = await Payment.create({
     order: order._id,
     provider: "paymongo",
@@ -90,7 +91,7 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
 // }
 
 export async function paymentWebhookService(event) {
-  const eventType = event.data.attributes.type;
+  const eventType = event?.data?.attributes?.type;
   const session = event?.data?.attributes?.data;
   const paymentData = session?.attributes;
   if (!paymentData) {
@@ -99,7 +100,7 @@ export async function paymentWebhookService(event) {
     throw error;
   }
   const orderId = paymentData?.metadata?.orderId;
-  const checkoutId = session.id;
+  const checkoutId = session?.id;
   // Find Payment record
   const payment = await Payment.findOne({
     checkoutSessionId: checkoutId,
