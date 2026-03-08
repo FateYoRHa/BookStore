@@ -10,9 +10,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import PaymentFieldMethod from "./PaymentFieldMethod";
 
 const PaymentFields = () => {
-  const { control, watch } = useFormContext();
-
-  const method = watch("payment.type");
+  // const { control, watch } = useFormContext();
+  const { control } = useFormContext();
+  // const method = watch("payment.type");
   return (
     <div className="space-y-7">
       <Controller
@@ -46,13 +46,13 @@ const PaymentFields = () => {
                     className="size-5"
                   />
                   <RadioGroupItem
-                    value="credit"
+                    value="card"
                     id="checkout-payment-method-1"
                     // aria-invalid={fieldState.invalid}
                   />
                 </Field>
               </FieldLabel>
-              <FieldLabel htmlFor="checkout-payment-method-2">
+              {/* <FieldLabel htmlFor="checkout-payment-method-2">
                 <Field orientation="horizontal">
                   <FieldContent className="flex-1">
                     <FieldTitle>PayPal</FieldTitle>
@@ -68,7 +68,7 @@ const PaymentFields = () => {
                     // aria-invalid={fieldState.invalid}
                   />
                 </Field>
-              </FieldLabel>
+              </FieldLabel> */}
               <FieldLabel htmlFor="checkout-payment-method-3">
                 <Field orientation="horizontal">
                   <FieldContent>
@@ -102,7 +102,7 @@ const PaymentFields = () => {
           </Field>
         )}
       />
-      <PaymentFieldMethod method={method} />
+      {/* <PaymentFieldMethod method={method} /> */}
     </div>
   );
 };
