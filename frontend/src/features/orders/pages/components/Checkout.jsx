@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { useForm, FormProvider } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import { Minus, Plus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,8 @@ const Checkout = () => {
   const customer = useAuthStore((state) => state.customer).customer;
   const address = customer?.address[0];
   const { mutateAsync } = useCheckout();
+  const navigate = useNavigate();
+
   const methods = useForm({
     resolver: zodResolver(customerInfoSchema),
     defaultValues: {
@@ -65,8 +68,12 @@ const Checkout = () => {
       toast.promise(mutateAsync(order), {
         loading: "Redirecting to secure payment...",
         success: (result) => {
-          window.location.href = result.checkoutUrl;
-          return "Redirecting...";
+          if (data.payment.type === "CoD") {
+            setTimeout(() => navigate("/checkout/success"), 0);
+          } else {
+            window.location.href = result.checkoutUrl;
+            return "Redirecting...";
+          }
         },
         error: "Payment failed. Please try again.",
       });
