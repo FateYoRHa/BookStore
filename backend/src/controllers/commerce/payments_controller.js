@@ -5,21 +5,25 @@ import {
 } from "../../services/commerce/payment_services.js";
 
 export async function checkout(req, res) {
-  const { address, shippingFee, paymentMethod } = req.body;
-  const id = req.user.id;
-  const order = await addOrderService({
-    id,
-    address,
-    shippingFee,
-    paymentMethod,
-  });
-  const orderId = order._id;
-  const session = await createCheckoutSessionService(orderId, paymentMethod);
+  try {
+    const { address, shippingFee, paymentMethod } = req.body;
+    const id = req.user.id;
+    const order = await addOrderService({
+      id,
+      address,
+      shippingFee,
+      paymentMethod,
+    });
+    const orderId = order._id;
+    const session = await createCheckoutSessionService(orderId, paymentMethod);
 
-  res.json({
-    orderId: order._id,
-    checkoutUrl: session.checkoutUrl,
-  });
+    res.json({
+      orderId: order._id,
+      checkoutUrl: session.checkoutUrl,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function paymentWebhook(req, res) {
@@ -27,7 +31,7 @@ export async function paymentWebhook(req, res) {
     await paymentWebhookService(req.body);
     return res.status(200);
   } catch (error) {
-    res.status(error.status || 500).json({ message: error.message });
+    res.status(200);
   }
 }
 
