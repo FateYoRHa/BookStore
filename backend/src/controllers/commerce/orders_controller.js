@@ -28,3 +28,14 @@ export async function updateOrder(req, res) {
   }
 }
 
+export async function getCustomerOrders(req, res) {
+  try {
+    const userId = req.user.id;
+    const orders = await orderService.getCustomerOrdersService(userId);
+    res.status(200).json(orders);
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error." });
+  }
+}
