@@ -14,6 +14,8 @@ import Profile from "@/features/customers/pages/Profile";
 import PaymentSuccess from "../features/orders/pages/components/PaymentSuccess";
 import PaymentFailed from "../features/orders/pages/components/PaymentFailed";
 
+import CustomerOrders from "@/features/orders/pages/CustomerOrders";
+
 export default function AppRouter() {
   return (
     <Routes>
@@ -24,6 +26,7 @@ export default function AppRouter() {
       <Route path="/profile" element={<Profile />} />
 
       <Route path="/cart" element={<Cart />} />
+      <Route path="/customer/orders" element={<CustomerOrders />} />
 
       <Route path="/books" element={<Books />} />
       <Route path="/books/:id" element={<BookDetails />} />
