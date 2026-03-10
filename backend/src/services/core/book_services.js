@@ -1,4 +1,4 @@
-import { Book, Author } from "../../model/index.js";
+import { Book, Author, Category } from "../../model/index.js";
 import * as mediaServices from "../../services/content/media_services.js";
 import * as inventoryService from "../../services/core/inventory_services.js";
 
@@ -16,7 +16,8 @@ export async function getBooksService(filters) {
 
     // Filter by category
     if (category) {
-      filter.categories = category;
+      const cat = await Category.findOne({ name: category }, { _id: 1 });
+      filter.categories = cat;
     }
 
     //  Price range filter
@@ -63,11 +64,14 @@ export async function getBookService(id) {
       .populate("categories", "name")
       .populate("images")
       .populate({
-        path: "reviews", select:"rating comment",populate: {
+        path: "reviews",
+        select: "rating comment",
+        populate: {
           path: "customer",
           model: "Customer",
-          select: "name"
-      }})
+          select: "name",
+        },
+      })
       .populate("inventory", "quantity status");
 
     if (!book) {
@@ -82,7 +86,7 @@ export async function getBookService(id) {
 }
 // FOR ADMINS ONLY
 export async function createBookWithAssets(book) {
-try {
+  try {
     const {
       title,
       description,
@@ -123,9 +127,9 @@ try {
 
     await inventoryService.initializeInventory(savedBook._id, quantity);
     return { book };
-} catch (error) {
-  throw error
-}
+  } catch (error) {
+    throw error;
+  }
 }
 export async function updateBookService(book) {
   try {
@@ -167,6 +171,6 @@ export async function updateBookService(book) {
     }
     return { updateBook };
   } catch (error) {
-    throw error
+    throw error;
   }
 }
