@@ -6,6 +6,6 @@ export const checkoutRequest = async (data) => {
 };
 
 export const getCustomerOrdersRequest = async () => {
-  const response = await api.get("/customer/orders")
-  return response.data
-}
+  const response = await api.get("/commerce/customer/orders");
+  return response.data;
+};
