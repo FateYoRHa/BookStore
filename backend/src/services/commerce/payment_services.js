@@ -76,9 +76,7 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
     };
   }
   if (method === "CoD") {
-    order.status = ORDER_STATUSES.PENDING;
-    await order.save();
-    await Payment.create({
+    const payment = await Payment.create({
       order: order._id,
       provider: "Cash on Delivery",
       method: method,
@@ -87,6 +85,9 @@ export async function createCheckoutSessionService(orderId, paymentMethod) {
       amount: order.totalAmount,
       status: PAYMENT_STATUSES.PENDING,
     });
+    order.status = ORDER_STATUSES.PENDING;
+    order.payment = payment._id;
+    await order.save();
     await inventoryService.updateInventoryService(order.items);
     await Cart.findOneAndUpdate({ customer: order.customer }, { items: [] });
 
