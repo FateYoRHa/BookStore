@@ -41,6 +41,8 @@ import { Badge } from "@/components/ui/badge";
 
 import { Search, ShoppingCart, Menu } from "lucide-react";
 
+import { useGetCategories } from "@/features/categories/hooks/category_hooks";
+
 export default function NavBar() {
   // In real app these come from Zustand or React Query
   const user = useAuthStore((state) => state.user);
@@ -57,8 +59,11 @@ export default function NavBar() {
     return firstLetters.join("");
   };
   const initials = getInitials(customer?.name).toUpperCase();
+  // CART
   const cart = useCart();
   const cartCount = cart?.data?.items.length;
+  // CATEGORY
+  const { data: categories } = useGetCategories();
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
@@ -94,19 +99,16 @@ export default function NavBar() {
 
                 {/* Dropdown Panel */}
                 <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-6 md:grid-cols-2">
-                    {/* // TODO map all categories */}
-                    {["Fiction", "Business", "Science", "Children"].map(
-                      (category) => (
-                        <li key={category}>
-                          <Link
-                            to={`/books?category=${category}`}
-                            className="block rounded-md p-3 hover:bg-muted transition">
-                            {category}
-                          </Link>
-                        </li>
-                      ),
-                    )}
+                  <ul className="grid w-[600px] grid-cols-3 gap-x-6 gap-y-2 p-6">
+                    {categories?.map((category) => (
+                      <li key={category?._id}>
+                        <Link
+                          to={`/books?category=${category?.name}`}
+                          className="block rounded-md px-3 py-2 text-sm hover:bg-muted transition">
+                          {category?.name}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
