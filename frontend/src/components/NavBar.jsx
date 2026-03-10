@@ -176,7 +176,7 @@ export default function NavBar() {
                   <Link to="/profile">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/orders">Orders</Link>
+                  <Link to="/customer/orders">Orders</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Logout />

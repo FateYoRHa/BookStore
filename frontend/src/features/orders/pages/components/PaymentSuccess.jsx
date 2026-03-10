@@ -15,7 +15,7 @@ export default function CheckoutSuccess() {
       <p className="text-muted-foreground mt-2">Thank you for your order.</p>
 
       <a
-        href="/orders"
+        href="/customer/orders"
         className="mt-6 bg-black text-white px-6 py-3 rounded-md">
         View Orders
       </a>
