@@ -11,6 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { useGetCategories } from "@/features/categories/hooks/category_hooks";
+
 const BookFilterBar = ({ searchInput, setSearchInput }) => {
   /**
    * useSearchParams lets us read & modify the URL query string
@@ -23,6 +25,7 @@ const BookFilterBar = ({ searchInput, setSearchInput }) => {
    * Helper function to update a single query param.
    * If value is empty, remove it from URL.
    */
+  const { data: categories } = useGetCategories();
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
   const minPrice = searchParams.get("minPrice") || "";
@@ -69,7 +72,7 @@ const BookFilterBar = ({ searchInput, setSearchInput }) => {
 
       <CardContent className="flex flex-col gap-4">
         {/* ========================= */}
-        {/* 🔎 SEARCH INPUT */}
+        {/* SEARCH INPUT */}
         {/* ========================= */}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium">Search</label>
@@ -81,7 +84,7 @@ const BookFilterBar = ({ searchInput, setSearchInput }) => {
         </div>
 
         {/* ========================= */}
-        {/* 📚 CATEGORY SELECT */}
+        {/* CATEGORY SELECT */}
         {/* ========================= */}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium">Category</label>
@@ -94,20 +97,19 @@ const BookFilterBar = ({ searchInput, setSearchInput }) => {
             </SelectTrigger>
 
             <SelectContent>
-              {/* 
-                In production, this would come from backend.
-                Hardcoded here for example.
-              */}
-              <SelectItem value="fiction">Fiction</SelectItem>
-              <SelectItem value="nonfiction">Non-Fiction</SelectItem>
-              <SelectItem value="fantasy">Fantasy</SelectItem>
-              <SelectItem value="romance">Romance</SelectItem>
+              <ul className="grid w-[600px] grid-cols-3 gap-x-6 gap-y-2 p-6">
+                {categories?.map((category) => (
+                  <SelectItem key={category?._id} value={category.name}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </ul>
             </SelectContent>
           </Select>
         </div>
 
         {/* ========================= */}
-        {/* 💰 PRICE RANGE */}
+        {/* PRICE RANGE */}
         {/* ========================= */}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium">Min Price</label>
@@ -151,7 +153,7 @@ const BookFilterBar = ({ searchInput, setSearchInput }) => {
         </div>
 
         {/* ========================= */}
-        {/* 🧹 CLEAR BUTTON */}
+        {/* CLEAR BUTTON */}
         {/* ========================= */}
         <Button variant="outline" onClick={clearFilters} className="mt-4">
           Clear Filters
