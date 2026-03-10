@@ -1,5 +1,5 @@
 // Homepage.jsx
-
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -33,15 +33,17 @@ export default function Homepage() {
           {/* CTA Buttons container */}
           <div className="flex gap-4">
             <Button size="lg">Browse Books</Button>
-            <Button variant="outline" size="lg">
-              View Categories
-            </Button>
+            <Link to={`/categories`}>
+              <Button variant="outline" size="lg">
+                View Categories
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* ================= FEATURED BOOKS ================= */}
-      
+
       <section className="container mx-auto px-4 py-12">
         {/* Section Title */}
         <h2 className="text-3xl font-semibold mb-8">Featured Books</h2>
