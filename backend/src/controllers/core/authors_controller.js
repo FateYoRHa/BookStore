@@ -1,11 +1,14 @@
 import { Author, Book } from "../../model/index.js";
 import * as authorService from "../../services/core/author_services.js";
 
-// TODO move to services with filters
 export async function getAuthors(req, res) {
   try {
-    const authors = await Author.find().select("penName bio");
-    res.status(200).json(authors);
+    const { search, page = 1, limit = 12 } = req.query;
+    const { authors, total, pageNumber, pages } =
+      await authorService.getAuthorsService({ search, page, limit });
+    res
+      .status(200)
+      .json({ authors, total, page: pageNumber, totalPages: pages });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
