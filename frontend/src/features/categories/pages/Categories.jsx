@@ -8,7 +8,7 @@ const Categories = () => {
       {/* ================= Header SECTION ================= */}
       <section className="container flex flex-col items-center text-center mx-auto px-4 py-5">
         <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
-          Discover Your Next Favorite Book
+          Discover Your Next Favorite Book Category(Genre)
         </h1>
       </section>
 
