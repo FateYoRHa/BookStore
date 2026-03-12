@@ -6,3 +6,8 @@ export const getAuthorsRequest = async ({ page, search, limit }) => {
   });
   return response.data;
 };
+
+export const getAuthorRequest = async (id) => {
+  const response = await api.get(`/core/authors/${id}`);
+  return response.data;
+};
