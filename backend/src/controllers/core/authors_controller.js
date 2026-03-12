@@ -16,19 +16,13 @@ export async function getAuthors(req, res) {
 
 export async function getAuthor(req, res) {
   try {
-    const author = await Author.findOne({ authorCode: req.params.id });
+    const author = await authorService.getAuthorService(req.params.id);
 
-    if (!author) {
-      return res.status(404).json({ message: "Author not found" });
-    }
-
-    const books = await Book.find({ author: author._id })
-      .populate("categories", "name")
-      .select("title bookCode price");
-
-    res.status(200).json({ author, books });
+    res.status(200).json(author);
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error" });
   }
 }
 
