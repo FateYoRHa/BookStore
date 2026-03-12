@@ -21,6 +21,23 @@ export async function getAuthorsService(filters) {
   const pages = Math.ceil(total / limitNumber);
   return { authors, total, pageNumber, pages };
 }
+
+export async function getAuthorService(id) {
+  const author = await Author.findOne({ authorCode: id }).populate({
+    path: "books",
+    populate: {
+      path: "images",
+      model: "BookImage",
+    },
+  });
+  if (!author) {
+    const error = new Error("Author not found");
+    error.status = 404;
+    throw error;
+  }
+  return author;
+}
+
 export async function addAuthorService(author) {
   const { penName, bio } = author;
   const newAuthor = new Author({
