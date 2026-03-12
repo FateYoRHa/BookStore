@@ -4,12 +4,19 @@ import Counter from "../../assets/counter.js";
 const PREFIX = "AU";
 const PAD = 4;
 
-const authorSchema = new mongoose.Schema({
-  authorCode: { type: String, unique: true, index: true },
-  penName: { type: String, unique: true },
-  bio: { type: String, required: true },
-  image: { url: String, alt: String },
-});
+const authorSchema = new mongoose.Schema(
+  {
+    authorCode: { type: String, unique: true, index: true },
+    penName: { type: String, unique: true },
+    bio: { type: String, required: true },
+    image: { url: String, alt: String },
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+);
 // VIRTUAL SCHEMA FOR BOOKS
 authorSchema.virtual("books", {
   ref: "Book",
