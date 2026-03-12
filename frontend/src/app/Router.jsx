@@ -9,6 +9,8 @@ import BookDetails from "@/features/books/pages/BookDetails";
 import Cart from "@/features/cart/pages/Cart";
 
 import Authors from "@/features/authors/pages/Authors";
+import AuthorDetails from "@/features/authors/pages/AuthorDetails";
+
 import Profile from "@/features/customers/pages/Profile";
 
 import PaymentSuccess from "../features/orders/pages/components/PaymentSuccess";
@@ -36,6 +38,7 @@ export default function AppRouter() {
       <Route path="/books/:id" element={<BookDetails />} />
 
       <Route path="/authors" element={<Authors />} />
+      <Route path="/authors/:id" element={<AuthorDetails />} />
 
       <Route path="/checkout/success" element={<PaymentSuccess />} />
       <Route path="/checkout/failed" element={<PaymentFailed />} />
