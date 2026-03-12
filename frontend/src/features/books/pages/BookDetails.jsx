@@ -100,6 +100,10 @@ const BookDetails = () => {
               </section>
               {/* META DATA GRID */}
               <section className="grid grid-cols-2 gap-y-2 gap-x-6 text-sm">
+                <label className="font-semibold text-black">Categories:</label>
+                <span className="text-muted-foreground">
+                  {book?.categories.map((cat) => `${cat?.name}, `)}
+                </span>
                 <label className="font-semibold text-black">Publisher: </label>
                 <span className="text-muted-foreground">{book?.publisher}</span>
                 <label className="font-semibold text-black">ISBN:</label>
@@ -123,8 +127,7 @@ const BookDetails = () => {
                 <div className="gap-2 inline-flex">
                   <Button
                     onClick={handleAdd}
-                    className="px-6 py-2 rounded-xl bg-teal-800 text-white hover:bg-teal-700 transition"
-                    >
+                    className="px-6 py-2 rounded-xl bg-teal-800 text-white hover:bg-teal-700 transition">
                     <ShoppingCart />
                     {isPending ? "Adding to Card..." : "Add to Cart"}
                   </Button>
