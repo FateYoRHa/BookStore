@@ -1,3 +1,5 @@
 import z from "zod";
 
-export const 
+export const postReview = z.object({
+  comment: z.string().trim(),
+});
