@@ -69,8 +69,9 @@ export async function getBookService(id) {
         populate: {
           path: "customer",
           model: "Customer",
-          select: "name",
+          select: "name image",
         },
+        options: { sort: { createdAt: -1 } },
       })
       .populate("inventory", "quantity status");
 
