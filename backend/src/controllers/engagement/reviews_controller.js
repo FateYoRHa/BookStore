@@ -2,10 +2,11 @@ import * as reviewService from "../../services/engagement/review_services.js";
 
 export async function addReview(req, res) {
   try {
-    const { book, customer, rating, comment } = req.body;
+    const userId = req.user.id
+    const { book, rating, comment } = req.body;
     const review = await reviewService.addReviewService({
       book,
-      customer,
+      userId,
       rating,
       comment,
     });
