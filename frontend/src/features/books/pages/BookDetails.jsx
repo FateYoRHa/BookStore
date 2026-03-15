@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useRef } from "react";
 import { useBook } from "../hooks/book_hooks.js";
 import { useAddCart } from "@/features/cart/hooks/cart_hooks.js";
+import { usePostReivew } from "@/features/reviews/hooks/review_hooks.js";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card.jsx";
 import { Button } from "@/components/ui/button.jsx";
@@ -10,7 +11,6 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Rating } from "@/components/rating";
 import { ShoppingCart } from "lucide-react";
 import { Separator } from "@/components/ui/separator.jsx";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Carousel,
   CarouselContent,
@@ -20,16 +20,21 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import BookDetailSkeleton from "./components/BookDetailSkeleton.jsx";
+import ReviewForm from "@/features/reviews/pages/ReviewForm.jsx";
 const BookDetails = () => {
   const { id } = useParams();
   const { data: book, isLoading, error } = useBook(id);
   const { mutate: addToCart, isPending } = useAddCart();
+  const { mutate: postReview } = usePostReivew(book?._id);
 
   const inventory = book?.inventory;
   const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
   const reviews = book?.reviews;
   const ratings = reviews?.map((review) => review.rating);
   const rating = ratings?.reduce((a, b) => a + b, 0) / ratings?.length;
+  const handleReviewSubmit = (reviewData) => {
+    postReview(reviewData);
+  };
 
   const handleAdd = () => {
     addToCart({
@@ -37,7 +42,6 @@ const BookDetails = () => {
       quantity: 1,
     });
   };
-
   if (error) return <p>Error loading book.</p>;
   return (
     <main className="container relative max-w-7xl mx-auto px-6 py-16 md:py-24">
@@ -143,11 +147,8 @@ const BookDetails = () => {
           <Separator />
           {/* Reviews Section */}
           <Card className="space-y-6 mt-10">
-            <CardContent>
-              <h2 className="text-2xl font-semibold">Reviews</h2>
-              <Textarea placeholder="Write a review" />
-              <Button className="mt-5 float-end">Submit Review</Button>
-            </CardContent>
+            {/* WRITE REVIEW */}
+            <ReviewForm book={book?._id} onSubmitReview={handleReviewSubmit} />
             <CardContent className="space-y-4">
               {reviews?.map((review) => (
                 <div
@@ -156,11 +157,18 @@ const BookDetails = () => {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Avatar>
-                        <AvatarImage
-                          src="https://github.com/shadcn.png"
-                          alt="@shadcn"
-                          className="grayscale"
-                        />
+                        {review?.customer?.image?.url == null ? (
+                          <AvatarImage
+                            src="https://github.com/shadcn.png"
+                            alt="@shadcn"
+                            className="grayscale"
+                          />
+                        ) : (
+                          <AvatarImage
+                            src={review?.customer?.image?.url}
+                            alt={review?.customer?.name}
+                          />
+                        )}
                       </Avatar>
                       <span className="font-medium">
                         {review?.customer?.name}
