@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useRef } from "react";
 import { useBook } from "../hooks/book_hooks.js";
 import { useAddCart } from "@/features/cart/hooks/cart_hooks.js";
-import { usePostReivew } from "@/features/reviews/hooks/review_hooks.js";
+import { usePostReview } from "@/features/reviews/hooks/review_hooks.js";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card.jsx";
 import { Button } from "@/components/ui/button.jsx";
@@ -21,11 +21,12 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import BookDetailSkeleton from "./components/BookDetailSkeleton.jsx";
 import ReviewForm from "@/features/reviews/pages/ReviewForm.jsx";
+import ReviewList from "@/features/reviews/pages/ReviewList.jsx";
 const BookDetails = () => {
   const { id } = useParams();
   const { data: book, isLoading, error } = useBook(id);
   const { mutate: addToCart, isPending } = useAddCart();
-  const { mutate: postReview } = usePostReivew(book?._id);
+  const { mutate: postReview } = usePostReview(book?._id);
 
   const inventory = book?.inventory;
   const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
@@ -149,39 +150,7 @@ const BookDetails = () => {
           <Card className="space-y-6 mt-10">
             {/* WRITE REVIEW */}
             <ReviewForm book={book?._id} onSubmitReview={handleReviewSubmit} />
-            <CardContent className="space-y-4">
-              {reviews?.map((review) => (
-                <div
-                  key={review?.customer?._id}
-                  className="p-4 border border-gray-200 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Avatar>
-                        {review?.customer?.image?.url == null ? (
-                          <AvatarImage
-                            src="https://github.com/shadcn.png"
-                            alt="@shadcn"
-                            className="grayscale"
-                          />
-                        ) : (
-                          <AvatarImage
-                            src={review?.customer?.image?.url}
-                            alt={review?.customer?.name}
-                          />
-                        )}
-                      </Avatar>
-                      <span className="font-medium">
-                        {review?.customer?.name}
-                      </span>
-                    </div>
-                    <span className="text-yellow-400">
-                      {"⭐".repeat(review?.rating)}
-                    </span>
-                  </div>
-                  <p className="">{review?.comment}</p>
-                </div>
-              ))}
-            </CardContent>
+            <ReviewList reviews={reviews} />
           </Card>
         </div>
       )}
