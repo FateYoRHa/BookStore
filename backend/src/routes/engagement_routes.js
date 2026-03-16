@@ -15,7 +15,7 @@ router.put("/wishlist/remove/", customerOnly, wishlist.removeFromWishlist);
 
 // REVIEW
 router.post("/review/", customerOnly, review.addReview);
-router.put("/review/:id", customerOnly, review.updateReview);
+router.put("/review", customerOnly, review.updateReview);
 
 // NEWSLETTER
 router.post("/newsletter/", newsletter.createNewsLetter);
