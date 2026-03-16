@@ -2,7 +2,10 @@ import { useParams } from "react-router-dom";
 import { useRef } from "react";
 import { useBook } from "../hooks/book_hooks.js";
 import { useAddCart } from "@/features/cart/hooks/cart_hooks.js";
-import { usePostReview } from "@/features/reviews/hooks/review_hooks.js";
+import {
+  usePostReview,
+  usePutReview,
+} from "@/features/reviews/hooks/review_hooks.js";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card.jsx";
 import { Button } from "@/components/ui/button.jsx";
@@ -22,12 +25,16 @@ import Autoplay from "embla-carousel-autoplay";
 import BookDetailSkeleton from "./components/BookDetailSkeleton.jsx";
 import ReviewForm from "@/features/reviews/pages/ReviewForm.jsx";
 import ReviewList from "@/features/reviews/pages/ReviewList.jsx";
+import UpdateReviewForm from "@/features/reviews/pages/UpdateReviewForm.jsx";
+
+import { useAuthStore } from "@/features/auth/store/authStore.js";
 const BookDetails = () => {
   const { id } = useParams();
   const { data: book, isLoading, error } = useBook(id);
   const { mutate: addToCart, isPending } = useAddCart();
   const { mutate: postReview } = usePostReview(book?._id);
-
+  const { mutate: putReview } = usePutReview(book?._id);
+  const customerId = useAuthStore((state) => state.customer).customer._id;
   const inventory = book?.inventory;
   const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
   const reviews = book?.reviews;
@@ -36,6 +43,9 @@ const BookDetails = () => {
   const handleReviewSubmit = (reviewData) => {
     postReview(reviewData);
   };
+  const handleUpdateReviewSubmit = (reviewData) => {
+    putReview(reviewData);
+  };
 
   const handleAdd = () => {
     addToCart({
@@ -43,6 +53,15 @@ const BookDetails = () => {
       quantity: 1,
     });
   };
+  let hasReview = false;
+  let reviewId = null;
+
+  reviews?.map((review) => {
+    if (review?.customer?._id === customerId) {
+      reviewId = review?._id;
+      hasReview = true;
+    }
+  });
   if (error) return <p>Error loading book.</p>;
   return (
     <main className="container relative max-w-7xl mx-auto px-6 py-16 md:py-24">
@@ -149,7 +168,19 @@ const BookDetails = () => {
           {/* Reviews Section */}
           <Card className="space-y-6 mt-10">
             {/* WRITE REVIEW */}
-            <ReviewForm book={book?._id} onSubmitReview={handleReviewSubmit} />
+            {hasReview ? (
+              <UpdateReviewForm
+                id={reviewId}
+                onSubmitReview={handleUpdateReviewSubmit}
+                hasReview={hasReview}
+              />
+            ) : (
+              <ReviewForm
+                book={book?._id}
+                onSubmitReview={handleReviewSubmit}
+                hasReview={hasReview}
+              />
+            )}
             <ReviewList reviews={reviews} />
           </Card>
         </div>
