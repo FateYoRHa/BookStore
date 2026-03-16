@@ -2,7 +2,7 @@ import * as reviewService from "../../services/engagement/review_services.js";
 
 export async function addReview(req, res) {
   try {
-    const userId = req.user.id
+    const userId = req.user.id;
     const { book, rating, comment } = req.body;
     const review = await reviewService.addReviewService({
       book,
@@ -19,12 +19,9 @@ export async function addReview(req, res) {
 
 export async function updateReview(req, res) {
   try {
-    const { book, customer, rating, comment } = req.body;
-    const id = req.params.id;
+    const { id, rating, comment } = req.body;
     const review = await reviewService.updateReviewService({
       id,
-      book,
-      customer,
       rating,
       comment,
     });
