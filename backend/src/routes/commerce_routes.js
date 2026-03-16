@@ -4,13 +4,9 @@ import * as orders from "../controllers/commerce/orders_controller.js";
 import * as cart from "../controllers/commerce/carts_controller.js";
 import * as payment from "../controllers/commerce/payments_controller.js";
 
-import { authenticate } from "../middleware/authenticate.js";
-import { authorize } from "../middleware/authorize.js";
+import { adminOnly, customerOnly } from "../middleware/roles.js";
 
 const router = express.Router();
-
-const adminOnly = [authenticate, authorize("admin")];
-const customerOnly = [authenticate, authorize("customer")];
 
 // CARTS
 router.get("/cart", customerOnly, cart.getCart);
