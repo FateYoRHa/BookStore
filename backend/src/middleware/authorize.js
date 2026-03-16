@@ -9,7 +9,7 @@ export function authorize(...roles) {
       }
 
       if (!roles || !roles.includes(user.role)) {
-        const error = new Error("Unauthorized");
+        const error = new Error("Forbidden");
         error.status = 403;
         throw error;
       }
