@@ -20,6 +20,8 @@ import CustomerOrders from "@/features/orders/pages/CustomerOrders";
 
 import Categories from "@/features/categories/pages/Categories";
 
+import CustomerWishlist from "@/features/wishlist/pages/CustomerWishlist";
+
 export default function AppRouter() {
   return (
     <Routes>
@@ -33,6 +35,7 @@ export default function AppRouter() {
       <Route path="/customer/orders" element={<CustomerOrders />} />
 
       <Route path="/categories" element={<Categories />} />
+      <Route path="/wishlist" element={<CustomerWishlist />} />
 
       <Route path="/books" element={<Books />} />
       <Route path="/books/:id" element={<BookDetails />} />
