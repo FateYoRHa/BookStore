@@ -34,16 +34,16 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(rateLimit);
 // AUTH
-app.use("/auth/", authRoutes);
+app.use("/auth", authRoutes);
 //routes
 
-app.use("/core/", coreRoutes);
+app.use("/core", coreRoutes);
 
 // COMMERCE
-app.use("/commerce/", commerceRoutes);
+app.use("/commerce", commerceRoutes);
 // CONTENT
-app.use("/content/", contentRoutes);
-app.use("/engagement/", engagementRoutes);
+app.use("/content", contentRoutes);
+app.use("/engagement", engagementRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
