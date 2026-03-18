@@ -180,6 +180,9 @@ export default function NavBar() {
                 <DropdownMenuItem asChild>
                   <Link to="/customer/orders">Orders</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/wishlist">Wishlist</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Logout />
                 </DropdownMenuItem>
