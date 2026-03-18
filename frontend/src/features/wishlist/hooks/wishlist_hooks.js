@@ -1,6 +1,10 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { addWishlistRequest, getWishlistRequest } from "../api/wishlist";
+import {
+  addWishlistRequest,
+  getWishlistRequest,
+  removeFromWishlistRequest,
+} from "../api/wishlist";
 import { useAuthStore } from "@/features/auth/store/authStore";
 
 export const useAddWishlist = () => {
@@ -25,5 +29,18 @@ export const useGetWishlist = () => {
     enabled: !!user, // only runs when logged in
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useRemoveFromWishlist = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (book) => removeFromWishlistRequest(book),
+    onSuccess: () => {
+      // Refetch cart after adding item
+      queryClient.invalidateQueries(["wishlist"]);
+      toast.success("Book removed from wishlist.");
+    },
   });
 };
