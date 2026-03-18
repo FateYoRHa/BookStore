@@ -5,6 +5,7 @@ const wishlistSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
       required: true,
+      unique: true,
     },
     books: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
   },
