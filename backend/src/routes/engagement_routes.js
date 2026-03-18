@@ -10,6 +10,7 @@ const router = express.Router();
 // WISHLIST
 router.put("/wishlist", customerOnly, wishlist.addToWishlist);
 router.put("/wishlist/remove", customerOnly, wishlist.removeFromWishlist);
+router.get("/wishlist", customerOnly, wishlist.wishlist);
 
 // REVIEW
 router.post("/review", customerOnly, review.addReview);
