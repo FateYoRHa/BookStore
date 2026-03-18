@@ -1,15 +1,12 @@
-import { Wishlist, Book } from "../../model/index.js";
+import { Wishlist, Customer } from "../../model/index.js";
 
 export async function addToWishlistService(wishlist) {
-  const { customer, books } = wishlist;
+  const { userId, book } = wishlist;
+  const customer = await Customer.findOne({ user: userId }, { _id: 1 });
   const addToWishlist = await Wishlist.findOneAndUpdate(
-    { customer: customer },
+    { customer: customer._id },
     {
-      $addToSet: {
-        books: {
-          $each: books,
-        },
-      },
+      $addToSet: { books: book },
     },
     { upsert: true, new: true },
   );
@@ -17,10 +14,10 @@ export async function addToWishlistService(wishlist) {
 }
 
 export async function removeFromWishlistService(wishlist) {
-  const { customer, book } = wishlist;
-  console.log(book)
+  const { userId, book } = wishlist;
+  const customer = await Customer.findOne({ user: userId }, { _id: 1 });
   const addToWishlist = await Wishlist.findOneAndUpdate(
-    { customer: customer },
+    { customer: customer._id },
     {
       $pull: {
         books: book,
@@ -29,4 +26,19 @@ export async function removeFromWishlistService(wishlist) {
     { new: true },
   );
   return addToWishlist;
+}
+
+export async function wishlistService(id) {
+  const customer = await Customer.findOne({ user: id }, { _id: 1 });
+  let wishlist = await Wishlist.findOne({ customer: customer._id }).populate({
+    path: "books",
+    populate: [{ path: "images" }, { path: "author", select: "penName" }],
+  });
+  if (!wishlist) {
+    wishlist = await Wishlist.create({
+      customer: customer._id,
+      books: [],
+    });
+  }
+  return wishlist;
 }
