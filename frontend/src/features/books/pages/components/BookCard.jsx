@@ -1,19 +1,26 @@
 import { cn } from "@/lib/utils";
 import { useAddCart } from "@/features/cart/hooks/cart_hooks";
+import { useAddWishlist } from "@/features/wishlist/hooks/wishlist_hooks";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { ShoppingBasket } from "lucide-react";
+import { ShoppingBasket, BookPlus } from "lucide-react";
 
 import { Link } from "react-router-dom";
 export const BookCard = ({ book, className, ...props }) => {
   // * add to cart usecase
   const { mutate: addToCart, isPending } = useAddCart();
+  const { mutate: addToWishlist, isAdding } = useAddWishlist();
 
   const handleAdd = () => {
     addToCart({
       book: book?._id,
       quantity: 1,
+    });
+  };
+  const handleWishlist = () => {
+    addToWishlist({
+      book: book?._id,
     });
   };
   return (
@@ -23,17 +30,14 @@ export const BookCard = ({ book, className, ...props }) => {
         className,
       )}
       {...props}>
-      {/* 
-      CardContent adds padding automatically
-      p-4 ensures internal spacing
-      */}
-      {/* Book Title */}
+      {/* Clickable book area */}
       <Link to={`/books/${book.bookCode}`}>
         <CardTitle className="text-center">
           <h3 className="font-semibold">{book.title}</h3>
         </CardTitle>
-        <CardContent className="p-4 flex flex-col gap-4 flex-grow">
-          {/* Book Image Placeholder */}
+
+        <CardContent className="p-4 flex flex-col gap-3 flex-grow">
+          {/* Book Image */}
           <AspectRatio className="overflow-hidden rounded-md">
             <img
               className="aspect-[3/4] w-full h-full object-cover"
@@ -42,22 +46,27 @@ export const BookCard = ({ book, className, ...props }) => {
             />
           </AspectRatio>
 
+          {/* Author */}
           <p className="text-sm text-muted-foreground">
             by: {book.author.penName}
           </p>
-          {/* Author */}
+
+          {/* Price under author */}
+          <span className="font-bold">${book.price}</span>
         </CardContent>
       </Link>
-      <CardFooter className="flex justify-between items-center mt-auto">
-        {/* 
-          mt-auto pushes this section to bottom
-          (because parent is flex column)
-        */}
 
-        {/* Price + Button Row */}
-        <span className="font-bold">${book.price}</span>
-        <Button size="xs" className="bg-green-500" onClick={handleAdd}>
+      {/* Buttons section */}
+      <CardFooter className="flex flex-col gap-2 mt-auto">
+        <Button size="xs" className="bg-green-500 w-full" onClick={handleAdd}>
           <ShoppingBasket /> {isPending ? "Adding" : "Add to Cart"}
+        </Button>
+
+        <Button
+          size="xs"
+          className="bg-neutral-500 w-full"
+          onClick={handleWishlist}>
+          <BookPlus /> Add to Wishlist
         </Button>
       </CardFooter>
     </Card>
