@@ -9,3 +9,8 @@ export const getWishlistRequest = async () => {
   const response = await api.get("/engagement/wishlist");
   return response.data;
 };
+
+export const removeFromWishlistRequest = async (book) => {
+  const response = await api.put("/engagement/wishlist/remove", book);
+  return response.data;
+};
