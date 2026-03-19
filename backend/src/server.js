@@ -12,6 +12,7 @@ import commerceRoutes from "./routes/commerce_routes.js";
 import coreRoutes from "./routes/core_routes.js";
 import contentRoutes from "./routes/content_routes.js";
 import engagementRoutes from "./routes/engagement_routes.js";
+import adminRoutes from "./routes/admin_routes.js";
 
 dotenv.config();
 
@@ -35,6 +36,8 @@ app.use(cookieParser());
 app.use(rateLimit);
 // AUTH
 app.use("/auth", authRoutes);
+// ADMIN
+app.use("/admin", adminRoutes);
 //routes
 
 app.use("/core", coreRoutes);
