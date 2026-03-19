@@ -2,11 +2,9 @@ import express from "express";
 import * as homePageSection from "../controllers/content/homepagesections_controller.js";
 import * as bannerSection from "../controllers/content/banners_controller.js";
 import * as featuredItem from "../controllers/content/featureditems_controller.js";
-import * as media from "../controllers/content/media_controller.js";
 
 import { authenticate } from "../middleware/authenticate.js";
 
-import { adminOnly } from "../middleware/roles.js";
 
 const router = express.Router();
 // Homepage Section
