@@ -17,7 +17,7 @@ router.post("/checkout", customerOnly, cart.checkout);
 // ORDERS
 router.post("/orders", customerOnly, orders.addOrder);
 router.get("/customer/orders", customerOnly, orders.getCustomerOrders);
-router.put("/orders/:id", adminOnly, orders.updateOrder);
+
 // PAYMENT
 router.post("/payment", customerOnly, payment.checkout);
 router.post("/payment/webhook", payment.paymentWebhook);
