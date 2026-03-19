@@ -5,20 +5,24 @@ import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ShoppingBasket, BookPlus } from "lucide-react";
+import { useRequireLogin } from "@/components/utils/requireLogin";
 
 import { Link } from "react-router-dom";
 export const BookCard = ({ book, className, ...props }) => {
   // * add to cart usecase
   const { mutate: addToCart, isPending } = useAddCart();
   const { mutate: addToWishlist, isAdding } = useAddWishlist();
+  const requireLogin = useRequireLogin();
 
   const handleAdd = () => {
+    if (!requireLogin()) return;
     addToCart({
       book: book?._id,
       quantity: 1,
     });
   };
   const handleWishlist = () => {
+    if (!requireLogin()) return;
     addToWishlist({
       book: book?._id,
     });

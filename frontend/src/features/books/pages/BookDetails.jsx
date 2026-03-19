@@ -28,12 +28,14 @@ import ReviewList from "@/features/reviews/pages/ReviewList.jsx";
 import UpdateReviewForm from "@/features/reviews/pages/UpdateReviewForm.jsx";
 
 import { useAuthStore } from "@/features/auth/store/authStore.js";
+import { useRequireLogin } from "@/components/utils/requireLogin.js";
 const BookDetails = () => {
   const { id } = useParams();
   const { data: book, isLoading, error } = useBook(id);
   const { mutate: addToCart, isPending } = useAddCart();
   const { mutate: postReview } = usePostReview(book?._id);
   const { mutate: putReview } = usePutReview(book?._id);
+  const requireLogin = useRequireLogin();
   const customer = useAuthStore((state) => state.customer);
   const inventory = book?.inventory;
   const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
@@ -41,13 +43,16 @@ const BookDetails = () => {
   const ratings = reviews?.map((review) => review.rating);
   const rating = ratings?.reduce((a, b) => a + b, 0) / ratings?.length;
   const handleReviewSubmit = (reviewData) => {
+    if (!requireLogin()) return;
     postReview(reviewData);
   };
   const handleUpdateReviewSubmit = (reviewData) => {
+    if (!requireLogin()) return;
     putReview(reviewData);
   };
 
   const handleAdd = () => {
+    if (!requireLogin()) return;
     addToCart({
       book: book?._id,
       quantity: 1,
