@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { useBook } from "../hooks/book_hooks.js";
 import { useAddCart } from "@/features/cart/hooks/cart_hooks.js";
@@ -34,7 +34,7 @@ const BookDetails = () => {
   const { mutate: addToCart, isPending } = useAddCart();
   const { mutate: postReview } = usePostReview(book?._id);
   const { mutate: putReview } = usePutReview(book?._id);
-  const customerId = useAuthStore((state) => state.customer).customer._id;
+  const customer = useAuthStore((state) => state.customer);
   const inventory = book?.inventory;
   const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
   const reviews = book?.reviews;
@@ -56,12 +56,14 @@ const BookDetails = () => {
   let hasReview = false;
   let reviewId = null;
 
-  reviews?.map((review) => {
-    if (review?.customer?._id === customerId) {
-      reviewId = review?._id;
-      hasReview = true;
-    }
-  });
+  if (customer) {
+    reviews?.map((review) => {
+      if (review?.customer?._id === customer.customer._id) {
+        reviewId = review?._id;
+        hasReview = true;
+      }
+    });
+  }
   if (error) return <p>Error loading book.</p>;
   return (
     <main className="container relative max-w-7xl mx-auto px-6 py-16 md:py-24">
