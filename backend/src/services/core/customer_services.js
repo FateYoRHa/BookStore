@@ -4,9 +4,6 @@ import { uploadToCloudinary } from "../content/media_services.js";
 import cloudinary from "../../config/cloudinary.js";
 import { uploadPresets } from "../../utis/uploadPresets.js";
 
-export async function getCustomersService() {
-  return await Customer.find().sort({ createdAt: "asc" });
-}
 export async function getCustomerService(id) {
   try {
     const customer = await Customer.findOne({ user: id }).populate(
