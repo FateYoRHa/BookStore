@@ -1,5 +1,5 @@
-import { BookImage } from "../../model/index.js";
-import cloudinary from "../../config/cloudinary.js";
+import { BookImage } from "../../../model/index.js";
+import cloudinary from "../../../config/cloudinary.js";
 
 export async function attachImagesToBookService(bookId, images) {
   if (!Array.isArray(images) || images.length === 0) {
