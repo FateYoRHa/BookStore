@@ -1,6 +1,4 @@
-import { Book, Author, Category } from "../../model/index.js";
-import * as mediaServices from "../../services/content/media_services.js";
-import * as inventoryService from "../../services/core/inventory_services.js";
+import { Book, Category } from "../../model/index.js";
 
 export async function getBooksService(filters) {
   try {
