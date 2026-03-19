@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import AdminRoutes from "./AdminRoutes";
 import LoginPage from "../features/auth/pages/AuthPage";
 
 import HomePage from "@/features/homepage/pages/HomePage";
@@ -29,13 +30,34 @@ export default function AppRouter() {
 
       <Route path="/login" element={<LoginPage />} />
 
-      <Route path="/profile" element={<Profile />} />
+      <Route
+        path="/profile"
+        element={
+          <AdminRoutes>
+            <Profile />
+          </AdminRoutes>
+        }
+      />
 
-      <Route path="/cart" element={<Cart />} />
+      <Route
+        path="/cart"
+        element={
+          <AdminRoutes>
+            <Cart />
+          </AdminRoutes>
+        }
+      />
       <Route path="/customer/orders" element={<CustomerOrders />} />
 
       <Route path="/categories" element={<Categories />} />
-      <Route path="/wishlist" element={<CustomerWishlist />} />
+      <Route
+        path="/wishlist"
+        element={
+          <AdminRoutes>
+            <CustomerWishlist />
+          </AdminRoutes>
+        }
+      />
 
       <Route path="/books" element={<Books />} />
       <Route path="/books/:id" element={<BookDetails />} />
