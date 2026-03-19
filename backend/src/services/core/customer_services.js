@@ -1,4 +1,4 @@
-import { Customer, Order } from "../../model/index.js";
+import { Customer } from "../../model/index.js";
 import * as orderService from "../../services/commerce/order_services.js";
 import { uploadToCloudinary } from "../content/media_services.js";
 import cloudinary from "../../config/cloudinary.js";
