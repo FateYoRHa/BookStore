@@ -1,4 +1,4 @@
-import * as mediaService from "../../../services/content/media_services.js";
+import * as mediaService from "../../../services/admin/content/admin_media_services.js";
 
 export async function attachImagesToBook(req, res) {
   try {
