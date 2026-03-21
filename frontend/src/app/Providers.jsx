@@ -15,7 +15,7 @@ export default function Providers({ children }) {
     <QueryClientProvider client={queryClient}>
       {/* Enables routing system */}
       <BrowserRouter>
-        <div className="min-h-screen bg-muted">
+        <div className="bg-muted">
           {/* Renders whatever component is passed (AppRouter) */}
           {children}
         </div>
