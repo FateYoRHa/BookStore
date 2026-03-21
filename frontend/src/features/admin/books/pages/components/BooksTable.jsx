@@ -11,7 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash } from "lucide-react";
 
+import { useGetAdminBooks } from "../../hooks/admin_books_hooks";
+
 const BooksTable = ({ books = [], onEdit, onDelete }) => {
+  const { data, isPending } = useGetAdminBooks();
   /*Formats a date into a readable string. Used for publicationDate column.*/
   const formatDate = (date) => {
     if (!date) return "-"; // fallback if null/undefined
@@ -22,7 +25,7 @@ const BooksTable = ({ books = [], onEdit, onDelete }) => {
   const formatPrice = (price) => {
     return `₱${price?.toLocaleString()}`;
   };
-
+  books = data;
   const rows = useMemo(() => books, [books]);
 
   return (
@@ -44,7 +47,7 @@ const BooksTable = ({ books = [], onEdit, onDelete }) => {
         <TableBody>
           {/* If no data, show empty state */}
 
-          {rows.length === 0 ? (
+          {rows?.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8}>
                 <div className="flex min-h-[400px] items-center justify-center text-muted-foreground">
@@ -53,7 +56,7 @@ const BooksTable = ({ books = [], onEdit, onDelete }) => {
               </TableCell>
             </TableRow>
           ) : (
-            rows.map((book) => {
+            rows?.map((book) => {
               const imageUrl =
                 book?.images?.[0]?.url || "https://via.placeholder.com/40";
 
@@ -82,7 +85,7 @@ const BooksTable = ({ books = [], onEdit, onDelete }) => {
                   <TableCell>{book.bookCode}</TableCell>
 
                   {/* AUTHOR (populated from backend) */}
-                  <TableCell>{book.author?.name || "—"}</TableCell>
+                  <TableCell>{book.author?.penName || "—"}</TableCell>
 
                   {/* CATEGORIES (array of populated category objects) */}
                   <TableCell>
@@ -106,10 +109,14 @@ const BooksTable = ({ books = [], onEdit, onDelete }) => {
                   <TableCell>
                     <Badge
                       variant={
-                        book.inventory?.stock > 0 ? "default" : "destructive"
+                        book?.inventory?.quantity === 0
+                          ? "destructive"
+                          : book?.inventory?.quantity < 10
+                            ? "warning"
+                            : "default"
                       }>
                       {/* fallback to 0 if inventory is missing */}
-                      {book.inventory?.stock ?? 0}
+                      {book?.inventory?.quantity ?? 0}
                     </Badge>
                   </TableCell>
 
