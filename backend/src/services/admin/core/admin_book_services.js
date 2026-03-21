@@ -1,6 +1,17 @@
-import { Book, Author, Category } from "../../../model/index.js";
-import * as mediaServices from "../content/admin_media_services";
+import { Book, Author } from "../../../model/index.js";
+import * as mediaServices from "../content/admin_media_services.js";
 import * as inventoryService from "../core/admin_inventory_services.js";
+
+export async function getAdminBooksService() {
+  // TODO filter
+  const books = await Book.find()
+    .populate("author", "penName")
+    .populate("categories", "name")
+    .populate("inventory")
+    .populate("images");
+
+  return books;
+}
 
 export async function createBookWithAssets(book) {
   try {

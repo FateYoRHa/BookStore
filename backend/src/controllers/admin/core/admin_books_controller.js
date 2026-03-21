@@ -1,4 +1,16 @@
-import * as bookService from "../../../services/core/book_services.js";
+import * as adminBookService from "../../../services/admin/core/admin_book_services.js";
+
+export async function getAdminBooks(req, res) {
+  try {
+    // TODO filter
+    const books = await adminBookService.getAdminBooksService();
+    res.status(200).json(books);
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error." });
+  }
+}
 
 export async function addBook(req, res) {
   try {
@@ -16,7 +28,7 @@ export async function addBook(req, res) {
       language,
     } = req.body;
 
-    const newBook = await bookService.createBookWithAssets({
+    const newBook = await adminBookService.createBookWithAssets({
       title,
       description,
       authorCode,
@@ -51,7 +63,7 @@ export async function updateBook(req, res) {
       price,
     } = req.body;
     const bookCode = req.params.id;
-    const updatedBook = await bookService.updateBookService({
+    const updatedBook = await adminBookService.updateBookService({
       bookCode,
       title,
       description,
