@@ -1,5 +1,11 @@
 import { Author, Book } from "../../../model/index.js";
 
+export async function getAdminAuthorsService() {}
+export async function getAdminAuthorsServiceList() {
+  const authors = await Author.find({}, "authorCode penName");
+  return authors;
+}
+
 export async function addAuthorService(author) {
   const { penName, bio } = author;
   const newAuthor = new Author({

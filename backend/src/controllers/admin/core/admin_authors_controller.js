@@ -1,6 +1,27 @@
 import { Author, Book } from "../../../model/index.js";
 import * as adminAuthorService from "../../../services/admin/core/admin_author_services.js";
 
+export async function getAdminAuthors(req, res) {
+  try {
+    const authors = await adminAuthorService.getAdminAuthorsService();
+    res.status(200).json(authors);
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error." });
+  }
+}
+export async function getAdminAuthorsList(req, res) {
+  try {
+    const authors = await adminAuthorService.getAdminAuthorsServiceList();
+    res.status(200).json(authors);
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error." });
+  }
+}
+
 export async function addAuthor(req, res) {
   try {
     const { penName, bio } = req.body;
