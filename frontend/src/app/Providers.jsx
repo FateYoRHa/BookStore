@@ -4,7 +4,6 @@ import { Toaster } from "react-hot-toast";
 import { Toaster as Toast } from "sonner";
 import { queryClient } from "../services/queryClient.js";
 
-import NavBar from "@/components/NavBar.jsx";
 
 // This file wraps GLOBAL providers.
 // Anything that should exist across the whole app goes here.
@@ -16,7 +15,6 @@ export default function Providers({ children }) {
     <QueryClientProvider client={queryClient}>
       {/* Enables routing system */}
       <BrowserRouter>
-        <NavBar />
         <div className="min-h-screen bg-muted">
           {/* Renders whatever component is passed (AppRouter) */}
           {children}
