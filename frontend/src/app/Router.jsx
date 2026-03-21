@@ -29,11 +29,10 @@ import CustomerWishlist from "@/features/wishlist/pages/CustomerWishlist";
 import AdminLayout from "./AdminLayout";
 import RouteGuard from "./RouteGuard";
 import AdminDashboard from "@/features/admin/dashboard/AdminDashboard";
-import BooksTable from "@/features/admin/books/BooksTable";
-import AuthorsTable from "@/features/admin/authors/AuthorsTable";
-import CategoriesTable from "@/features/admin/categories/CategoriesTable";
-import OrdersTable from "@/features/admin/orders/OrdersTable";
-
+import AdminBooks from "@/features/admin/books/pages/AdminBooks";
+import AdminAuthors from "@/features/admin/authors/pages/AdminAuthors";
+import AdminCategories from "@/features/admin/categories/pages/AdminCategories";
+import AdminOrders from "@/features/admin/orders/pages/AdminOrders";
 export default function AppRouter() {
   return (
     <Routes>
@@ -96,7 +95,7 @@ export default function AppRouter() {
           path="/admin/books"
           element={
             <RouteGuard>
-              <BooksTable />
+              <AdminBooks />
             </RouteGuard>
           }
         />
@@ -104,7 +103,7 @@ export default function AppRouter() {
           path="/admin/authors"
           element={
             <RouteGuard>
-              <AuthorsTable />
+              <AdminAuthors />
             </RouteGuard>
           }
         />
@@ -112,7 +111,7 @@ export default function AppRouter() {
           path="/admin/categories"
           element={
             <RouteGuard>
-              <CategoriesTable />
+              <AdminCategories />
             </RouteGuard>
           }
         />
@@ -120,7 +119,7 @@ export default function AppRouter() {
           path="/admin/orders"
           element={
             <RouteGuard>
-              <OrdersTable />
+              <AdminOrders />
             </RouteGuard>
           }
         />
