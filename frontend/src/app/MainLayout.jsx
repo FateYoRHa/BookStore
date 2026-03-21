@@ -5,8 +5,10 @@ export default function MainLayout() {
   return (
     <>
       <NavBar />
-      <div className="min-h-screen bg-muted">
-        <Outlet />
+      <div className="flex flex-col min-h-screen bg-background">
+        <main className="flex-1">
+          <Outlet />
+        </main>
       </div>
     </>
   );
