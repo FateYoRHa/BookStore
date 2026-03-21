@@ -109,7 +109,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/admin/category"
+          path="/admin/categories"
           element={
             <RouteGuard>
               <CategoriesTable />
