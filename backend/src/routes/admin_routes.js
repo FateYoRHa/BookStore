@@ -13,6 +13,7 @@ import { adminOnly } from "../middleware/roles.js";
 const router = express.Router();
 
 // BOOKS
+router.get("/books", adminOnly, adminBooks.getAdminBooks);
 router.post("/books", adminOnly, adminBooks.addBook);
 router.put("/books/:id", adminOnly, adminBooks.updateBook);
 
