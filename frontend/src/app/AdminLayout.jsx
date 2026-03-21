@@ -11,10 +11,10 @@ export default function AdminLayout() {
         "--header-height": "calc(var(--spacing) * 12)",
       }}>
       <DashboardSidebar variant="inset" />
-      <SidebarInset>
+      <SidebarInset className="flex flex-col overflow-hidden">
         <DashboardHeader />
 
-        <div className="min-h-screen bg-muted">
+        <div className="flex-1 overflow-auto bg-muted">
           <Outlet />
         </div>
       </SidebarInset>
