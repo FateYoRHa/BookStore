@@ -1,14 +1,5 @@
-import {
-  CircleGauge,
-  LibraryBig,
-  Users,
-  ChartBarStacked,
-  Leaf,
-  Settings,
-  Package,
-  User,
-} from "lucide-react";
-
+import { adminRoutes } from "../util/adminRoutes";
+import { Leaf, User, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -30,34 +21,6 @@ import { Logout } from "@/features/auth/pages/forms/Logout";
 
 import { Link, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/authStore";
-
-const navItems = [
-  {
-    title: "Dashboard",
-    url: "/admin/dashboard",
-    icon: CircleGauge,
-  },
-  {
-    title: "Books",
-    url: "/admin/books",
-    icon: LibraryBig,
-  },
-  {
-    title: "Authors",
-    url: "/admin/authors",
-    icon: Users,
-  },
-  {
-    title: "Categories",
-    url: "/admin/categories",
-    icon: ChartBarStacked,
-  },
-  {
-    title: "Orders",
-    url: "/admin/orders",
-    icon: Package,
-  },
-];
 
 const DashboardSidebar = ({ ...props }) => {
   const location = useLocation();
@@ -101,7 +64,7 @@ const DashboardSidebar = ({ ...props }) => {
       {/* ================= CONTENT ================= */}
       <SidebarContent>
         <SidebarMenu className="px-2 py-2">
-          {navItems.map((item) => {
+          {adminRoutes.map((item) => {
             const isActive = location.pathname.startsWith(item.url);
 
             return (
