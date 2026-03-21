@@ -54,7 +54,7 @@ const DashboardSidebar = ({ ...props }) => {
                 to="/admin/dashboard"
                 className="flex items-center gap-2 text-sm font-semibold text-foreground">
                 <Leaf className="size-5 text-primary" />
-                <span className="tracking-tight">Leaf & Ledger</span>
+                <span className="tracking-tight text-primary">Leaf & Ledger</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
