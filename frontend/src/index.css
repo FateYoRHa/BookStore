@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* @custom-variant dark (&:is(.dark *)); */
+/* Theme mapping for shadcn / tailwind components */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -20,6 +20,9 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -38,8 +41,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -55,60 +58,68 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+
+/* ========== LIGHT MODE ========== */
 :root {
-  /* ========== BASE ========== */
-  --background: oklch(0.97 0.01 80); /* warm paper */
-  --foreground: oklch(0.23 0.02 250); /* soft ink */
+  /* Base */
+  --background: oklch(0.97 0.01 80);
+  --foreground: oklch(0.23 0.02 250); /* base text */
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.23 0.02 250);
+  --card-foreground: var(--foreground);
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.23 0.02 250);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
 
-  /* ========== PRIMARY (Deep Teal) ========== */
+  /* Primary / Secondary / Accent */
   --primary: oklch(0.42 0.11 200);
   --primary-foreground: oklch(0.98 0.01 80);
 
-  /* ========== SECONDARY (Soft Surface) ========== */
   --secondary: oklch(0.92 0.02 80);
   --secondary-foreground: oklch(0.35 0.03 250);
 
-  /* ========== ACCENT (Warm Highlight) ========== */
   --accent: oklch(0.75 0.14 85);
-  --accent-foreground: oklch(0.23 0.02 250);
+  --accent-foreground: var(--foreground);
 
-  /* ========== MUTED ========== */
+  /* Status */
   --muted: oklch(0.94 0.01 80);
   --muted-foreground: oklch(0.55 0.02 250);
 
-  /* ========== DESTRUCTIVE (Rich Red) ========== */
   --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.985 0 0);
+  --destructive-foreground: oklch(
+    0.15 0.02 25
+  ); /* dark red text for destructive button */
 
-  /* ========== BORDERS & INPUTS ========== */
+  --success: oklch(0.55 0.15 150);
+  --success-foreground: oklch(0.98 0.01 80); /* bright for success */
+  --warning: oklch(0.75 0.18 85);
+  --warning-foreground: oklch(0.15 0.02 85);
+  --info: oklch(0.65 0.15 230);
+  --info-foreground: oklch(0.15 0.02 230);
+
+  /* Borders / Inputs */
   --border: oklch(0.88 0.01 240);
   --input: oklch(0.9 0.01 240);
   --ring: oklch(0.55 0.12 200);
 
-  /* Optional Semantic Colors */
-  --success: oklch(0.55 0.15 150);
-  --warning: oklch(0.75 0.18 85);
-  --info: oklch(0.65 0.15 230);
-  
+  /* Charts */
   --chart-1: oklch(0.81 0.1 252);
   --chart-2: oklch(0.62 0.19 260);
   --chart-3: oklch(0.55 0.22 263);
   --chart-4: oklch(0.49 0.22 264);
   --chart-5: oklch(0.42 0.18 266);
+
+  /* Sidebar */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary-foreground: var(--sidebar-foreground);
   --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-accent-foreground: var(--sidebar-foreground);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Fonts */
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
@@ -117,106 +128,71 @@
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
+
+  /* Radius / Shadows */
   --radius: 0.625rem;
-  --shadow-x: 0;
-  --shadow-y: 1px;
-  --shadow-blur: 3px;
-  --shadow-spread: 0px;
-  --shadow-opacity: 0.1;
-  --shadow-color: oklch(0 0 0);
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-sm:
     0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow-md:
-    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-  --shadow-lg:
-    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-  --shadow-xl:
-    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
+  --shadow: var(--shadow-sm);
+  --shadow-md: 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-2xl: 0 25px 50px -12px hsl(0 0% 0% / 0.25);
+  /* Positive/Negative Colors */
+  --color-positive-light: oklch(0.8 0.15 140); /* light green background */
+  --color-positive: oklch(0.55 0.25 150); /* strong green text */
+
+  --color-negative-light: oklch(0.95 0.18 30); /* light red background */
+  --color-negative: oklch(0.55 0.25 25); /* dark red text */
 }
 
+/* ========== DARK MODE ========== */
 .dark {
-/* ========== BASE ========== */
   --background: oklch(0.16 0.01 250);
-  --foreground: oklch(0.97 0.01 80);
+  --foreground: oklch(0.97 0.01 80); /* base text light */
 
   --card: oklch(0.21 0.01 250);
-  --card-foreground: oklch(0.97 0.01 80);
+  --card-foreground: var(--foreground);
 
   --popover: oklch(0.25 0.01 250);
-  --popover-foreground: oklch(0.97 0.01 80);
+  --popover-foreground: var(--foreground);
 
-  /* ========== PRIMARY ========== */
   --primary: oklch(0.55 0.12 200);
-  --primary-foreground: oklch(0.15 0.01 250);
+  --primary-foreground: oklch(0.15 0.01 250); /* dark text on bright primary */
 
-  /* ========== SECONDARY ========== */
-  --secondary: oklch(0.30 0.02 250);
-  --secondary-foreground: oklch(0.95 0.01 80);
+  --secondary: oklch(0.3 0.02 250);
+  --secondary-foreground: var(--background);
 
-  /* ========== ACCENT ========== */
   --accent: oklch(0.65 0.15 85);
-  --accent-foreground: oklch(0.15 0.01 250);
+  --accent-foreground: var(--foreground);
 
-  /* ========== MUTED ========== */
   --muted: oklch(0.28 0.01 250);
   --muted-foreground: oklch(0.7 0 0);
 
-  /* ========== DESTRUCTIVE (Stronger for dark) ========== */
   --destructive: oklch(0.62 0.23 25);
-  --destructive-foreground: oklch(0.98 0 0);
+  --destructive-foreground: oklch(
+    0.97 0.01 80
+  ); /* white text on dark red button */
+
+  --success: oklch(0.6 0.16 150);
+  --warning: oklch(0.7 0.18 85);
+  --info: oklch(0.7 0.18 230);
 
   --border: oklch(0.32 0 0);
   --input: oklch(0.35 0 0);
   --ring: oklch(0.6 0.12 200);
 
-  --success: oklch(0.60 0.16 150);
-  --warning: oklch(0.70 0.18 85);
-  --info: oklch(0.70 0.18 230);
-
   --chart-1: oklch(0.81 0.1 252);
   --chart-2: oklch(0.62 0.19 260);
   --chart-3: oklch(0.55 0.22 263);
   --chart-4: oklch(0.49 0.22 264);
   --chart-5: oklch(0.42 0.18 266);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.275 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
-  --radius: 0.625rem;
-  --shadow-x: 0;
-  --shadow-y: 1px;
-  --shadow-blur: 3px;
-  --shadow-spread: 0px;
-  --shadow-opacity: 0.1;
-  --shadow-color: oklch(0 0 0);
-  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm:
-    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow-md:
-    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-  --shadow-lg:
-    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-  --shadow-xl:
-    0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  /* Positive/Negative Colors */
+  --color-positive-light: oklch(0.35 0.12 140); /* darker green bg */
+  --color-positive: oklch(0.85 0.1 140); /* bright green text */
+
+  --color-negative-light: oklch(0.6 0.18 25); /* dark red bg */
+  --color-negative: oklch(0.97 0.02 25); /* bright red text */
 }
