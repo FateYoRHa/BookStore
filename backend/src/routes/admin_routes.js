@@ -18,6 +18,7 @@ router.post("/books", adminOnly, adminBooks.addBook);
 router.put("/books/:id", adminOnly, adminBooks.updateBook);
 
 // AUTHORS
+router.get("/authors/list", adminOnly, adminAuthors.getAdminAuthorsList);
 router.post("/authors", adminOnly, adminAuthors.addAuthor);
 router.put("/authors/:id", adminOnly, adminAuthors.updateAuthor);
 router.delete("/authors/:id", adminOnly, adminAuthors.removeAuthor);
