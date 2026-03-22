@@ -10,6 +10,7 @@ import * as adminBanners from "../controllers/admin/content/admin_banners_contro
 import * as adminFeaturedItems from "../controllers/admin/content/admin_featureditems_controller.js";
 
 import { adminOnly } from "../middleware/roles.js";
+import { uploadImage, requireFiles } from "../middleware/upload.js";
 const router = express.Router();
 
 // BOOKS
@@ -56,6 +57,14 @@ router.post(
   "/media/attachimagetobook/:bookId/images",
   adminOnly,
   adminMedia.attachImagesToBook,
+);
+
+router.patch(
+  "/upload/images",
+  adminOnly,
+  uploadImage.array("images"),
+  requireFiles("Image"),
+  adminMedia.uploadImages,
 );
 
 // BANNERS
