@@ -18,3 +18,15 @@ export async function attachImagesToBook(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export async function uploadImages(req, res) {
+  try {
+    const files = req.files;
+    const urls = await mediaService.uploadImagesService(files);
+    res.json({ urls });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .json({ message: error.image || "Internal Server Error" });
+  }
+}

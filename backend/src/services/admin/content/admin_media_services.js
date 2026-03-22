@@ -47,3 +47,13 @@ export const uploadToCloudinary = async (
     stream.end(buffer);
   });
 };
+export async function uploadImagesService(files) {
+  if (!files) {
+    throw new Error("No file provided.");
+  }
+  const uploaded = await Promise.all(
+    files.map((file) => uploadToCloudinary(file.buffer, "books")),
+  );
+
+  return uploaded.map((img) => img.secure_url);
+}
