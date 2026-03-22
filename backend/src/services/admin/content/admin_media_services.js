@@ -1,4 +1,4 @@
-import { BookImage } from "../../../model/index.js";
+import { BookImage, Book } from "../../../model/index.js";
 import cloudinary from "../../../config/cloudinary.js";
 
 export async function attachImagesToBookService(bookId, images) {
@@ -14,7 +14,7 @@ export async function attachImagesToBookService(bookId, images) {
   const insertedImages = await BookImage.insertMany(
     images.map((img, index) => ({
       book: bookId,
-      url: img.url,
+      url: img,
       type: img.type || "cover",
       order: index,
     })),
