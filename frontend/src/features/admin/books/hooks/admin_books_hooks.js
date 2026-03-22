@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { getBooksAdminRequest } from "../api/admin_books";
+import { getBooksAdminRequest, putBookAdminRequest } from "../api/admin_books";
 
 export const useGetAdminBooks = () => {
   return useQuery({
@@ -8,5 +8,11 @@ export const useGetAdminBooks = () => {
     queryFn: () => getBooksAdminRequest(),
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateAdminBooks = () => {
+  return useMutation({
+    mutationFn: putBookAdminRequest,
   });
 };
