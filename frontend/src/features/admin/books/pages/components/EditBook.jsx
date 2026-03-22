@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import { useGetAdminAuthorsList } from "@/features/admin/authors/hooks/admin_author_hooks";
 import { updateBook } from "../../bookSchema";
 import { useUpdateAdminBooks } from "../../hooks/admin_books_hooks";
+import { uploadImages } from "@/services/uploadImages";
 
 const EditBook = ({ book, open, setOpen }) => {
   const { data: authors } = useGetAdminAuthorsList();
@@ -78,7 +79,9 @@ const EditBook = ({ book, open, setOpen }) => {
       publicationDate: book.publicationDate?.slice(0, 10) || "",
       price: book.price || 0,
       categories: book.categories?.map((c) => c._id) || [],
-      existingImages: book.images || [],
+      existingImages:
+        book.images?.map((img) => (typeof img === "string" ? img : img.url)) ||
+        [],
       newImages: [],
       bookCode: book.bookCode || "",
     });
@@ -106,14 +109,26 @@ const EditBook = ({ book, open, setOpen }) => {
     setValue("newImages", [...(newImages || []), ...files]);
   };
 
-  const onSubmit = (data) => {
-    console.log("FORM DATA:", data);
-    // editBook(data, {
-    //   onSuccess: () => {
-    //     toast.success("Book updated.");
-    //     setOpen(false);
-    //   },
-    // });
+  const onSubmit = async (data) => {
+    let uploadedUrls = [];
+    if (data.newImages?.length > 0) {
+      const res = await uploadImages(data?.newImages);
+      uploadedUrls = res.urls;
+    }
+    const images = [...(data.existingImages || []), ...uploadedUrls];
+    const payload = {
+      ...data,
+      images,
+    };
+    delete payload.newImages;
+    delete payload.existingImages;
+    console.log("Final Payload: ", payload);
+    editBook(payload, {
+      onSuccess: () => {
+        toast.success("Book updated.");
+        setOpen(false);
+      },
+    });
   };
   const removeExistingImage = (url) => {
     setValue(
@@ -138,7 +153,9 @@ const EditBook = ({ book, open, setOpen }) => {
         </DialogHeader>
 
         <div className="overflow-y-auto pr-2 max-h-[calc(90vh-120px)]">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}
+            className="space-y-4">
             <FieldGroup>
               <Input {...register("bookCode")} disabled />
               {/* TITLE */}
