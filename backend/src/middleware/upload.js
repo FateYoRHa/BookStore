@@ -12,7 +12,16 @@ export const requireFile = (fieldName) => {
     next();
   };
 };
-
+export const requireFiles = (fieldName) => {
+  return (req, res, next) => {
+    if (!req.files) {
+      return res.status(400).json({
+        message: `${fieldName} file is required.`,
+      });
+    }
+    next();
+  };
+};
 const fileFilter = (req, file, cb) => {
   if (!file.mimetype.startsWith("image/")) {
     cb(new Error("Only images are allowed."), false);
