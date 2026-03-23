@@ -2,15 +2,47 @@ import { Book, Author } from "../../../model/index.js";
 import * as mediaServices from "../content/admin_media_services.js";
 import * as inventoryService from "../core/admin_inventory_services.js";
 
-export async function getAdminBooksService() {
-  // TODO filter
-  const books = await Book.find()
-    .populate("author", "penName")
-    .populate("categories", "name")
-    .populate("inventory")
-    .populate("images");
+export async function getAdminBooksService(filters) {
+  try {
+    const { search, category, minPrice, maxPrice, sort, page, limit } = filters;
+    const filter = {};
+    // Search by title (case-insensitive regex)
+    if (search) {
+      filter.title = { $regex: search, $options: "i" };
+    }
+    // Filter by category
+    if (category) {
+      filter.categories = category;
+    }
+    //  Price range filter
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+    // Sorting logic
+    let sortOption = { createdAt: -1 }; // default newest
+    if (sort === "price-asc") sortOption = { price: 1 };
+    if (sort === "price-desc") sortOption = { price: -1 };
+    //  Pagination math
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
+    const skip = (pageNumber - 1) * limitNumber;
 
-  return books;
+    const books = await Book.find(filter)
+      .populate("author", "penName")
+      .populate("categories", "name")
+      .populate("inventory")
+      .populate("images")
+      .sort(sortOption)
+      .skip(skip) // skip previous pages
+      .limit(limitNumber) // limit per page
+      .select("-__v");
+
+    return books;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function createBookWithAssets(book) {

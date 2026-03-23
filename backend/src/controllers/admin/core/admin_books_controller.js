@@ -2,8 +2,24 @@ import * as adminBookService from "../../../services/admin/core/admin_book_servi
 
 export async function getAdminBooks(req, res) {
   try {
-    // TODO filter
-    const books = await adminBookService.getAdminBooksService();
+    const {
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      sort,
+      page = 1,
+      limit = 12,
+    } = req.query;
+    const books = await adminBookService.getAdminBooksService({
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      sort,
+      page,
+      limit,
+    });
     res.status(200).json(books);
   } catch (error) {
     res
