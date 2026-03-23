@@ -29,6 +29,12 @@ const bookSchema = new Schema(
     price: { type: Number, required: true },
     pages: { type: Number, required: true },
     language: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ["available", "unavailable"],
+      default: "available",
+    },
+    deletedAt: { type: Date, default: null, index: true },
   },
   {
     timestamps: true,
@@ -53,7 +59,7 @@ bookSchema.virtual("inventory", {
   ref: "Inventory",
   localField: "_id",
   foreignField: "book",
-  justOne: true
+  justOne: true,
 });
 //THIS ADDS PREFIX TO ID
 
