@@ -81,3 +81,14 @@ export async function updateBook(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+export async function removeBook(req, res) {
+  try {
+    const bookCode = req.params.id;
+    await adminBookService.deleteBookService(bookCode);
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting book", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}

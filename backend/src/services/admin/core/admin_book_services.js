@@ -102,3 +102,10 @@ export async function updateBookService(book) {
     throw error;
   }
 }
+export async function deleteBookService(book) {
+  return await Book.findOneAndUpdate(
+    { bookCode: book },
+    { deletedAt: new Date() },
+    { new: true },
+  );
+}

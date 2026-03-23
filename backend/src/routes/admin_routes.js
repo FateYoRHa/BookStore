@@ -17,6 +17,7 @@ const router = express.Router();
 router.get("/books", adminOnly, adminBooks.getAdminBooks);
 router.post("/books", adminOnly, adminBooks.addBook);
 router.put("/books/:id", adminOnly, adminBooks.updateBook);
+router.delete("/books/:id", adminOnly, adminBooks.removeBook);
 
 // AUTHORS
 router.get("/authors/list", adminOnly, adminAuthors.getAdminAuthorsList);
