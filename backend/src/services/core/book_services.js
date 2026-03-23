@@ -5,7 +5,7 @@ export async function getBooksService(filters) {
     const { search, category, minPrice, maxPrice, sort, page, limit } = filters;
     // =========================
     //  Build dynamic filter object
-    const filter = {};
+    const filter = { deletedAt: null }; // exclude deleted books
 
     // Search by title (case-insensitive regex)
     if (search) {
