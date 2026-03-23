@@ -10,8 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
-const BooksTable = ({ books = [], onEdit, onDelete }) => {
+const BooksTable = ({ books = [], onEdit, onDelete, isDeleting }) => {
   /*Formats a date into a readable string. Used for publicationDate column.*/
   const formatDate = (date) => {
     if (!date) return "-"; // fallback if null/undefined
@@ -138,8 +139,13 @@ const BooksTable = ({ books = [], onEdit, onDelete }) => {
                           /**
                            * Same idea as edit — delegate logic to parent
                            */
-                          onClick={() => onDelete(book.bookCode)}>
-                          <Trash className="h-4 w-4 text-destructive" />
+                          onClick={() => onDelete(book.bookCode)}
+                          disa>
+                          {isDeleting ? (
+                            <Spinner className="h-4 w-4" />
+                          ) : (
+                            <Trash className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                     </TableCell>

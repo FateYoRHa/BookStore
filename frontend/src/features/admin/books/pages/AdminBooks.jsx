@@ -5,11 +5,14 @@ import EditBook from "./components/EditBook";
 import AddBook from "./components/AddBook";
 import { Button } from "@/components/ui/button";
 import { BookPlus } from "lucide-react";
-
+import useRemoveAdminBook from "../hooks/admin_books_hooks";
+import { on } from "node:cluster";
+import { toast } from "sonner";
 const AdminBooks = () => {
   const { data } = useGetAdminBooks();
   const [open, setOpen] = useState(false);
   const [editBook, setEditBook] = useState(null);
+  const { mutate, isPending: isDeleting } = useRemoveAdminBook();
 
   const onEdit = (book) => {
     setEditBook(book);
@@ -21,7 +24,11 @@ const AdminBooks = () => {
   };
 
   const onDelete = (book) => {
-    console.log("Delete", book);
+    mutate(book, {
+      onSuccess: () => {
+        toast.success("Book removed successfully.");
+      },
+    });
   };
 
   return (
@@ -32,7 +39,7 @@ const AdminBooks = () => {
         Add Book
       </Button>
       {/* Table container fills available space */}
-      <BooksTable books={data} onEdit={onEdit} onDelete={onDelete} />
+      <BooksTable books={data} onEdit={onEdit} onDelete={onDelete} isDeleting={isDeleting} />
 
       {/* Edit dialog */}
       <EditBook book={editBook} open={open} setOpen={setOpen} />
