@@ -36,12 +36,14 @@ import { useUpdateAdminBooks } from "../../hooks/admin_books_hooks";
 import { useGetCategories } from "@/features/categories/hooks/category_hooks";
 import { uploadImages } from "@/services/uploadImages";
 import BookCategories from "./BookCategories";
+import { Spinner } from "@/components/ui/spinner";
 
 const EditBook = ({ book, open, setOpen }) => {
   const { data: authors } = useGetAdminAuthorsList();
   const { data: categ } = useGetCategories();
-  const { mutate: editBook, isPending } = useUpdateAdminBooks();
+  const { mutate: editBook } = useUpdateAdminBooks();
   const [openCat, setOpenCat] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const {
     control,
     register,
@@ -112,6 +114,7 @@ const EditBook = ({ book, open, setOpen }) => {
   };
 
   const onSubmit = async (data) => {
+    setIsPending(true);
     let uploadedUrls = [];
     if (data.newImages?.length > 0) {
       const res = await uploadImages(data?.newImages);
@@ -124,11 +127,11 @@ const EditBook = ({ book, open, setOpen }) => {
     };
     delete payload.newImages;
     delete payload.existingImages;
-    console.log("Final Payload: ", payload);
     editBook(payload, {
       onSuccess: () => {
         toast.success("Book updated.");
         setOpen(false);
+        setIsPending(false);
       },
     });
   };
@@ -336,7 +339,13 @@ const EditBook = ({ book, open, setOpen }) => {
               </Button>
 
               <Button type="submit" disabled={isPending}>
-                Save Changes
+                {isPending ? (
+                  <>
+                    <Spinner /> Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
               </Button>
             </div>
           </form>
