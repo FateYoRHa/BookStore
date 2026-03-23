@@ -5,14 +5,18 @@ import EditBook from "./components/EditBook";
 import AddBook from "./components/AddBook";
 import { Button } from "@/components/ui/button";
 import { BookPlus } from "lucide-react";
-import { useRemoveAdminBook } from "../hooks/admin_books_hooks";
+import {
+  useRemoveAdminBook,
+  useReAddAdminBook,
+} from "../hooks/admin_books_hooks";
 import { toast } from "sonner";
 const AdminBooks = () => {
   const { data } = useGetAdminBooks();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editBook, setEditBook] = useState(null);
-  const { mutate, isPending: isDeleting } = useRemoveAdminBook();
+  const { mutate: removeBook, isPending: isDeleting } = useRemoveAdminBook();
+  const { mutate: reAddMutate, isPending: isReAdding } = useReAddAdminBook();
 
   const onEdit = (book) => {
     setEditBook(book);
@@ -24,9 +28,17 @@ const AdminBooks = () => {
   };
 
   const onDelete = (book) => {
-    mutate(book, {
+    removeBook(book, {
       onSuccess: () => {
         toast.success("Book removed successfully.");
+      },
+    });
+  };
+
+  const onReAdd = (book) => {
+    reAddMutate(book, {
+      onSuccess: () => {
+        toast.success("Book re-added successfully.");
       },
     });
   };
@@ -43,6 +55,8 @@ const AdminBooks = () => {
         books={data}
         onEdit={onEdit}
         onDelete={onDelete}
+        onReAdd={onReAdd}
+        isReAdding={isReAdding}
         isDeleting={isDeleting}
       />
 
