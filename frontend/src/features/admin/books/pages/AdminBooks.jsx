@@ -9,6 +9,7 @@ import {
   useRemoveAdminBook,
   useReAddAdminBook,
 } from "../hooks/admin_books_hooks";
+import { BooksColumns } from "../../components/TableColumns";
 import { toast } from "sonner";
 const AdminBooks = () => {
   const { data } = useGetAdminBooks();
@@ -42,10 +43,16 @@ const AdminBooks = () => {
       },
     });
   };
-
+  const columns = BooksColumns({
+    onEdit,
+    onDelete,
+    onReAdd,
+    isDeleting,
+    isReAdding,
+  });
   return (
     // TODO remove page scroll
-    <div className="flex flex-col flex-1 p-4 overflow-hidden">
+    <div className="flex flex-col flex-1 p-4 overflow-auto min-w-0">
       <Button onClick={onAdd} className="self-end mb-4">
         <BookPlus className="h-4 w-4" />
         Add Book
@@ -53,6 +60,7 @@ const AdminBooks = () => {
       {/* Table container fills available space */}
       <BooksTable
         books={data}
+        columns={columns}
         onEdit={onEdit}
         onDelete={onDelete}
         onReAdd={onReAdd}
