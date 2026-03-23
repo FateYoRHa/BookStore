@@ -37,10 +37,10 @@ export const useAddAdminBook = () => {
   });
 };
 
-export const useRemoveAdminBook = (book) => {
+export const useRemoveAdminBook = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: removeBookAdminRequest(book),
+    mutationFn: removeBookAdminRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["books"] });
     },
