@@ -50,16 +50,15 @@ export async function addBook(req, res) {
       .json({ message: error.message || "Internal Server Error" });
   }
 }
-
 export async function updateBook(req, res) {
   try {
     const {
       title,
       description,
-      author,
+      authorCode,
       publisher,
       publicationDate,
-      categories,
+      categoryIds,
       images,
       price,
     } = req.body;
@@ -68,18 +67,17 @@ export async function updateBook(req, res) {
       bookCode,
       title,
       description,
-      author,
+      authorCode,
       publisher,
       publicationDate,
-      categories,
+      categoryIds,
       images,
       price,
     });
 
     res.status(200).json(updatedBook);
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .json({ message: error.image || "Internal Server Error" });
+    console.error("Error updating book", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
