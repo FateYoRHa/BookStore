@@ -32,8 +32,7 @@ const BooksTable = ({ books = [], onEdit, onDelete, isDeleting }) => {
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <TableHead>Book</TableHead>
-              <TableHead>Code</TableHead>
-              <TableHead>Author</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Categories</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Stock</TableHead>
@@ -61,29 +60,45 @@ const BooksTable = ({ books = [], onEdit, onDelete, isDeleting }) => {
                   <TableRow key={book._id}>
                     {/* BOOK INFO (image + title + publisher) */}
                     <TableCell>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-start gap-3">
                         <img
                           src={imageUrl}
                           alt={book.title}
-                          className="h-10 w-10 rounded-md object-cover border"
+                          className="h-10 w-10 rounded-md object-cover border shrink-0"
                         />
-                        <div className="flex flex-col">
-                          <span className="font-medium line-clamp-1">
+                        <div className="flex flex-col min-w-0">
+                          {/* Title */}
+                          <span className="font-medium leading-tight line-clamp-2">
                             {book.title}
                           </span>
+                          {/* Metadata row */}
+
+                          {/* BOOK CODE (auto-generated in backend) */}
+                          <span className="font-mono opacity-70">
+                            {book.bookCode}
+                          </span>
+                          {/* AUTHOR (populated from backend) */}
+                          <div className="text-xs text-muted-foreground flex flex-wrap gap-x-2">
+                            <span>Author: {book.author?.penName}</span>
+                          </div>
+                          {/* Publisher */}
                           <span className="text-xs text-muted-foreground line-clamp-1">
-                            {book.publisher}
+                            Publisher: {book.publisher}
                           </span>
                         </div>
                       </div>
                     </TableCell>
-
-                    {/* BOOK CODE (auto-generated in backend) */}
-                    <TableCell>{book.bookCode}</TableCell>
-
-                    {/* AUTHOR (populated from backend) */}
-                    <TableCell>{book.author?.penName || "—"}</TableCell>
-
+                    <TableCell>
+                      {book.deletedAt ? (
+                        <span className="text-xs px-2 py-1 rounded-md bg-destructive text-destructive-foreground">
+                          Deleted
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2 py-1 rounded-md bg-success text-success-foreground">
+                          Active
+                        </span>
+                      )}
+                    </TableCell>
                     {/* CATEGORIES (array of populated category objects) */}
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
