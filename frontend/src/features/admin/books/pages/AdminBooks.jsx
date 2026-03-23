@@ -5,8 +5,7 @@ import EditBook from "./components/EditBook";
 import AddBook from "./components/AddBook";
 import { Button } from "@/components/ui/button";
 import { BookPlus } from "lucide-react";
-import useRemoveAdminBook from "../hooks/admin_books_hooks";
-import { on } from "node:cluster";
+import { useRemoveAdminBook } from "../hooks/admin_books_hooks";
 import { toast } from "sonner";
 const AdminBooks = () => {
   const { data } = useGetAdminBooks();
@@ -39,7 +38,12 @@ const AdminBooks = () => {
         Add Book
       </Button>
       {/* Table container fills available space */}
-      <BooksTable books={data} onEdit={onEdit} onDelete={onDelete} isDeleting={isDeleting} />
+      <BooksTable
+        books={data}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        isDeleting={isDeleting}
+      />
 
       {/* Edit dialog */}
       <EditBook book={editBook} open={open} setOpen={setOpen} />
