@@ -13,3 +13,7 @@ export const addBookAdminRequest = async (book) => {
   const response = await api.post("/admin/books", book);
   return response.data;
 };
+export const removeBookAdminRequest = async (book) => {
+  const response = await api.delete(`/admin/books/${book}`);
+  return response.data;
+};
