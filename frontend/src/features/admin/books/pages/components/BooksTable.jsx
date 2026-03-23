@@ -140,11 +140,11 @@ const BooksTable = ({ books = [], onEdit, onDelete, isDeleting }) => {
                            * Same idea as edit — delegate logic to parent
                            */
                           onClick={() => onDelete(book.bookCode)}
-                          disa>
+                          disabled={isDeleting}>
                           {isDeleting ? (
                             <Spinner className="h-4 w-4" />
                           ) : (
-                            <Trash className="h-4 w-4" />
+                            <Trash className="h-4 w-4 text-destructive" />
                           )}
                         </Button>
                       </div>
