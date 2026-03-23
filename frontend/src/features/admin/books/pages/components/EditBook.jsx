@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
@@ -33,12 +33,15 @@ import { toast } from "sonner";
 import { useGetAdminAuthorsList } from "@/features/admin/authors/hooks/admin_author_hooks";
 import { updateBook } from "../../bookSchema";
 import { useUpdateAdminBooks } from "../../hooks/admin_books_hooks";
+import { useGetCategories } from "@/features/categories/hooks/category_hooks";
 import { uploadImages } from "@/services/uploadImages";
+import BookCategories from "./BookCategories";
 
 const EditBook = ({ book, open, setOpen }) => {
   const { data: authors } = useGetAdminAuthorsList();
+  const { data: categ } = useGetCategories();
   const { mutate: editBook, isPending } = useUpdateAdminBooks();
-
+  const [openCat, setOpenCat] = useState(false);
   const {
     control,
     register,
@@ -89,9 +92,8 @@ const EditBook = ({ book, open, setOpen }) => {
 
   // Category handlers
   const addCategory = () => {
-    const newId = Date.now().toString();
-
-    setValue("categories", [...categories, newId]);
+    // const newId = Date.now().toString();
+    setOpenCat(true);
   };
 
   const removeCategory = (id) => {
@@ -249,12 +251,18 @@ const EditBook = ({ book, open, setOpen }) => {
               {/* CATEGORIES */}
               <Field>
                 <Label>Categories</Label>
-
+                {/* CATEGORY DIALOG */}
+                <BookCategories
+                  open={openCat}
+                  setOpenCat={setOpenCat}
+                  categ={categ}
+                  categories={categories}
+                  setValue={setValue}
+                />
                 <div className="flex flex-wrap gap-2 mb-2">
                   {categories?.map((catId) => {
                     const catName =
-                      book.categories?.find((c) => c._id === catId)?.name ||
-                      catId;
+                      categ?.find((c) => c._id === catId)?.name || catId;
                     return (
                       <Badge key={catId} className="flex items-center gap-1">
                         {catName}
