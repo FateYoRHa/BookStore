@@ -10,12 +10,13 @@ import { toast } from "sonner";
 const AdminBooks = () => {
   const { data } = useGetAdminBooks();
   const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [editBook, setEditBook] = useState(null);
   const { mutate, isPending: isDeleting } = useRemoveAdminBook();
 
   const onEdit = (book) => {
     setEditBook(book);
-    setOpen(true);
+    setOpenEdit(true);
   };
   const onAdd = () => {
     setEditBook(null);
@@ -46,7 +47,7 @@ const AdminBooks = () => {
       />
 
       {/* Edit dialog */}
-      <EditBook book={editBook} open={open} setOpen={setOpen} />
+      <EditBook book={editBook} open={openEdit} setOpen={setOpenEdit} />
 
       {/* Add dialog */}
       <AddBook open={open} setOpen={setOpen} />
