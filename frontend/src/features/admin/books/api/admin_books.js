@@ -18,6 +18,6 @@ export const removeBookAdminRequest = async (book) => {
   return response.data;
 };
 export const reAddBookAdminRequest = async (book) => {
-  const response = await api.post(`/admin/books/readd/${book}`);
+  const response = await api.patch(`/admin/books/${book}/restore`);
   return response.data;
 };
