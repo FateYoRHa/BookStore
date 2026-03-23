@@ -109,3 +109,10 @@ export async function deleteBookService(book) {
     { new: true },
   );
 }
+export async function restoreBookService(book) {
+  return await Book.findOneAndUpdate(
+    { bookCode: book },
+    { deletedAt: null },
+    { new: true },
+  );
+}

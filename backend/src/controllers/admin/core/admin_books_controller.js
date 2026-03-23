@@ -92,3 +92,13 @@ export async function removeBook(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+export async function restoreBook(req, res) {
+  try {
+    const bookCode = req.params.id;
+    const restoredBook = await adminBookService.restoreBookService(bookCode);
+    res.status(200).json(restoredBook);
+  } catch (error) {
+    console.error("Error restoring book", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
