@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { getBooksAdminRequest, putBookAdminRequest } from "../api/admin_books";
+import {
+  getBooksAdminRequest,
+  putBookAdminRequest,
+  addBookAdminRequest,
+} from "../api/admin_books";
 
 export const useGetAdminBooks = () => {
   return useQuery({
@@ -16,6 +20,16 @@ export const useUpdateAdminBooks = () => {
 
   return useMutation({
     mutationFn: putBookAdminRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+    },
+  });
+};
+export const useAddAdminBook = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: addBookAdminRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["books"] });
     },
