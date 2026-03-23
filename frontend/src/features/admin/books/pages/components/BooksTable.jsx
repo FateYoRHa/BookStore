@@ -9,10 +9,17 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash } from "lucide-react";
+import { ListPlus, Pencil, Trash } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
-const BooksTable = ({ books = [], onEdit, onDelete, isDeleting }) => {
+const BooksTable = ({
+  books = [],
+  onEdit,
+  onDelete,
+  onReAdd,
+  isDeleting,
+  isReAdding,
+}) => {
   /*Formats a date into a readable string. Used for publicationDate column.*/
   const formatDate = (date) => {
     if (!date) return "-"; // fallback if null/undefined
@@ -147,21 +154,27 @@ const BooksTable = ({ books = [], onEdit, onDelete, isDeleting }) => {
                           onClick={() => onEdit(book)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
-
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          /**
-                           * Same idea as edit — delegate logic to parent
-                           */
-                          onClick={() => onDelete(book.bookCode)}
-                          disabled={isDeleting}>
-                          {isDeleting ? (
-                            <Spinner className="h-4 w-4" />
-                          ) : (
-                            <Trash className="h-4 w-4 text-destructive" />
-                          )}
-                        </Button>
+                        {book.deletedAt ? (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            disabled={isReAdding}
+                            onClick={() => onReAdd(book.bookCode)}>
+                            <ListPlus className="h-4 w-4 text-success" />
+                          </Button>
+                        ) : (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => onDelete(book.bookCode)}
+                            disabled={isDeleting}>
+                            {isDeleting ? (
+                              <Spinner className="h-4 w-4" />
+                            ) : (
+                              <Trash className="h-4 w-4 text-destructive" />
+                            )}
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
