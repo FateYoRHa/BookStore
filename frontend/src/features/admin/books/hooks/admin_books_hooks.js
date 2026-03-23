@@ -5,6 +5,7 @@ import {
   putBookAdminRequest,
   addBookAdminRequest,
   removeBookAdminRequest,
+  reAddBookAdminRequest,
 } from "../api/admin_books";
 
 export const useGetAdminBooks = () => {
@@ -41,6 +42,15 @@ export const useRemoveAdminBook = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: removeBookAdminRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+    },
+  });
+};
+export const useReAddAdminBook = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: reAddBookAdminRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["books"] });
     },
