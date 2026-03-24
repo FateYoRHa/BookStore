@@ -17,15 +17,15 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import BookTableFilter from "./BookTableFilter";
+import TableFilter from "./TableFilter";
 import { globalSearchFilter } from "@/features/admin/utils/globalFilter";
-const BooksTable = ({ books, columns }) => {
+const DataTable = ({ data, columns }) => {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
   const table = useReactTable({
-    data: books ?? [],
+    data: data ?? [],
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -42,7 +42,7 @@ const BooksTable = ({ books, columns }) => {
   const rowModel = table.getRowModel();
   return (
     <>
-      <BookTableFilter table={table} />
+      <TableFilter table={table} />
       <div className="flex flex-col h-full rounded-2xl border bg-background overflow-x-auto">
         <div className="flex-1 overflow-auto">
           <Table className="min-w-full table-fixed">
@@ -112,4 +112,4 @@ const BooksTable = ({ books, columns }) => {
   );
 };
 
-export default BooksTable;
+export default DataTable;

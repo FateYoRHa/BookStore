@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-const BookTableFilter = ({ table }) => {
+const TableFilter = ({ table }) => {
   return (
     <div className="flex items-center py-4">
       <Input
@@ -42,4 +42,4 @@ const BookTableFilter = ({ table }) => {
   );
 };
 
-export default BookTableFilter;
+export default TableFilter;
