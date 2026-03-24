@@ -136,7 +136,14 @@ export const BooksColumns = ({
   },
   {
     accessorKey: "inventory.quantity",
-    header: "Stock",
+    header: ({ column }) => (
+      <button
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex items-center gap-1">
+        Stock
+        <ArrowUpDown className="h-4 w-4" />
+      </button>
+    ),
     minSize: 50,
     size: 80,
     cell: ({ getValue }) => (
