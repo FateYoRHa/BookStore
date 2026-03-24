@@ -69,8 +69,12 @@ export const addBook = z.object({
     .max(1500, "Book description exceeds character limit.")
     .optional(),
 
-  author: objectId,
-
+  authorCode: z
+    .string({
+      required_error: "Author is required.",
+      invalid_type_error: "Author is required.",
+    })
+    .min(1, "Author is required."),
   publisher: z
     .string()
     .trim()
