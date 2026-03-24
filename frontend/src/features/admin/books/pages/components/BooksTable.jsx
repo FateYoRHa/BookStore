@@ -8,12 +8,6 @@ import {
 } from "@tanstack/react-table";
 
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Table,
   TableBody,
   TableCell,
@@ -24,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import BookTableFilter from "./BookTableFilter";
+import { globalSearchFilter } from "@/features/admin/utils/globalFilter";
 const BooksTable = ({ books, columns }) => {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -42,32 +37,7 @@ const BooksTable = ({ books, columns }) => {
     state: { sorting, columnFilters, columnVisibility, globalFilter },
     columnResizeMode: "onChange",
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, filterValue) => {
-      // custom global filter
-      const search = filterValue.toLowerCase();
-      return Object.values(row.original).some((value) => {
-        if (typeof value === "string" || typeof value === "number") {
-          return value.toString().toLowerCase().includes(search);
-        }
-        if (Array.isArray(value)) {
-          // for categories array
-          return value.some(
-            (item) =>
-              item?.name?.toLowerCase().includes(search) ||
-              item?._id?.toLowerCase().includes(search),
-          );
-        }
-        if (typeof value === "object" && value !== null) {
-          // nested objects like author.penName or inventory.quantity
-          return Object.values(value)
-            .map(String)
-            .join(" ")
-            .toLowerCase()
-            .includes(search);
-        }
-        return false;
-      });
-    },
+    globalFilterFn: globalSearchFilter,
   });
   const rowModel = table.getRowModel();
   return (
