@@ -55,7 +55,7 @@ const AddBook = ({ open, setOpen }) => {
     defaultValues: {
       title: "",
       description: "",
-      author: "",
+      authorCode: "",
       publisher: "",
       publicationDate: "",
       price: null,
@@ -97,7 +97,7 @@ const AddBook = ({ open, setOpen }) => {
     setIsPending(true);
     let uploadedUrls = [];
     if (data.images?.length > 0) {
-      const res = await uploadImages(data?.images);
+      const res = await uploadImages(data?.images, "books");
       uploadedUrls = res.urls;
     }
     const payload = {
@@ -108,6 +108,10 @@ const AddBook = ({ open, setOpen }) => {
       onSuccess: () => {
         toast.success("Book Added.");
         setOpen(false);
+        setIsPending(false);
+      },
+      onError: () => {
+        toast.error("Failed to add book.");
         setIsPending(false);
       },
     });
@@ -153,7 +157,7 @@ const AddBook = ({ open, setOpen }) => {
               </Field>
               {/* AUTHOR */}
               <Controller
-                name="author"
+                name="authorCode"
                 control={control}
                 render={({ field }) => (
                   <Field>
@@ -168,7 +172,9 @@ const AddBook = ({ open, setOpen }) => {
 
                       <SelectContent>
                         {authors?.map((author) => (
-                          <SelectItem key={author._id} value={author._id}>
+                          <SelectItem
+                            key={author._id}
+                            value={author.authorCode}>
                             {author.penName}
                           </SelectItem>
                         ))}
