@@ -1,5 +1,4 @@
 import { useState } from "react";
-import BooksTable from "./components/BooksTable";
 import { useGetAdminBooks } from "../hooks/admin_books_hooks";
 import EditBook from "./components/EditBook";
 import AddBook from "./components/AddBook";
@@ -10,6 +9,7 @@ import {
   useReAddAdminBook,
 } from "../hooks/admin_books_hooks";
 import { BooksColumns } from "./components/BookTableColumns";
+import DataTable from "../../components/DataTable";
 import { toast } from "sonner";
 const AdminBooks = () => {
   const { data } = useGetAdminBooks();
@@ -58,7 +58,7 @@ const AdminBooks = () => {
         Add Book
       </Button>
       {/* Table container fills available space */}
-      <BooksTable books={data} columns={columns} />
+      <DataTable data={data} columns={columns} />
 
       {/* Edit dialog */}
       <EditBook book={editBook} open={openEdit} setOpen={setOpenEdit} />
