@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { authorSchema } from "../../authorSchema";
 import { useUpdateAdminAuthor } from "../../hooks/admin_author_hooks";
 import { Spinner } from "@/components/ui/spinner";
+import { uploadImages } from "@/services/uploadImages";
 const EditAuthor = ({ open, setOpen, author }) => {
   const { mutate: updateAuthor } = useUpdateAdminAuthor();
   const [isPending, setIsPending] = useState(false);
@@ -68,19 +69,18 @@ const EditAuthor = ({ open, setOpen, author }) => {
     return () => URL.revokeObjectURL(url);
   }, [image]);
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = async (values) => {
     setIsPending(true);
-
-    const payload = {
+    const url = await uploadImages(values.image, "authors");
+    const author = {
       ...values,
-      authorCode: author?.authorCode, // include identifier
+      image: url[0],
     };
-    console.log("Payload: ", payload);
-    // updateAuthor(payload, {
-    //   onSuccess: () => {
-    //     setOpen(false);
-    //   },
-    // });
+    updateAuthor(author, {
+      onSuccess: () => {
+        setOpen(false);
+      },
+    });
     setOpen(false);
   };
 

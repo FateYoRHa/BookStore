@@ -38,15 +38,17 @@ const AddAuthor = ({ open, setOpen }) => {
   });
 
   const onSubmit = async (values) => {
-    console.log(values);
     setIsPending(true);
-    // const url = await uploadImages(values.image, "authors");
-    // console.log(url)
-    // addAuthor(values, {
-    //   onSuccess: () => {
-    //     setOpen(false);
-    //   },
-    // });
+    const url = await uploadImages(values.image, "authors");
+    const author = {
+      ...values,
+      image: url[0],
+    };
+    addAuthor(author, {
+      onSuccess: () => {
+        setOpen(false);
+      },
+    });
   };
   const image = watch("image");
   const [preview, setPreview] = useState(null);
