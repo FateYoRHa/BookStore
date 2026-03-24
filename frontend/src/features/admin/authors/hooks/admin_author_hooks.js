@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAdminAuthors, getAdminAuthorsList } from "../api/admin_authors";
+import {
+  addAdminAuthor,
+  getAdminAuthors,
+  getAdminAuthorsList,
+  updateAdminAuthor,
+} from "../api/admin_authors";
 
 export const useGetAdminAuthorsList = () => {
   const queryClient = useQueryClient();
@@ -20,6 +25,26 @@ export const useGetAdminAuthors = () => {
     queryFn: () => getAdminAuthors(),
     onSuccess: (data) => {
       queryClient.setQueryData(["authors"], data);
+    },
+  });
+};
+
+export const useAddAdminAuthor = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (author) => addAdminAuthor(author),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["authors"]);
+    },
+  });
+};
+
+export const useUpdateAdminAuthor = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (author) => updateAdminAuthor(author),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["authors"]);
     },
   });
 };
