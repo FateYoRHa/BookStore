@@ -117,7 +117,7 @@ const EditBook = ({ book, open, setOpen }) => {
     setIsPending(true);
     let uploadedUrls = [];
     if (data.newImages?.length > 0) {
-      const res = await uploadImages(data?.newImages);
+      const res = await uploadImages(data?.newImages, "books");
       uploadedUrls = res.urls;
     }
     const images = [...(data.existingImages || []), ...uploadedUrls];
@@ -131,6 +131,10 @@ const EditBook = ({ book, open, setOpen }) => {
       onSuccess: () => {
         toast.success("Book updated.");
         setOpen(false);
+        setIsPending(false);
+      },
+      onError: () => {
+        toast.error("Failed to update book.");
         setIsPending(false);
       },
     });
