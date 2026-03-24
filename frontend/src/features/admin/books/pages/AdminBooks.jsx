@@ -58,15 +58,7 @@ const AdminBooks = () => {
         Add Book
       </Button>
       {/* Table container fills available space */}
-      <BooksTable
-        books={data}
-        columns={columns}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onReAdd={onReAdd}
-        isReAdding={isReAdding}
-        isDeleting={isDeleting}
-      />
+      <BooksTable books={data} columns={columns} />
 
       {/* Edit dialog */}
       <EditBook book={editBook} open={openEdit} setOpen={setOpenEdit} />
