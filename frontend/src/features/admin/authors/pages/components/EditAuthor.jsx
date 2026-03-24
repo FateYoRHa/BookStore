@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -78,7 +78,12 @@ const EditAuthor = ({ open, setOpen, author }) => {
     };
     updateAuthor(author, {
       onSuccess: () => {
+        toast.success("Author updated successfully.");
         setOpen(false);
+      },
+      onError: () => {
+        toast.error("Failed to update author. Please try again.");
+        setIsPending(false);
       },
     });
     setOpen(false);

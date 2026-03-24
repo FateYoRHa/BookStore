@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,6 +48,11 @@ const AddAuthor = ({ open, setOpen }) => {
     addAuthor(author, {
       onSuccess: () => {
         setOpen(false);
+        toast.success("Author added successfully.");
+      },
+      onError: () => {
+        setIsPending(false);
+        toast.error("Failed to add author. Please try again.");
       },
     });
   };
