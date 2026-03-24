@@ -9,7 +9,7 @@ import {
   useRemoveAdminBook,
   useReAddAdminBook,
 } from "../hooks/admin_books_hooks";
-import { BooksColumns } from "../../components/TableColumns";
+import { BooksColumns } from "./components/BookTableColumns";
 import { toast } from "sonner";
 const AdminBooks = () => {
   const { data } = useGetAdminBooks();
