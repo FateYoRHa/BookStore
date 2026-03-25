@@ -18,3 +18,11 @@ export const updateAdminAuthor = async (author) => {
   const response = await api.put(`/admin/authors/${author.authorCode}`, author);
   return response.data;
 };
+export const deleteAdminAuthor = async (author) => {
+  const response = await api.delete(`/admin/authors/${author}`);
+  return response.data;
+};
+export const reAddAdminAuthor = async (author) => {
+  const response = await api.patch(`/admin/authors/${author}/restore`);
+  return response.data;
+};
