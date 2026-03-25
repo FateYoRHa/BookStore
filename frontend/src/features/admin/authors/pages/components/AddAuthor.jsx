@@ -51,9 +51,9 @@ const AddAuthor = ({ open, setOpen }) => {
         toast.success("Author added successfully.");
       },
       onError: () => {
-        setIsPending(false);
         toast.error("Failed to add author. Please try again.");
       },
+      onSettled: () => setIsPending(false),
     });
   };
   const image = watch("image");
