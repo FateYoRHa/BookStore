@@ -16,13 +16,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import { authorSchema } from "../../authorSchema";
+import { updateAuthorSchema } from "../../authorSchema";
 import { useUpdateAdminAuthor } from "../../hooks/admin_author_hooks";
 import { Spinner } from "@/components/ui/spinner";
 import { uploadImages } from "@/services/uploadImages";
 const EditAuthor = ({ open, setOpen, author }) => {
   const { mutate: updateAuthor } = useUpdateAdminAuthor();
   const [isPending, setIsPending] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -31,62 +32,76 @@ const EditAuthor = ({ open, setOpen, author }) => {
     setValue,
     reset,
   } = useForm({
-    resolver: zodResolver(authorSchema),
+    resolver: zodResolver(updateAuthorSchema),
     defaultValues: {
       penName: "",
       bio: "",
-      image: undefined,
+      newImage: undefined,
     },
   });
 
-  // Watch new uploaded image
-  const image = watch("image");
+  const newImage = watch("newImage");
 
-  // Preview state (handles both existing + new)
   const [preview, setPreview] = useState(null);
 
-  // Load author data when dialog opens / author changes
+  // Load author data
   useEffect(() => {
     if (!author) return;
 
     reset({
       penName: author.penName || "",
       bio: author.bio || "",
-      image: undefined, // important: don't preload file
+      newImage: undefined,
     });
 
-    // existing image preview
     setPreview(author?.image?.url || null);
   }, [author, reset]);
 
-  // Handle new image preview
+  // Handle new image preview (override existing)
   useEffect(() => {
-    if (!image) return;
+    if (!newImage) return;
 
-    const url = URL.createObjectURL(image);
+    const url = URL.createObjectURL(newImage);
     setPreview(url);
 
     return () => URL.revokeObjectURL(url);
-  }, [image]);
+  }, [newImage]);
 
+  // Submit logic (clean separation)
   const handleFormSubmit = async (values) => {
-    setIsPending(true);
-    const url = await uploadImages(values.image, "authors");
-    const author = {
-      ...values,
-      image: url[0],
-    };
-    updateAuthor(author, {
-      onSuccess: () => {
-        toast.success("Author updated successfully.");
-        setOpen(false);
-      },
-      onError: () => {
-        toast.error("Failed to update author. Please try again.");
-        setIsPending(false);
-      },
-    });
-    setOpen(false);
+    try {
+      setIsPending(true);
+
+      let imageUrl = author?.image?.url;
+
+      // ONLY upload if new image exists
+      if (values.newImage) {
+        const res = await uploadImages(values.newImage, "authors");
+        imageUrl = res?.urls?.[0]; // adjust based on your API response
+      }
+
+      const payload = {
+        authorCode: author.authorCode,
+        penName: values.penName,
+        bio: values.bio,
+        image: imageUrl,
+      };
+
+      updateAuthor(payload, {
+        onSuccess: () => {
+          toast.success("Author updated successfully.");
+          setOpen(false);
+        },
+        onError: () => {
+          toast.error("Failed to update author.");
+        },
+        onSettled: () => setIsPending(false),
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong.");
+      setIsPending(false);
+    }
   };
 
   return (
@@ -131,18 +146,19 @@ const EditAuthor = ({ open, setOpen, author }) => {
               type="file"
               accept="image/*"
               onChange={(e) =>
-                setValue("image", e.target.files?.[0], {
+                setValue("newImage", e.target.files?.[0], {
                   shouldValidate: true,
+                  shouldDirty: true,
                 })
               }
               className={cn(
-                errors?.image && "border-red-500 focus-visible:ring-red-500",
+                errors?.newImage && "border-red-500 focus-visible:ring-red-500",
               )}
             />
 
-            <FormFieldError error={errors?.image} />
+            <FormFieldError error={errors?.newImage} />
 
-            {/* Preview (existing OR new) */}
+            {/* Preview (new overrides old) */}
             {preview && (
               <img
                 src={preview}
@@ -151,21 +167,23 @@ const EditAuthor = ({ open, setOpen, author }) => {
               />
             )}
 
-            {/* File name (only for new upload) */}
-            {image && (
-              <p className="text-xs text-muted-foreground mt-1">{image.name}</p>
+            {/* File name */}
+            {newImage && (
+              <p className="text-xs text-muted-foreground mt-1">
+                {newImage.name}
+              </p>
             )}
 
-            {/* Remove image (optional UX) */}
-            {(preview || image) && (
+            {/* Remove */}
+            {(preview || newImage) && (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 className="mt-2"
                 onClick={() => {
-                  setValue("image", undefined);
-                  setPreview(null);
+                  setValue("newImage", undefined);
+                  setPreview(author?.image?.url || null); // restore original
                 }}>
                 Remove Image
               </Button>
@@ -180,6 +198,7 @@ const EditAuthor = ({ open, setOpen, author }) => {
               onClick={() => setOpen(false)}>
               Cancel
             </Button>
+
             <Button type="submit" disabled={isPending}>
               {isPending ? (
                 <>
@@ -195,5 +214,4 @@ const EditAuthor = ({ open, setOpen, author }) => {
     </Dialog>
   );
 };
-
 export default EditAuthor;
