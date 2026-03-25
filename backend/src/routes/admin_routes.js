@@ -21,10 +21,12 @@ router.delete("/books/:id", adminOnly, adminBooks.removeBook);
 router.patch("/books/:id/restore", adminOnly, adminBooks.restoreBook);
 
 // AUTHORS
+router.get("/authors", adminOnly, adminAuthors.getAdminAuthors);
 router.get("/authors/list", adminOnly, adminAuthors.getAdminAuthorsList);
 router.post("/authors", adminOnly, adminAuthors.addAuthor);
 router.put("/authors/:id", adminOnly, adminAuthors.updateAuthor);
 router.delete("/authors/:id", adminOnly, adminAuthors.removeAuthor);
+router.patch("/authors/:id/restore", adminOnly, adminAuthors.restoreAuthor);
 
 // CATEGORIES
 router.post("/categories", adminOnly, adminCategories.addCategory);
