@@ -10,6 +10,7 @@ const authorSchema = new mongoose.Schema(
     penName: { type: String, unique: true },
     bio: { type: String, required: true },
     image: { url: String, alt: String },
+    deletedAt: { type: Date, default: null },
   },
   {
     timestamps: true,
