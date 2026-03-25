@@ -22,7 +22,8 @@ export async function attachImagesToBook(req, res) {
 export async function uploadImages(req, res) {
   try {
     const files = req.files;
-    const urls = await mediaService.uploadImagesService(files);
+    const type = req.body.type;
+    const urls = await mediaService.uploadImagesService(files, type);
     res.json({ urls });
   } catch (error) {
     res
