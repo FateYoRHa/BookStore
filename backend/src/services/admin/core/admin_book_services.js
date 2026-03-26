@@ -32,7 +32,7 @@ export async function createBookWithAssets(book) {
       language,
     } = book;
 
-    // Resolve author via public code
+    // Resolve author via author code
     const author = await Author.findOne({ authorCode: authorCode });
     if (!author) {
       const error = new Error("Author not found");
@@ -68,7 +68,7 @@ export async function updateBookService(book) {
       bookCode,
       title,
       description,
-      authorCode,
+      author,
       publisher,
       publicationDate,
       categoryIds,
@@ -82,10 +82,10 @@ export async function updateBookService(book) {
       {
         title,
         description,
-        authorCode,
+        author,
         publisher,
         publicationDate,
-        categoryIds,
+        categories: categoryIds,
         price,
         pages,
         language,
