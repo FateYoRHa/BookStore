@@ -7,6 +7,18 @@ export async function attachImagesToBookService(bookId, images) {
   }
   const bookExists = await Book.exists({ _id: bookId });
   if (!bookExists) throw new Error("Book not found");
+  const existingImages = await BookImage.find({ book: bookId });
+  // filter removed images
+  const removedPublicIds = existingImages
+    .filter(
+      (img) =>
+        !images.some((incoming) => incoming.public_id === img.image?.public_id),
+    )
+    .map((img) => img.image?.public_id)
+    .filter(Boolean); // avoids undefined
+  if (removedPublicIds?.length) {
+    await deleteImagesService(removedPublicIds);
+  }
   await BookImage.deleteMany({ book: bookId });
   const insertedImages = await BookImage.insertMany(
     images.map((img, index) => ({
