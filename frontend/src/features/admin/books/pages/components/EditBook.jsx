@@ -125,11 +125,14 @@ const EditBook = ({ book, open, setOpen }) => {
       const res = await uploadImages(data?.newImages, "books");
       uploadedUrls = res.images;
     }
+    const categoryIds = data.categories;
     const images = [...(data.existingImages || []), ...uploadedUrls];
     const payload = {
       ...data,
       images,
+      categoryIds,
     };
+    delete payload.categories;
     delete payload.newImages;
     delete payload.existingImages;
     editBook(payload, {
