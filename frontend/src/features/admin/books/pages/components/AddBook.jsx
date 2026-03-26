@@ -100,10 +100,13 @@ const AddBook = ({ open, setOpen }) => {
       const res = await uploadImages(data?.images, "books");
       uploadedUrls = res.images;
     }
+    const categoryIds = data.categories;
     const payload = {
       ...data,
       images: uploadedUrls,
+      categoryIds,
     };
+    delete payload.categories; // remove categories as it's now categoryIds
     mutate(payload, {
       onSuccess: () => {
         toast.success("Book Added.");

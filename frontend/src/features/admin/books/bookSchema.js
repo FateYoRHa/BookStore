@@ -41,7 +41,18 @@ export const updateBook = z.object({
     .min(1, "At least one category is required.")
     .max(10, "Too many categories.")
     .optional(),
-  existingImages: z.array(z.string()).optional(),
+  existingImages: z
+    .array(
+      z.union([
+        z.string(), // old string URLs
+        z.object({
+          url: z.string(),
+          public_id: z.string().optional(), // new images may or may not have public_id
+          altText: z.string().optional(),
+        }),
+      ]),
+    )
+    .optional(),
   newImages: z
     .array(
       z

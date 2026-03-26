@@ -54,7 +54,7 @@ export async function updateBook(req, res) {
     const {
       title,
       description,
-      authorCode,
+      author,
       publisher,
       publicationDate,
       categoryIds,
@@ -66,7 +66,7 @@ export async function updateBook(req, res) {
       bookCode,
       title,
       description,
-      authorCode,
+      author,
       publisher,
       publicationDate,
       categoryIds,
