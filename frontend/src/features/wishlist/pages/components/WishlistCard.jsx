@@ -54,7 +54,7 @@ const WishlistCard = ({ book }) => {
         <CardContent className="flex flex-col gap-3 grow">
           <AspectRatio ratio={3 / 4} className="overflow-hidden rounded-md">
             <img
-              src={book.images?.[0]?.url}
+              src={book.images?.[0]?.url || book.images?.[0]?.image?.url}
               alt={book.title}
               className="w-full h-full object-cover"
             />

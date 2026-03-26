@@ -45,7 +45,7 @@ export const BookCard = ({ book, className, ...props }) => {
           <AspectRatio className="overflow-hidden rounded-md">
             <img
               className="aspect-[3/4] w-full h-full object-cover"
-              src={book.images[0].url}
+              src={book.images[0]?.url || book.images[0]?.image?.url}
               alt={book.title}
             />
           </AspectRatio>
