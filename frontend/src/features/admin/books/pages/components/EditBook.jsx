@@ -63,6 +63,7 @@ const EditBook = ({ book, open, setOpen }) => {
       categories: [],
       existingImages: [],
       newImages: [],
+      removedImages: [],
       bookCode: "",
     },
     resolver: zodResolver(updateBook),
@@ -71,6 +72,7 @@ const EditBook = ({ book, open, setOpen }) => {
   const categories = watch("categories");
   const existingImages = watch("existingImages");
   const newImages = watch("newImages");
+  const removedImages = watch("removedImages");
   // Populate form when book changes
   useEffect(() => {
     if (!book) return;
@@ -98,6 +100,7 @@ const EditBook = ({ book, open, setOpen }) => {
       price: book.price || 0,
       categories: book.categories?.map((c) => c._id) || [],
       existingImages: normalizedImages,
+      removedImages: [],
       newImages: [],
       bookCode: book.bookCode || "",
     });
@@ -127,7 +130,7 @@ const EditBook = ({ book, open, setOpen }) => {
     setIsPending(true);
     let uploadedUrls = [];
     if (data.newImages?.length > 0) {
-      const res = await uploadImages(data?.newImages, "books");
+      const res = await uploadImages(data?.newImages, removedImages, "books");
       uploadedUrls = res.images;
     }
     const categoryIds = data.categories;
@@ -153,6 +156,8 @@ const EditBook = ({ book, open, setOpen }) => {
     });
   };
   const removeExistingImage = (url) => {
+    const image = existingImages.filter((img) => img === url);
+    setValue("removedImages", [ ...removedImages, image[0].public_id ]);
     setValue(
       "existingImages",
       existingImages.filter((img) => img !== url),
