@@ -75,7 +75,6 @@ export async function deleteImagesService(publicIds) {
   if (!publicIds) {
     throw new Error("No public ID(s) provided.");
   }
-
   // normalize to array and prevent accidental bad calls
   const ids = (Array.isArray(publicIds) ? publicIds : [publicIds]).filter(
     Boolean,
@@ -92,3 +91,15 @@ export async function deleteImagesService(publicIds) {
     }),
   );
 }
+export const deleteFromCloudinary = async (publicId) => {
+  if (!publicId) throw new Error("No public_id provided for deletion");
+
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    console.log(`Deleted ${publicId}:`, result);
+    return result;
+  } catch (err) {
+    console.error(`Cloudinary deletion error for ${publicId}:`, err.message);
+    throw err; // propagate error to your service
+  }
+};
