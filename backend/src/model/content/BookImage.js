@@ -1,5 +1,5 @@
 import { Schema, mongoose } from "mongoose";
-import imageSchema from "../../utis/imageSchema.js";
+import { imageSchema } from "../../utis/imageSchema.js";
 const bookImageSchema = new Schema(
   {
     book: { type: mongoose.Schema.Types.ObjectId, ref: "Book", required: true },
