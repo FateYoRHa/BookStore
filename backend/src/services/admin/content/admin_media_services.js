@@ -58,3 +58,10 @@ export async function uploadImagesService(files, type) {
     public_id: img.public_id,
   }));
 }
+
+export async function deleteImagesService(public_id) {
+  if (!public_id) {
+    throw new Error("No public ID provided.");
+  }
+  return await Promise.all(public_id.map((img) => deleteFromCloudinary(img)));
+}

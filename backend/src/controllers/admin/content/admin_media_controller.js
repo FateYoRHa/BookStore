@@ -33,3 +33,16 @@ export async function uploadImages(req, res) {
     });
   }
 }
+
+export async function deleteImages(req, res) {
+  try {
+
+    const images = await mediaService.uploadImagesService(req.body.removedImages);
+
+    res.json({ images });
+  } catch (error) {
+    res.status(error.status || 500).json({
+      message: error.message || "Internal Server Error",
+    });
+  }
+}
