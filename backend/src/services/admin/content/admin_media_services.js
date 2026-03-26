@@ -96,7 +96,6 @@ export const deleteFromCloudinary = async (publicId) => {
 
   try {
     const result = await cloudinary.uploader.destroy(publicId);
-    console.log(`Deleted ${publicId}:`, result);
     return result;
   } catch (err) {
     console.error(`Cloudinary deletion error for ${publicId}:`, err.message);
