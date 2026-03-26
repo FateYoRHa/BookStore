@@ -1,9 +1,5 @@
 import api from "./axios";
-export const uploadImages = async (
-  files,
-  removedImages = [],
-  type = "general",
-) => {
+export const uploadImages = async (files, type = "general") => {
   if (!files) throw new Error("No files provided");
 
   const fileArray = Array.isArray(files) ? files : [files];
@@ -15,7 +11,6 @@ export const uploadImages = async (
 
   // Optional: add type/folder info
   formData.append("type", type);
-  formData.append("removedImages", JSON.stringify(removedImages));
 
   const res = await api.patch("/admin/upload/images", formData, {
     headers: {
