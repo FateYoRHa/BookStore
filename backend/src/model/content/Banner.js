@@ -1,8 +1,9 @@
 import { mongoose, Schema } from "mongoose";
+import { imageSchema } from "../../utis/imageSchema.js";
 const bannerSchema = new Schema(
   {
     title: String,
-    image: { type: String, required: true },
+    image: imageSchema,
     link: String,
     startDate: Date,
     endDate: Date,
