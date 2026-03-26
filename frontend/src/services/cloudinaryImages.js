@@ -20,3 +20,10 @@ export const uploadImages = async (files, type = "general") => {
 
   return res.data;
 };
+export const deleteImages = async (removedImages) => {
+  if (!removedImages) throw new Error("No public ID provided");
+
+  return await api.delete("/admin/delete/images", {
+    data: { removedImages },
+  });
+};

@@ -33,3 +33,18 @@ export async function uploadImages(req, res) {
     });
   }
 }
+
+export async function deleteImages(req, res) {
+  try {
+    const { removedImages } = req.body;
+    if (!Array.isArray(removedImages) || removedImages.length === 0) {
+      return res.status(400).json({ message: "No images to delete" });
+    }
+    await mediaService.deleteImagesService(removedImages);
+    return res.sendStatus(204);
+  } catch (error) {
+    res.status(error.status || 500).json({
+      message: error.message || "Internal Server Error",
+    });
+  }
+}

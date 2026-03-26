@@ -1,5 +1,5 @@
 import { Author, Book } from "../../../model/index.js";
-
+import { deleteImagesService } from "../../../services/admin/content/admin_media_services.js";
 export async function getAdminAuthorsService() {
   const authors = await Author.find().sort({ createdAt: -1 });
   return authors;
@@ -26,6 +26,8 @@ export async function addAuthorService(author) {
 
 export async function updateAuthorService(author) {
   const { authorCode, image, penName, bio } = author;
+  const authorImage = await Author.findOne({ authorCode: authorCode }, "image");
+  await deleteImagesService(authorImage.image?.public_id);
   const updateAuthor = await Author.findOneAndUpdate(
     { authorCode: authorCode },
     {

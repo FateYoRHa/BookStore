@@ -7,6 +7,18 @@ export async function attachImagesToBookService(bookId, images) {
   }
   const bookExists = await Book.exists({ _id: bookId });
   if (!bookExists) throw new Error("Book not found");
+  const existingImages = await BookImage.find({ book: bookId });
+  // filter removed images
+  const removedPublicIds = existingImages
+    .filter(
+      (img) =>
+        !images.some((incoming) => incoming.public_id === img.image?.public_id),
+    )
+    .map((img) => img.image?.public_id)
+    .filter(Boolean); // avoids undefined
+  if (removedPublicIds?.length) {
+    await deleteImagesService(removedPublicIds);
+  }
   await BookImage.deleteMany({ book: bookId });
   const insertedImages = await BookImage.insertMany(
     images.map((img, index) => ({
@@ -58,3 +70,35 @@ export async function uploadImagesService(files, type) {
     public_id: img.public_id,
   }));
 }
+
+export async function deleteImagesService(publicIds) {
+  if (!publicIds) {
+    throw new Error("No public ID(s) provided.");
+  }
+  // normalize to array and prevent accidental bad calls
+  const ids = (Array.isArray(publicIds) ? publicIds : [publicIds]).filter(
+    Boolean,
+  );
+
+  return await Promise.all(
+    ids.map(async (id) => {
+      try {
+        return await deleteFromCloudinary(id);
+      } catch (err) {
+        console.error("Failed to delete:", id, err.message);
+        return null; // don't break entire batch
+      }
+    }),
+  );
+}
+export const deleteFromCloudinary = async (publicId) => {
+  if (!publicId) throw new Error("No public_id provided for deletion");
+
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
+  } catch (err) {
+    console.error(`Cloudinary deletion error for ${publicId}:`, err.message);
+    throw err; // propagate error to your service
+  }
+};
