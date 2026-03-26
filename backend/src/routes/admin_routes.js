@@ -70,6 +70,7 @@ router.patch(
   requireFiles("Image"),
   adminMedia.uploadImages,
 );
+router.delete("/delete/images", adminOnly, adminMedia.deleteImages);
 
 // BANNERS
 router.post("/banners", adminOnly, adminBanners.addBanner);
