@@ -18,7 +18,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { authorSchema } from "../../authorSchema";
 import { useEffect, useState } from "react";
 import { useAddAdminAuthor } from "../../hooks/admin_author_hooks";
-import { uploadImages } from "@/services/uploadImages";
+import { uploadImages } from "@/services/cloudinaryImages";
 import { cn } from "@/lib/utils";
 const AddAuthor = ({ open, setOpen }) => {
   const { mutate: addAuthor } = useAddAdminAuthor();

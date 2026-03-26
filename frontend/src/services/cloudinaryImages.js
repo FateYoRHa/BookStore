@@ -1,5 +1,9 @@
 import api from "./axios";
-export const uploadImages = async (files, removedImages = [], type = "general") => {
+export const uploadImages = async (
+  files,
+  removedImages = [],
+  type = "general",
+) => {
   if (!files) throw new Error("No files provided");
 
   const fileArray = Array.isArray(files) ? files : [files];
@@ -18,6 +22,16 @@ export const uploadImages = async (files, removedImages = [], type = "general") 
       "Content-Type": "multipart/form-data",
     },
   });
+
+  return res.data;
+};
+export const deleteImages = async (removedImages) => {
+  if (!removedImages) throw new Error("No public ID provided");
+
+  const formData = new FormData();
+  formData.append("removedImages", JSON.stringify(removedImages));
+
+  const res = await api.delete("/admin/upload/images", formData);
 
   return res.data;
 };

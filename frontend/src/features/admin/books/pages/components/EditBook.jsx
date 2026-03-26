@@ -34,7 +34,7 @@ import { useGetAdminAuthorsList } from "@/features/admin/authors/hooks/admin_aut
 import { updateBook } from "../../bookSchema";
 import { useUpdateAdminBooks } from "../../hooks/admin_books_hooks";
 import { useGetCategories } from "@/features/categories/hooks/category_hooks";
-import { uploadImages } from "@/services/uploadImages";
+import { uploadImages } from "@/services/cloudinaryImages";
 import BookCategories from "./BookCategories";
 import { Spinner } from "@/components/ui/spinner";
 

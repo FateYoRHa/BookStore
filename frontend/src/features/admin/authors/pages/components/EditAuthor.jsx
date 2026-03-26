@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { updateAuthorSchema } from "../../authorSchema";
 import { useUpdateAdminAuthor } from "../../hooks/admin_author_hooks";
 import { Spinner } from "@/components/ui/spinner";
-import { uploadImages } from "@/services/uploadImages";
+import { uploadImages } from "@/services/cloudinaryImages";
 const EditAuthor = ({ open, setOpen, author }) => {
   const { mutate: updateAuthor } = useUpdateAdminAuthor();
   const [isPending, setIsPending] = useState(false);
