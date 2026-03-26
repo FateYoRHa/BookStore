@@ -77,10 +77,16 @@ const EditBook = ({ book, open, setOpen }) => {
     const normalizedImages =
       book.images
         ?.map((img) => {
-          if (typeof img === "string") return img; // old string format
-          if (img.url) return img.url; // top-level image object
-          if (img.image?.url) return img.image.url; // nested image object
-          return null; // ignore invalid
+          if (typeof img === "string") {
+            return { url: img, public_id: "" }; // old string → object
+          }
+          if (img.url) {
+            return { url: img.url, public_id: img.public_id || "" }; // top-level object
+          }
+          if (img.image?.url) {
+            return { url: img.image.url, public_id: img.image.public_id || "" }; // nested object
+          }
+          return null;
         })
         .filter(Boolean) || [];
     reset({
@@ -109,7 +115,6 @@ const EditBook = ({ book, open, setOpen }) => {
       categories.filter((c) => c !== id),
     );
   };
-
   // Image upload
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -307,20 +312,23 @@ const EditBook = ({ book, open, setOpen }) => {
 
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {/* EXISTING IMAGES */}
-                  {existingImages?.map((img, idx) => (
-                    <div key={idx} className="relative">
-                      <img
-                        src={img}
-                        className="h-16 w-16 object-cover rounded border"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeExistingImage(img)}
-                        className="absolute top-0 right-0 bg-black text-white rounded-full">
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
+                  {existingImages?.map((img, idx) => {
+                    // if(img.url) img = img.url.toString();
+                    return (
+                      <div key={idx} className="relative">
+                        <img
+                          src={typeof img === "string" ? img : img.url}
+                          className="h-16 w-16 object-cover rounded border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeExistingImage(img)}
+                          className="absolute top-0 right-0 bg-black text-white rounded-full">
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    );
+                  })}
 
                   {/* NEW IMAGES */}
                   {newImages?.map((file, idx) => (
