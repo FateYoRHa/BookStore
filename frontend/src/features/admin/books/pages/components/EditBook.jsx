@@ -34,7 +34,7 @@ import { useGetAdminAuthorsList } from "@/features/admin/authors/hooks/admin_aut
 import { updateBook } from "../../bookSchema";
 import { useUpdateAdminBooks } from "../../hooks/admin_books_hooks";
 import { useGetCategories } from "@/features/categories/hooks/category_hooks";
-import { uploadImages } from "@/services/cloudinaryImages";
+import { deleteImages, uploadImages } from "@/services/cloudinaryImages";
 import BookCategories from "./BookCategories";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -129,8 +129,11 @@ const EditBook = ({ book, open, setOpen }) => {
   const onSubmit = async (data) => {
     setIsPending(true);
     let uploadedUrls = [];
+    if (data.removedImages?.length > 0) {
+      await deleteImages(removedImages);
+    }
     if (data.newImages?.length > 0) {
-      const res = await uploadImages(data?.newImages, removedImages, "books");
+      const res = await uploadImages(data?.newImages, "books");
       uploadedUrls = res.images;
     }
     const categoryIds = data.categories;
@@ -157,7 +160,7 @@ const EditBook = ({ book, open, setOpen }) => {
   };
   const removeExistingImage = (url) => {
     const image = existingImages.filter((img) => img === url);
-    setValue("removedImages", [ ...removedImages, image[0].public_id ]);
+    setValue("removedImages", [...removedImages, image[0].public_id]);
     setValue(
       "existingImages",
       existingImages.filter((img) => img !== url),
