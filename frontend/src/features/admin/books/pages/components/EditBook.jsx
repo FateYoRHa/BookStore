@@ -86,6 +86,7 @@ const EditBook = ({ book, open, setOpen }) => {
       categories: book.categories?.map((c) => c._id) || [],
       existingImages:
         book.images?.map((img) => (typeof img === "string" ? img : img.url)) ||
+        book.images?.map((img) => (typeof img === "string" ? img : img.image?.url)) ||
         [],
       newImages: [],
       bookCode: book.bookCode || "",
@@ -118,7 +119,7 @@ const EditBook = ({ book, open, setOpen }) => {
     let uploadedUrls = [];
     if (data.newImages?.length > 0) {
       const res = await uploadImages(data?.newImages, "books");
-      uploadedUrls = res.urls;
+      uploadedUrls = res.images;
     }
     const images = [...(data.existingImages || []), ...uploadedUrls];
     const payload = {
