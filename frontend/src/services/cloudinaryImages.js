@@ -23,10 +23,7 @@ export const uploadImages = async (files, type = "general") => {
 export const deleteImages = async (removedImages) => {
   if (!removedImages) throw new Error("No public ID provided");
 
-  const formData = new FormData();
-  formData.append("removedImages", JSON.stringify(removedImages));
-
-  const res = await api.delete("/admin/upload/images", formData);
-
-  return res.data;
+  return await api.delete("/admin/delete/images", {
+    data: { removedImages },
+  });
 };
