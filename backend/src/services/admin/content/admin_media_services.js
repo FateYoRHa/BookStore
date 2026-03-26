@@ -14,7 +14,7 @@ export async function attachImagesToBookService(bookId, images) {
   const insertedImages = await BookImage.insertMany(
     images.map((img, index) => ({
       book: bookId,
-      url: img,
+      image: { url: img.url, public_id: img.public_id },
       type: img.type || "cover",
       order: index,
     })),
