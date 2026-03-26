@@ -98,7 +98,7 @@ const AddBook = ({ open, setOpen }) => {
     let uploadedUrls = [];
     if (data.images?.length > 0) {
       const res = await uploadImages(data?.images, "books");
-      uploadedUrls = res.urls;
+      uploadedUrls = res.images;
     }
     const payload = {
       ...data,

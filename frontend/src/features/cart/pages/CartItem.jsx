@@ -11,19 +11,19 @@ const CartItem = ({ item }) => {
   const { mutate: addToCart, isLoading } = useAddCart();
   const [quantity, setQuantity] = useState(item?.quantity);
   const addQuantity = () => {
-    quantity == 10 ? setQuantity(10) : setQuantity((q) => (q + 1));
-    
+    quantity == 10 ? setQuantity(10) : setQuantity((q) => q + 1);
+
     addToCart({
       book: item?.book._id,
-      quantity: quantity+1,
+      quantity: quantity + 1,
     });
   };
 
   const decreaseQuantity = () => {
-    quantity == 1 ? setQuantity(1) : setQuantity((q) => (q - 1));
+    quantity == 1 ? setQuantity(1) : setQuantity((q) => q - 1);
     addToCart({
       book: item?.book._id,
-      quantity: quantity-1,
+      quantity: quantity - 1,
     });
   };
   // * remove from cart
@@ -35,7 +35,9 @@ const CartItem = ({ item }) => {
       {/* PRODUCT IMAGE */}
       <div className="h-24 w-20 shrink-0 overflow-hidden rounded-lg">
         <img
-          src={item?.book.images?.[0]?.url}
+          src={
+            item?.book.images?.[0]?.url || item?.book.images?.[0]?.image?.url
+          }
           alt={item?.book.title}
           className="h-full w-full object-cover"
         />

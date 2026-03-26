@@ -68,14 +68,21 @@ const EditBook = ({ book, open, setOpen }) => {
     resolver: zodResolver(updateBook),
     mode: "onChange",
   });
-
   const categories = watch("categories");
   const existingImages = watch("existingImages");
   const newImages = watch("newImages");
   // Populate form when book changes
   useEffect(() => {
     if (!book) return;
-
+    const normalizedImages =
+      book.images
+        ?.map((img) => {
+          if (typeof img === "string") return img; // old string format
+          if (img.url) return img.url; // top-level image object
+          if (img.image?.url) return img.image.url; // nested image object
+          return null; // ignore invalid
+        })
+        .filter(Boolean) || [];
     reset({
       title: book.title || "",
       description: book.description || "",
@@ -84,9 +91,7 @@ const EditBook = ({ book, open, setOpen }) => {
       publicationDate: book.publicationDate?.slice(0, 10) || "",
       price: book.price || 0,
       categories: book.categories?.map((c) => c._id) || [],
-      existingImages:
-        book.images?.map((img) => (typeof img === "string" ? img : img.url)) ||
-        [],
+      existingImages: normalizedImages,
       newImages: [],
       bookCode: book.bookCode || "",
     });
@@ -118,7 +123,7 @@ const EditBook = ({ book, open, setOpen }) => {
     let uploadedUrls = [];
     if (data.newImages?.length > 0) {
       const res = await uploadImages(data?.newImages, "books");
-      uploadedUrls = res.urls;
+      uploadedUrls = res.images;
     }
     const images = [...(data.existingImages || []), ...uploadedUrls];
     const payload = {
@@ -302,7 +307,7 @@ const EditBook = ({ book, open, setOpen }) => {
                   {existingImages?.map((img, idx) => (
                     <div key={idx} className="relative">
                       <img
-                        src={img.url || img}
+                        src={img}
                         className="h-16 w-16 object-cover rounded border"
                       />
                       <button

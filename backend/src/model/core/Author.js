@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Counter from "../../assets/counter.js";
-
+import { imageSchema } from "../../utis/imageSchema.js";
 const PREFIX = "AU";
 const PAD = 4;
 
@@ -9,7 +9,7 @@ const authorSchema = new mongoose.Schema(
     authorCode: { type: String, unique: true, index: true },
     penName: { type: String, unique: true },
     bio: { type: String, required: true },
-    image: { url: String, alt: String },
+    image: imageSchema,
     deletedAt: { type: Date, default: null },
   },
   {

@@ -90,8 +90,8 @@ const BookDetails = () => {
                         className="overflow-hidden rounded-md">
                         <img
                           className="w-full h-full object-cover rounded-lg shadow-xl"
-                          src={image?.url}
-                          alt={image?.altText}
+                          src={image?.url || image?.image?.url}
+                          alt={image?.altText || image?.image?.altText}
                         />
                       </AspectRatio>
                     </CarouselItem>

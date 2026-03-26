@@ -18,9 +18,7 @@ export const BooksColumns = ({
     maxSize: 300,
     cell: ({ row }) => {
       const book = row.original;
-      const imageUrl =
-        book?.images?.[0]?.url ??
-        "https://via.placeholder.com/150x200?text=No+Image";
+      const imageUrl = book?.images?.[0]?.url || book?.images?.[0]?.image?.url;
       return (
         <div className="flex items-start gap-3 max-w-[300px]">
           <img

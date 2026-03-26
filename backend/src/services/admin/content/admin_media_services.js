@@ -5,16 +5,13 @@ export async function attachImagesToBookService(bookId, images) {
   if (!Array.isArray(images) || images.length === 0) {
     throw new Error("Images must be a non-empty array");
   }
-
   const bookExists = await Book.exists({ _id: bookId });
   if (!bookExists) throw new Error("Book not found");
-
   await BookImage.deleteMany({ book: bookId });
-
   const insertedImages = await BookImage.insertMany(
     images.map((img, index) => ({
       book: bookId,
-      url: img,
+      image: { url: img.url, public_id: img.public_id },
       type: img.type || "cover",
       order: index,
     })),
@@ -51,9 +48,13 @@ export async function uploadImagesService(files, type) {
   if (!files) {
     throw new Error("No file provided.");
   }
+
   const uploaded = await Promise.all(
     files.map((file) => uploadToCloudinary(file.buffer, type)),
   );
 
-  return uploaded.map((img) => img.secure_url);
+  return uploaded.map((img) => ({
+    url: img.secure_url,
+    public_id: img.public_id,
+  }));
 }

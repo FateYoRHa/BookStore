@@ -15,8 +15,9 @@ export async function addAuthorService(author) {
     penName,
     bio,
     image: {
-      url: image,
-      alt: penName,
+      url: image.url,
+      public_id: image.public_id,
+      altText: penName,
     },
   });
   await newAuthor.save();
@@ -31,8 +32,9 @@ export async function updateAuthorService(author) {
       penName,
       bio,
       image: {
-        url: image,
-        alt: penName,
+        url: image.url,
+        public_id: image.public_id,
+        altText: penName,
       },
     },
     { new: true },
