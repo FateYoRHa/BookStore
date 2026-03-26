@@ -23,11 +23,13 @@ export async function uploadImages(req, res) {
   try {
     const files = req.files;
     const type = req.body.type;
-    const urls = await mediaService.uploadImagesService(files, type);
-    res.json({ urls });
+
+    const images = await mediaService.uploadImagesService(files, type);
+
+    res.json({ images });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .json({ message: error.image || "Internal Server Error" });
+    res.status(error.status || 500).json({
+      message: error.message || "Internal Server Error",
+    });
   }
 }
