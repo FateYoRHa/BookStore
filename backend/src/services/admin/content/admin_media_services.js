@@ -59,9 +59,24 @@ export async function uploadImagesService(files, type) {
   }));
 }
 
-export async function deleteImagesService(public_id) {
-  if (!public_id) {
-    throw new Error("No public ID provided.");
+export async function deleteImagesService(publicIds) {
+  if (!publicIds) {
+    throw new Error("No public ID(s) provided.");
   }
-  return await Promise.all(public_id.map((img) => deleteFromCloudinary(img)));
+
+  // normalize to array and prevent accidental bad calls
+  const ids = (Array.isArray(publicIds) ? publicIds : [publicIds]).filter(
+    Boolean,
+  );
+
+  return await Promise.all(
+    ids.map(async (id) => {
+      try {
+        return await deleteFromCloudinary(id);
+      } catch (err) {
+        console.error("Failed to delete:", id, err.message);
+        return null; // don't break entire batch
+      }
+    }),
+  );
 }
