@@ -53,6 +53,11 @@ export const updateBook = z.object({
       ]),
     )
     .optional(),
+  removedImages: z
+    .array(
+      z.string(), // old string URLs
+    )
+    .optional(),
   newImages: z
     .array(
       z
