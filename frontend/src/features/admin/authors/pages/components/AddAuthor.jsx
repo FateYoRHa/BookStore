@@ -43,7 +43,7 @@ const AddAuthor = ({ open, setOpen }) => {
     const url = await uploadImages(values.image, "authors");
     const author = {
       ...values,
-      image: url.urls[0],
+      image: url.images[0],
     };
     addAuthor(author, {
       onSuccess: () => {

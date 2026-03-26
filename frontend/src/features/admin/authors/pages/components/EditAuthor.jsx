@@ -72,12 +72,12 @@ const EditAuthor = ({ open, setOpen, author }) => {
     try {
       setIsPending(true);
 
-      let imageUrl = author?.image?.url;
+      let imageUrl = author?.image;
 
       // ONLY upload if new image exists
       if (values.newImage) {
         const res = await uploadImages(values.newImage, "authors");
-        imageUrl = res?.urls?.[0]; // adjust based on your API response
+        imageUrl = res?.images[0]; // adjust based on your API response
       }
 
       const payload = {
