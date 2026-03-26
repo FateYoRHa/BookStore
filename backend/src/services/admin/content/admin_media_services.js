@@ -5,16 +5,13 @@ export async function attachImagesToBookService(bookId, images) {
   if (!Array.isArray(images) || images.length === 0) {
     throw new Error("Images must be a non-empty array");
   }
-
   const bookExists = await Book.exists({ _id: bookId });
   if (!bookExists) throw new Error("Book not found");
-
   await BookImage.deleteMany({ book: bookId });
-
   const insertedImages = await BookImage.insertMany(
     images.map((img, index) => ({
       book: bookId,
-      image: { url: img.image?.url, public_id: img.image?.public_id },
+      image: { url: img.url, public_id: img.public_id },
       type: img.type || "cover",
       order: index,
     })),

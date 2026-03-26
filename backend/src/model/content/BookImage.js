@@ -10,7 +10,6 @@ const bookImageSchema = new Schema(
       enum: ["cover", "preview", "thumbnail"],
       default: "cover",
     },
-    public_id: { type: String, required: true },
   },
   { timestamps: true },
 );
