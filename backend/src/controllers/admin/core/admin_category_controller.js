@@ -1,5 +1,5 @@
 import { Category } from "../../../model/index.js";
-import * as categoryService from "../../../services/core/category_services.js";
+import * as categoryService from "../../../services/admin/core/admin_category_services.js";
 
 export async function addCategory(req, res) {
   try {
