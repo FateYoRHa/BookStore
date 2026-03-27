@@ -8,6 +8,7 @@ const categorySchema = new Schema({
   name: { type: String, unique: true, required: true },
   description: { type: String, required: true },
   icon: { type: String, required: true },
+  deletedAt: { type: Date, default: null, index: true },
   isFeatured: { type: Boolean, default: false },
   sortOrder: { type: Number, default: 0 },
 });
