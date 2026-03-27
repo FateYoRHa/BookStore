@@ -35,7 +35,11 @@ export async function updateCategoryService(category) {
     throw new Error("Category already exists.");
   }
   const catImage = await Category.findOne({ categoryCode: catCode }, "image");
-  await deleteImagesService(catImage.image?.public_id);
+  const publicId = catImage?.image?.public_id;
+
+  if (publicId) {
+    await deleteImagesService([publicId]);
+  }
 
   const updateCategory = await Category.findOneAndUpdate(
     { categoryCode: catCode },
