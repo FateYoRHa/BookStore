@@ -1,14 +1,14 @@
-import { useGetCategories } from "@/features/categories/hooks/category_hooks";
 import DataTable from "../../components/DataTable";
 import CategoryTableColumns from "./components/CategoryTableColumns";
 import { useState } from "react";
 import AddCategory from "./components/AddCategory";
 import { BookmarkPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAdminGetCategories } from "../hooks/admin_category_hooks";
 
 const AdminCategories = () => {
   const [openAddForm, setOpenAddForm] = useState(false);
-  const { data } = useGetCategories();
+  const { data } = useAdminGetCategories();
   const columns = CategoryTableColumns();
 
   // HANDLERS
