@@ -11,14 +11,18 @@ export const updateCategoryRequest = async (category) => {
 };
 
 export const removeCategoryRequest = async (category) => {
-  const res = await api.delete(
-    `/admin/categories/${category.catCode}`,
-    category,
-  );
+  const res = await api.delete(`/admin/categories/${category}`, category);
   return res.data;
 };
 
 export const getAdminCategoriesRequest = async () => {
   const res = await api.get("/admin/categories");
+  return res.data;
+};
+export const reAddCategoryRequest = async (category) => {
+  const res = await api.patch(
+    `/admin/categories/${category}/restore`,
+    category,
+  );
   return res.data;
 };
