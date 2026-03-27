@@ -27,7 +27,11 @@ export async function addAuthorService(author) {
 export async function updateAuthorService(author) {
   const { authorCode, image, penName, bio } = author;
   const authorImage = await Author.findOne({ authorCode: authorCode }, "image");
-  await deleteImagesService(authorImage.image?.public_id);
+  const publicId = authorImage?.image?.public_id;
+
+  if (publicId) {
+    await deleteImagesService([publicId]);
+  }
   const updateAuthor = await Author.findOneAndUpdate(
     { authorCode: authorCode },
     {
