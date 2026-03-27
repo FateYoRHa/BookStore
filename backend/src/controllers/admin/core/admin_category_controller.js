@@ -1,16 +1,22 @@
-import { Category } from "../../../model/index.js";
-import * as categoryService from "../../../services/core/category_services.js";
+import * as categoryService from "../../../services/admin/core/admin_category_services.js";
 
+export async function getAdminCategories(req, res) {
+  try {
+    const categories = await categoryService.getCategoriesService();
+    res.status(200).json(categories);
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error" });
+  }
+}
 export async function addCategory(req, res) {
   try {
-    const { name, description, icon } = req.body;
-    const exist = await Category.findOne({ name: name }).lean();
-    if (exist)
-      return res.status(409).json({ message: `${name} already exist` });
-    const category = new categoryService.addCategoryService({
+    const { name, description, image } = req.body;
+    const category = await categoryService.addCategoryService({
       name,
       description,
-      icon,
+      image,
     });
 
     res.status(201).json(category);

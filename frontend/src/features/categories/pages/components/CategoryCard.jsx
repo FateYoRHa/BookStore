@@ -8,7 +8,6 @@ export default function CategoryCard({ category }) {
   function handleClick() {
     navigate(`/books?category=${category.name}`);
   }
-
   return (
     <Card
       onClick={handleClick}
@@ -18,7 +17,7 @@ export default function CategoryCard({ category }) {
         <div className="w-full">
           <AspectRatio ratio={1 / 1}>
             <img
-              src={category.icon}
+              src={category?.image?.url}
               alt={category.name}
               className="h-full w-full object-cover rounded-md"
             />
