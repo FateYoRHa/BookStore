@@ -19,7 +19,7 @@ const CategoryTableColumns = () => [
       return (
         <div className="flex items-center gap-3 max-w-[250px] mx-auto">
           <img
-            src={category?.icon}
+            src={category?.image?.url}
             alt={category?.name}
             className="h-10 w-10 rounded-md object-cover border shrink-0"
           />
