@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { updateAuthorSchema } from "../../authorSchema";
 import { useUpdateAdminAuthor } from "../../hooks/admin_author_hooks";
 import { Spinner } from "@/components/ui/spinner";
-import { uploadImages } from "@/services/cloudinaryImages";
+import { deleteImages, uploadImages } from "@/services/cloudinaryImages";
 const EditAuthor = ({ open, setOpen, author }) => {
   const { mutate: updateAuthor } = useUpdateAdminAuthor();
   const [isPending, setIsPending] = useState(false);
@@ -73,10 +73,10 @@ const EditAuthor = ({ open, setOpen, author }) => {
       setIsPending(true);
 
       let imageUrl = author?.image;
-
+      let res = null;
       // ONLY upload if new image exists
       if (values.newImage) {
-        const res = await uploadImages(values.newImage, "authors");
+        res = await uploadImages(values.newImage, "authors");
         imageUrl = res?.images[0]; // adjust based on your API response
       }
 
@@ -92,7 +92,10 @@ const EditAuthor = ({ open, setOpen, author }) => {
           toast.success("Author updated successfully.");
           setOpen(false);
         },
-        onError: () => {
+        onError: async () => {
+          if (res) {
+            await deleteImages([res?.images?.[0]?.public_id]);
+          }
           toast.error("Failed to update author.");
         },
         onSettled: () => setIsPending(false),

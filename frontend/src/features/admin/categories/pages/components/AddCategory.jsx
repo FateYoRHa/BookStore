@@ -16,7 +16,7 @@ import { useAddAdminCategory } from "../../hooks/admin_category_hooks";
 import FormFieldError from "@/components/forms/FormFieldError";
 import { addCategorySchema } from "../../categorySchema";
 import { cn } from "@/lib/utils";
-import { uploadImages } from "@/services/cloudinaryImages";
+import { deleteImages, uploadImages } from "@/services/cloudinaryImages";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 const AddCategory = ({ open, setOpen }) => {
@@ -47,7 +47,8 @@ const AddCategory = ({ open, setOpen }) => {
         setOpen(false);
         toast.success("Category added successfully.");
       },
-      onError: () => {
+      onError: async () => {
+        await deleteImages([url?.images?.[0]?.public_id]);
         toast.error("Failed to add category. Please try again.");
       },
       onSettled: () => setIsPending(false),

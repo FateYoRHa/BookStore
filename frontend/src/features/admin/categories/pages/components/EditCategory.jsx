@@ -69,8 +69,9 @@ const EditCategory = ({ open, setOpen, category }) => {
   const onSubmit = async (data) => {
     setIsPending(true);
     let url = category?.image;
+    let res = null;
     if (data.newImage) {
-      const res = await uploadImages(data.newImage, "categories");
+      res = await uploadImages(data.newImage, "categories");
       url = res.images[0];
     }
     const payload = { ...data, image: url, catCode: category.categoryCode };
@@ -80,8 +81,10 @@ const EditCategory = ({ open, setOpen, category }) => {
         toast.success("Category updated successfully.");
       },
       onError: async () => {
+        if (res) {
+          await deleteImages([url.public_id]); // <- this will delete uploaded image on error
+        }
         toast.error("Failed to update category. Please try again.");
-        await deleteImages([url.public_id]); // <- this will delete uploaded image on error
       },
       onSettled: () => setIsPending(false),
     });

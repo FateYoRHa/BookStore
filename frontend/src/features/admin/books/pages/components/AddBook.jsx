@@ -34,7 +34,7 @@ import { useGetAdminAuthorsList } from "@/features/admin/authors/hooks/admin_aut
 import { addBook } from "../../bookSchema";
 import { useAddAdminBook } from "../../hooks/admin_books_hooks";
 import { useGetCategories } from "@/features/categories/hooks/category_hooks";
-import { uploadImages } from "@/services/cloudinaryImages";
+import { deleteImages, uploadImages } from "@/services/cloudinaryImages";
 import BookCategories from "./BookCategories";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -96,9 +96,11 @@ const AddBook = ({ open, setOpen }) => {
   const onSubmit = async (data) => {
     setIsPending(true);
     let uploadedUrls = [];
+    let publicIds = [];
     if (data.images?.length > 0) {
       const res = await uploadImages(data?.images, "books");
       uploadedUrls = res.images;
+      publicIds = res.images.map((img) => img.public_id);
     }
     const categoryIds = data.categories;
     const payload = {
@@ -113,7 +115,10 @@ const AddBook = ({ open, setOpen }) => {
         setOpen(false);
         setIsPending(false);
       },
-      onError: () => {
+      onError: async () => {
+        if (publicIds.length) {
+          await deleteImages(publicIds);
+        }
         toast.error("Failed to add book.");
         setIsPending(false);
       },

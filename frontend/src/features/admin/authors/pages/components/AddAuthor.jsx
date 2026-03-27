@@ -18,7 +18,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { authorSchema } from "../../authorSchema";
 import { useEffect, useState } from "react";
 import { useAddAdminAuthor } from "../../hooks/admin_author_hooks";
-import { uploadImages } from "@/services/cloudinaryImages";
+import { deleteImages, uploadImages } from "@/services/cloudinaryImages";
 import { cn } from "@/lib/utils";
 const AddAuthor = ({ open, setOpen }) => {
   const { mutate: addAuthor } = useAddAdminAuthor();
@@ -50,7 +50,8 @@ const AddAuthor = ({ open, setOpen }) => {
         setOpen(false);
         toast.success("Author added successfully.");
       },
-      onError: () => {
+      onError: async () => {
+        await deleteImages([url?.images?.[0]?.public_id]);
         toast.error("Failed to add author. Please try again.");
       },
       onSettled: () => setIsPending(false),
