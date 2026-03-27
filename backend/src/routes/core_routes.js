@@ -20,7 +20,6 @@ router.get("/books/:id", book.getBook);
 
 // CATEGORIES
 router.get("/categories", category.getCategories);
-router.get("/categories/:id", category.getCategory);
 // CUSTOMERS
 
 router.get(
