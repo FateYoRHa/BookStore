@@ -18,6 +18,7 @@ import { addCategorySchema } from "../../categorySchema";
 import { cn } from "@/lib/utils";
 import { uploadImages } from "@/services/cloudinaryImages";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 const AddCategory = ({ open, setOpen }) => {
   const { mutate: addCategory } = useAddAdminCategory();
   const [isPending, setIsPending] = useState(false);
