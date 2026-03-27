@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ListPlus, Pencil, Trash } from "lucide-react";
 
-const CategoryTableColumns = () => [
+const CategoryTableColumns = ({ onEdit }) => [
   {
     accessorKey: "categoryCode",
     header: "Category Code",
@@ -73,7 +73,7 @@ const CategoryTableColumns = () => [
 
       return (
         <div className="flex justify-center gap-2">
-          <Button size="icon" variant="ghost">
+          <Button size="icon" variant="ghost" onClick={() => onEdit(category)}>
             <Pencil className="h-4 w-4" />
           </Button>
 
