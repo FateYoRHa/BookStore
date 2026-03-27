@@ -19,10 +19,10 @@ const categorySchema = new Schema(
 
 categorySchema.pre("save", async function () {
   if (this.categoryCode) return;
-  const counter = Counter.findOneAndUpdate(
+  const counter = await Counter.findOneAndUpdate(
     { key: "category" },
     { $inc: { value: 1 } },
-    { upsert: true, new: true },
+    { new: true, upsert: true },
   );
   const number = counter.value.toString().padStart(PAD, 0);
   this.categoryCode = `${PREFIX}-${number}`;
