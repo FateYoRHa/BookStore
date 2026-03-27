@@ -25,10 +25,16 @@ export async function addCategoryService(category) {
   return newCategory;
 }
 export async function updateCategoryService(category) {
-  const { catCode, name, description, icon } = category;
+  const { catCode, name, description, image } = category;
+  const exist = await Category.findOne({ name: name }).lean();
+  if (exist) return res.status(409).json({ message: `${name} already exist` });
   const updateCategory = await Category.findOneAndUpdate(
-    { catCode: catCode },
-    { name, description, icon },
+    { categoryCode: catCode },
+    {
+      name,
+      description,
+      image: { url: image.url, public_id: image.public_id, altText: name },
+    },
     { new: true },
   );
   return updateCategory;
