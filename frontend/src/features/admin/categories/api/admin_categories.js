@@ -17,3 +17,8 @@ export const removeCategoryRequest = async (category) => {
   );
   return res.data;
 };
+
+export const getCategoriesRequest = async () => {
+  const res = await api.get("/admin/categories");
+  return res.data;
+};
