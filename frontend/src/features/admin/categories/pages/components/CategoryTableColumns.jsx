@@ -4,7 +4,7 @@ import { ListPlus, Pencil, Trash } from "lucide-react";
 
 const CategoryTableColumns = () => [
   {
-    accessorKey: "catCode",
+    accessorKey: "categoryCode",
     header: "Category Code",
     meta: { className: "text-center" },
     cell: ({ getValue }) => (
@@ -33,7 +33,8 @@ const CategoryTableColumns = () => [
   },
   {
     header: "Description",
-    accessorKey: "bio",
+    accessorKey: "description",
+    meta: { className: "text-center" },
     size: 300,
     cell: ({ getValue }) => (
       <div className="max-w-[300px] mx-auto text-center">
