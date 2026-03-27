@@ -6,11 +6,19 @@ export async function getCategoriesService() {
 }
 
 export async function addCategoryService(category) {
-  const { name, description, icon } = category;
+  const { name, description, image } = category;
+  const exist = await Category.findOne({ name: name }).lean();
+  if (exist) {
+    throw new Error("Category already exists.");
+  }
   const newCategory = new Category({
     name,
     description,
-    icon,
+    image: {
+      url: image.url,
+      public_id: image.public_id,
+      altText: name,
+    },
   });
 
   await newCategory.save();
