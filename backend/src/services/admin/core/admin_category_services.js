@@ -1,5 +1,10 @@
 import { Category } from "../../../model/index.js";
 
+export async function getCategoriesService() {
+  const categories = await Category.find().sort({ createdAt: -1 });
+  return categories;
+}
+
 export async function addCategoryService(category) {
   const { name, description, icon } = category;
   const newCategory = new Category({
