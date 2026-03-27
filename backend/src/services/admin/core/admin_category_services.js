@@ -1,4 +1,5 @@
 import { Category } from "../../../model/index.js";
+import { deleteImagesService } from "../content/admin_media_services.js";
 
 export async function getCategoriesService() {
   const categories = await Category.find().sort({ createdAt: -1 });
@@ -26,8 +27,16 @@ export async function addCategoryService(category) {
 }
 export async function updateCategoryService(category) {
   const { catCode, name, description, image } = category;
-  const exist = await Category.findOne({ name: name }).lean();
-  if (exist) return res.status(409).json({ message: `${name} already exist` });
+  const exist = await Category.findOne({
+    name: name,
+    categoryCode: { $ne: catCode },
+  }).lean();
+  if (exist) {
+    throw new Error("Category already exists.");
+  }
+  const catImage = await Category.findOne({ categoryCode: catCode }, "image");
+  await deleteImagesService(catImage.image?.public_id);
+
   const updateCategory = await Category.findOneAndUpdate(
     { categoryCode: catCode },
     {
