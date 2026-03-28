@@ -43,6 +43,7 @@ router.patch(
 router.get("/customers", adminOnly, adminCustomers.getCustomers);
 
 // ORDERS
+router.get("/orders", adminOnly, adminOrders.getAdminOrders)
 router.put("/orders/:id", adminOnly, adminOrders.updateOrder);
 
 // HOMEPAGESECTION
