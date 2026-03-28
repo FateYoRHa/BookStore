@@ -32,7 +32,8 @@ router.patch("/authors/:id/restore", adminOnly, adminAuthors.restoreAuthor);
 router.get("/categories", adminOnly, adminCategories.getAdminCategories);
 router.post("/categories", adminOnly, adminCategories.addCategory);
 router.put("/categories/:id", adminOnly, adminCategories.updateCategory);
-router.delete("/categories/:id", adminOnly, adminCategories.deleteCategory);
+router.delete("/categories/:id", adminOnly, adminCategories.removeCategory);
+
 
 // CUSTOMERS
 router.get("/customers", adminOnly, adminCustomers.getCustomers);
