@@ -2,7 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ListPlus, Pencil, Trash } from "lucide-react";
 
-const CategoryTableColumns = ({ onEdit }) => [
+const CategoryTableColumns = ({
+  onEdit,
+  onRemove,
+  onReAdd,
+  isRemoving,
+  isReAdding,
+}) => [
   {
     accessorKey: "categoryCode",
     header: "Category Code",
@@ -78,11 +84,19 @@ const CategoryTableColumns = ({ onEdit }) => [
           </Button>
 
           {category.deletedAt ? (
-            <Button size="icon" variant="ghost">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => onReAdd(category.categoryCode)}
+              disabled={isReAdding}>
               <ListPlus className="h-4 w-4 text-green-500" />
             </Button>
           ) : (
-            <Button size="icon" variant="ghost">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => onRemove(category.categoryCode)}
+              disabled={isRemoving}>
               <Trash className="h-4 w-4 text-destructive" />
             </Button>
           )}

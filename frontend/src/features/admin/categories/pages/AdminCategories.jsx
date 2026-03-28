@@ -4,7 +4,11 @@ import { useState } from "react";
 import AddCategory from "./components/AddCategory";
 import { BookmarkPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAdminGetCategories } from "../hooks/admin_category_hooks";
+import {
+  useAdminGetCategories,
+  useReAddAdminCategory,
+  useRemoveAdminCategory,
+} from "../hooks/admin_category_hooks";
 import EditCategory from "./components/EditCategory";
 
 const AdminCategories = () => {
@@ -12,7 +16,8 @@ const AdminCategories = () => {
   const [openEditForm, setOpenEditForm] = useState(false);
   const [category, setCategory] = useState(null);
   const { data } = useAdminGetCategories();
-
+  const { mutate: remove, isPending: isRemoving } = useRemoveAdminCategory();
+  const { mutate: reAdd, isPending: isReadding } = useReAddAdminCategory();
   // HANDLERS
   const handleAddCategory = () => {
     setOpenAddForm(true);
@@ -21,10 +26,20 @@ const AdminCategories = () => {
     setOpenEditForm(true);
     setCategory(category);
   };
+  const handleRemoveCategory = (category) => {
+    remove(category);
+  };
+  const handleReAddCategory = (category) => {
+    reAdd(category);
+  };
 
   // table columns
   const columns = CategoryTableColumns({
     onEdit: handleEditCategory,
+    onRemove: handleRemoveCategory,
+    onReAdd: handleReAddCategory,
+    isRemoving,
+    isReadding,
   });
   return (
     <div className="flex flex-col flex-1 p-4 overflow-auto min-w-0">

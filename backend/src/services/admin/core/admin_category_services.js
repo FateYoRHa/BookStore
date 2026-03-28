@@ -52,6 +52,17 @@ export async function updateCategoryService(category) {
   );
   return updateCategory;
 }
-export async function deleteCategoryService(category) {
-  return await Category.findOneAndDelete({ catCode: category });
+export async function removeCategoryService(category) {
+  return await Category.findOneAndUpdate(
+    { categoryCode: category },
+    { deletedAt: new Date() },
+    { new: true },
+  );
+}
+export async function reAddCategoryService(category) {
+  return await Category.findOneAndUpdate(
+    { categoryCode: category },
+    { deletedAt: null },
+    { new: true },
+  );
 }
