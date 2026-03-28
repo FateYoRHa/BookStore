@@ -43,7 +43,7 @@ const DataTable = ({ data, columns }) => {
   return (
     <>
       <TableFilter table={table} />
-      <div className="flex flex-col h-full rounded-2xl border bg-background overflow-x-auto">
+      <div className="flex flex-col h-full rounded-2xl border bg-background  overflow-x-auto">
         <div className="flex-1 overflow-auto">
           <Table className="min-w-full table-fixed">
             <TableHeader className="sticky top-0 bg-background z-10">
@@ -58,6 +58,11 @@ const DataTable = ({ data, columns }) => {
                         header.column.columnDef.header,
                         header.getContext(),
                       )}
+                      <div
+                        onMouseDown={header.getResizeHandler()}
+                        onTouchStart={header.getResizeHandler()}
+                        className="absolute right-0 top-0 h-full w-1 cursor-col-resize"
+                      />
                     </TableHead>
                   ))}
                 </TableRow>
@@ -66,11 +71,13 @@ const DataTable = ({ data, columns }) => {
             <TableBody>
               {rowModel.rows.length ? (
                 rowModel.rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.id} className="align-top">
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className={cell.column.columnDef.meta?.className}>
+                        className={`align-top whitespace-normal break-words ${
+                          cell.column.columnDef.meta?.className
+                        }`}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
