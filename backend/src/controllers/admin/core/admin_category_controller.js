@@ -41,10 +41,10 @@ export async function updateCategory(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
-export async function deleteCategory(req, res) {
+export async function removeCategory(req, res) {
   try {
-    await categoryService.deleteCategoryService(req.params.id);
-    res.status(200).json({ message: "Category was deleted successfully" });
+    await categoryService.removeCategoryService(req.params.id);
+    return res.sendStatus(204);
   } catch (error) {
     console.log("Error retrieving category", error);
     res.status(500).json({ message: "Internal Server Error" });
