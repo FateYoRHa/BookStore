@@ -50,3 +50,12 @@ export async function removeCategory(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+export async function reAddCategory(req, res) {
+  try {
+    await categoryService.reAddCategoryService(req.params.id);
+    return res.sendStatus(204);
+  } catch (error) {
+    console.log("Error retrieving category", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}

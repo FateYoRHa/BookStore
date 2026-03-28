@@ -33,7 +33,11 @@ router.get("/categories", adminOnly, adminCategories.getAdminCategories);
 router.post("/categories", adminOnly, adminCategories.addCategory);
 router.put("/categories/:id", adminOnly, adminCategories.updateCategory);
 router.delete("/categories/:id", adminOnly, adminCategories.removeCategory);
-
+router.patch(
+  "/categories/:id/restore",
+  adminOnly,
+  adminCategories.reAddCategory,
+);
 
 // CUSTOMERS
 router.get("/customers", adminOnly, adminCustomers.getCustomers);
