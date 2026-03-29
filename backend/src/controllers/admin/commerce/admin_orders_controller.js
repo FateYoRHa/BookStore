@@ -24,7 +24,7 @@ export async function updateOrder(req, res) {
 export async function getOrderDetail(req, res) {
   try {
     const orderCode = req.params.id;
-    const order = await orderService.getOrderDetailService(orderCode);
+    const order = await adminOrderService.getOrderDetailService(orderCode);
     res.status(200).json(order);
   } catch (error) {
     res
