@@ -29,3 +29,23 @@ export async function updateOrderService(order) {
   );
   return updateOrder;
 }
+
+export async function getOrderDetailService(orderCode) {
+  const order = await Order.findOne({ orderCode: orderCode })
+    .populate({
+      path: "items.book",
+      model: "Book",
+      select: "title price",
+      populate: [
+        {
+          path: "images",
+          select: "image",
+          match: { type: "cover" },
+          perDocumentLimit: 1,
+        },
+      ],
+    })
+    .populate("customer", "name customerCode phone")
+    .populate("payment");
+  return order;
+}
