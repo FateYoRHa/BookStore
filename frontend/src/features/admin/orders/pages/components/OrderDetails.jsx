@@ -120,12 +120,12 @@ const OrderDetails = () => {
           <CardContent className="space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>₱{order?.totalAmount.toFixed(2)}</span>
+              <span>₱{order?.totalAmount?.toFixed(2)}</span>
             </div>
             <Separator />
             <div className="flex justify-between font-semibold">
               <span>Total</span>
-              <span>₱{order?.totalAmount.toFixed(2)}</span>
+              <span>₱{order?.totalAmount?.toFixed(2)}</span>
             </div>
           </CardContent>
         </Card>
