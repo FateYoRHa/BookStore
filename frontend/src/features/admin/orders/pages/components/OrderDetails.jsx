@@ -5,6 +5,12 @@ import { Separator } from "@/components/ui/separator";
 import { CheckCircle, Truck, Package, Clipboard, Package2 } from "lucide-react";
 import { useGetAdminOrderDetail } from "../../hooks/admin_order_hooks";
 import { useParams } from "react-router-dom";
+import {
+  steps,
+  formatDate,
+  formatPhone,
+  getProgress,
+} from "../../utils/helpers";
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -12,51 +18,7 @@ const OrderDetails = () => {
 
   // ORDER STATUS TRACKER stuff
   const isCancelled = order?.status === "cancelled";
-  const steps = [
-    { key: "pending", label: "Pending", icon: CheckCircle },
-    { key: "paid", label: "Preparing", icon: Package2 },
-    { key: "shipped", label: "Shipped", icon: Truck },
-    {
-      key: "out_for_delivery",
-      label: "Out for Delivery",
-      icon: Package,
-    },
-    { key: "delivered", label: "Delivered", icon: Clipboard },
-  ];
   const currentIndex = steps.findIndex((s) => s.key === order?.status);
-  const progress = () => {
-    const index = steps.findIndex((s) => s.key === order?.status);
-    if (index === -1 || order?.status === "cancelled") return 0;
-    // progress is based on step completion (e.g., step 1 of 4 => 25%)
-    return ((index + 1) / steps.length) * 100;
-  };
-  // FORMATTERS
-  const formatDate = (dateString) => {
-    if (!dateString) return;
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "2-digit",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true, // Optional: use 12-hour clock
-    }).format(date);
-  };
-  const formatPhone = (phoneNumber) => {
-    if (!phoneNumber) return;
-    // Remove all non-numeric characters
-    const cleaned = ("" + phoneNumber).replace(/\D/g, "");
-    let match = null;
-    cleaned.length == 11
-      ? (match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/))
-      : (match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/));
-
-    if (match) {
-      return `(${match[1]}) ${match[2]}-${match[3]}`;
-    }
-    return null;
-  };
   // ---------------------------------------
   const customer = order?.customer;
   const address = order?.shippingAddress;
@@ -162,22 +124,21 @@ const OrderDetails = () => {
                       isCancelled
                         ? "bg-red-500 text-white"
                         : completed
-                          ? "success"
+                          ? "bg-green-500 text-white"
                           : "bg-muted"
                     }`}>
                     <Icon className="w-5 h-5" />
                   </div>
-                  <p className="text-sm mt-2">{step.label}</p>
+                  <p className="text-xs mt-2 text-center">{step.label}</p>
                 </div>
               );
             })}
           </div>
 
-          {/* Progress bar */}
           <div className="h-2 bg-muted rounded-full mt-4 overflow-hidden">
             <div
               className="h-full bg-black transition-all"
-              style={{ width: `${progress()}%` }}
+              style={{ width: `${getProgress(order?.status)}%` }}
             />
           </div>
 
