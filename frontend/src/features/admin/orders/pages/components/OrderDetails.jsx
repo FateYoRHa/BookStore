@@ -29,7 +29,7 @@ const OrderDetails = () => {
         {/* Order Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Order ORD-12345</CardTitle>
+            <CardTitle>Order: {order?.orderCode}</CardTitle>
             <p className="text-sm text-muted-foreground">
               Placed on {formatDate(order?.createdAt)}
             </p>
