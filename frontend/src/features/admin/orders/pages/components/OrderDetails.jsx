@@ -20,7 +20,6 @@ const OrderDetails = () => {
       key: "out_for_delivery",
       label: "Out for Delivery",
       icon: Package,
-      completed: false,
     },
     { key: "delivered", label: "Delivered", icon: Clipboard },
   ];
@@ -183,22 +182,22 @@ const OrderDetails = () => {
           </div>
 
           <div className="mt-3">
-            {order?.status == "paid" ? (
-              <span className="text-sm text-muted-foreground ml-2">
-                Preparing your order.
-              </span>
-            ) : order?.status === "cancelled" ? (
-              <>
-                <Badge variant="destructive">Cancelled</Badge>
-                <span className="text-sm text-muted-foreground ml-2">
-                  on {formatDate(order?.updatedAt)}
-                </span>
-              </>
+            {order?.status === "pending" || order?.status === "paid" ? (
+              <p className="uppercase">{order?.status}</p>
             ) : (
               <>
-                <Badge>Shipped</Badge>
+                <Badge
+                  variant={isCancelled ? "destructive" : "default"}
+                  className={`uppercase ${order?.status === "delivered" ? "bg-green-500 text-white" : ""}`}>
+                  {order?.status}
+                </Badge>
                 <span className="text-sm text-muted-foreground ml-2">
-                  on {formatDate(order?.updatedAt)}
+                  {order?.status === "pending" ||
+                  order?.status === "out_for_delivery" ? (
+                    ""
+                  ) : (
+                    <>on {formatDate(order?.updatedAt)}</>
+                  )}
                 </span>
               </>
             )}
