@@ -41,6 +41,7 @@ export async function addOrderService(customer) {
     items: orderItems,
     shippingAddress: address,
     totalAmount: totalAmount + shippingFee,
+    deliveryFee: shippingFee,
   });
 
   const savedOrder = await order.save();
