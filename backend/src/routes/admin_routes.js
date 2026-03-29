@@ -43,9 +43,9 @@ router.patch(
 router.get("/customers", adminOnly, adminCustomers.getCustomers);
 
 // ORDERS
-router.get("/orders", adminOnly, adminOrders.getAdminOrders)
+router.get("/orders", adminOnly, adminOrders.getAdminOrders);
 router.put("/orders/:id", adminOnly, adminOrders.updateOrder);
-
+router.get("/order/detail/:id", adminOnly, adminOrders.getOrderDetail);
 // HOMEPAGESECTION
 router.post(
   "/homepagesection/add",

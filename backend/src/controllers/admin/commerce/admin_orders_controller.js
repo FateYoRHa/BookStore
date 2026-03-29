@@ -21,3 +21,14 @@ export async function updateOrder(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+export async function getOrderDetail(req, res) {
+  try {
+    const orderCode = req.params.id;
+    const order = await adminOrderService.getOrderDetailService(orderCode);
+    res.status(200).json(order);
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error." });
+  }
+}

@@ -24,6 +24,7 @@ export const ORDER_STATUSES = {
   PENDING: "pending",
   PAID: "paid",
   SHIPPED: "shipped",
+  OUT_FOR_DELIVERY: "out_for_delivery",
   DELIVERED: "delivered",
   CANCELLED: "cancelled",
   FAILED: "payment failed",
