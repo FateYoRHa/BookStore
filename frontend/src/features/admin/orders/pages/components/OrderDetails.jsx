@@ -107,6 +107,18 @@ const OrderDetails = () => {
                     </p>
                   </>
                 )}
+                <p className="font-medium">Payment Status</p>
+
+                {order?.payment?.status === "pending" ? (
+                  <p className="text-sm text-muted-foreground uppercase">
+                    {order?.payment?.status}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground uppercase">
+                    {order?.payment?.status} on{" "}
+                    {formatDate(order?.payment?.updatedAt)}
+                  </p>
+                )}
               </div>
             </Card>
           </CardContent>
