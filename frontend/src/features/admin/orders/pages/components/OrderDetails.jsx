@@ -80,6 +80,17 @@ const OrderDetails = () => {
                     {formatDate(order?.payment?.updatedAt)}
                   </p>
                 )}
+
+                <p className="font-medium">Shipping Status</p>
+                {order?.status === "pending" || order?.status === "paid" ? (
+                  <p className="text-sm text-muted-foreground">Preparing...</p>
+                ) : (
+                  <>
+                    <p className="text-sm text-muted-foreground uppercase">
+                      Shipped on {formatDate(order?.shipping?.shippedAt)}
+                    </p>
+                  </>
+                )}
               </div>
             </Card>
           </CardContent>
@@ -93,7 +104,14 @@ const OrderDetails = () => {
           <CardContent className="space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>₱{order?.totalAmount?.toFixed(2)}</span>
+              <span>
+                ₱{(order?.totalAmount - order?.deliveryFee)?.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Delivery Fee</span>
+              <span>₱{order?.deliveryFee?.toFixed(2)}</span>
             </div>
             <Separator />
             <div className="flex justify-between font-semibold">
@@ -157,7 +175,12 @@ const OrderDetails = () => {
                   order?.status === "out_for_delivery" ? (
                     ""
                   ) : (
-                    <>on {formatDate(order?.updatedAt)}</>
+                    <>
+                      on{" "}
+                      {order?.status === "shipped"
+                        ? formatDate(order?.shipping?.shippedAt)
+                        : formatDate(order?.updatedAt)}
+                    </>
                   )}
                 </span>
               </>
