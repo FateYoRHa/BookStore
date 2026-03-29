@@ -30,7 +30,7 @@ const orderSchema = new Schema(
     shippingAddress: {
       street: String,
       city: String,
-      postalCode: String,
+      zipCode: String,
       country: String,
     },
     //
