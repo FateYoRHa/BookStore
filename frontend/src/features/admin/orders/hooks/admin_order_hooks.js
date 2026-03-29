@@ -1,5 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAdminOrdersRequest } from "../api/admin_orders";
+import {
+  getAdminOrderDetailRequest,
+  getAdminOrdersRequest,
+} from "../api/admin_orders";
 
 export const useGetAdminOrders = () => {
   return useQuery({
@@ -7,5 +10,11 @@ export const useGetAdminOrders = () => {
     queryFn: () => getAdminOrdersRequest(),
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
+  });
+};
+export const useGetAdminOrderDetail = (code) => {
+  return useQuery({
+    queryKey: ["orders", code],
+    queryFn: () => getAdminOrderDetailRequest(code),
   });
 };
