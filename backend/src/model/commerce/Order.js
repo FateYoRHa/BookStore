@@ -46,6 +46,12 @@ const orderSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Payment",
     },
+    shipping: {
+      trackingNumber: String,
+      courier: String,
+      shippedAt: Date,
+    },
+    deliveryFee: { type: Number, required: true },
   },
   { timestamps: true },
 );
