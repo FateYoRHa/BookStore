@@ -1,107 +1,150 @@
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useGetAdminOrderDetail } from "../../hooks/admin_order_hooks";
-import { useParams } from "react-router-dom";
-import { useState } from "react";
-import {
-  steps,
-  formatDate,
-  formatPhone,
-  getProgress,
-  STATUS_ACTIONS,
-} from "../../utils/helpers";
-
+import { formatDate, formatPhone, getProgress } from "../../utils/helpers";
+import { steps, STATUS_ACTIONS } from "../../utils/constantValues";
+import { updateOrderSchema } from "../../orderSchema";
+import { cn } from "@/lib/utils";
+import { ConfirmAction } from "@/components/ConfirmAction";
+import FormFieldError from "@/components/forms/FormFieldError";
 const OrderUpdate = () => {
   const { id } = useParams();
   const { data: order, isPending } = useGetAdminOrderDetail(id);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm({
+    resolver: zodResolver(updateOrderSchema),
+    defaultValues: {
+      status: "",
+      note: "",
+      trackingNumber: "",
+    },
+  });
 
-  const [status, setStatus] = useState("");
-  const [trackingNumber, setTrackingNumber] = useState(
-    order?.shipping?.trackingNumber || "",
-  );
-  const [note, setNote] = useState("");
-
+  // Load order data
+  let status = watch("status");
+  useEffect(() => {
+    if (!order) return;
+    reset({
+      status: order?.status,
+      note: "",
+      trackingNumber: order?.shipping?.trackingNumber || "",
+    });
+  }, [order, reset]);
   if (isPending) return <div className="p-6">Loading...</div>;
-
   const isCancelled = order?.status === "cancelled";
   const currentIndex = steps.findIndex((s) => s.key === order?.status);
 
   const customer = order?.customer;
   const address = order?.shippingAddress;
-
-  const handleSave = () => {
+  const handleUpdateStatus = (action) => {
+    status = action;
+    console.log(status);
+  };
+  const handleSave = (data) => {
     const payload = {
-      status: status || order?.status,
-      trackingNumber,
-      note,
+      ...data,
+      status: status,
     };
-
     console.log("UPDATE ORDER:", payload);
     // TODO: call mutation hook here
   };
-
+  const action = STATUS_ACTIONS[status];
   return (
     <div className="p-6 space-y-6 overflow-auto">
       {/* Editable Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Update Order</CardTitle>
+          <CardTitle>Update Order: {order?.orderCode}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Status Update */}
-            <div>
-              <p className="text-sm font-medium mb-1">Order Status</p>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger>
-                  <SelectValue placeholder={order?.status} />
-                </SelectTrigger>
-                <SelectContent>
-                  {STATUS_OPTIONS.map((s) => (
-                    <SelectItem
-                      key={s}
-                      value={s}>
-                      {s.status.replaceAll("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        <CardContent>
+          <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
+            {/* Top Section */}
+            <div className="grid md:grid-cols-2 gap-6 border rounded-lg p-4">
+              {/* STATUS SECTION */}
+              <div className="flex flex-col gap-3">
+                <p className="text-sm font-medium">Order Status</p>
+
+                <Badge className="uppercase w-fit">{status}</Badge>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  {action && (
+                    <ConfirmAction
+                      label={action.label}
+                      onConfirm={() => handleUpdateStatus(action.next)}
+                      disabled={isCancelled || status === "delivered"}
+                      confirmText={`Mark order as ${action.next}?`}
+                      description={`This action cannot be undone.`}
+                      className={
+                        action.next === "delivered"
+                          ? "bg-green-500 text-white"
+                          : ""
+                      }
+                    />
+                  )}
+
+                  {!["delivered", "cancelled"].includes(status) && (
+                    <ConfirmAction
+                      label="Cancel Order"
+                      variant="destructive"
+                      onConfirm={() => handleUpdateStatus("cancelled")}
+                      confirmText="Cancel this order?"
+                      description="This action cannot be undone."
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* TRACKING */}
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-medium">Tracking Number</p>
+
+                <Input
+                  {...register("trackingNumber")}
+                  placeholder="Enter tracking number"
+                  disabled={["pending", "paid"].includes(status)} // ✅ better rule
+                  className={cn(
+                    errors?.trackingNumber &&
+                      "border-red-500 focus-visible:ring-red-500",
+                  )}
+                />
+
+                <FormFieldError error={errors?.trackingNumber} />
+              </div>
             </div>
 
-            {/* Tracking Number */}
-            <div>
-              <p className="text-sm font-medium mb-1">Tracking Number</p>
-              <Input
-                placeholder="Enter tracking number"
-                value={trackingNumber}
-                onChange={(e) => setTrackingNumber(e.target.value)}
-                disabled={order?.status === "shipped"}
+            {/* ADMIN NOTE */}
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium">Admin Note</p>
+
+              <Textarea
+                {...register("note")}
+                placeholder="Add internal note..."
+                className={cn(
+                  errors?.note && "border-red-500 focus-visible:ring-red-500",
+                )}
               />
+
+              <FormFieldError error={errors?.note} />
             </div>
-          </div>
 
-          {/* Admin Notes */}
-          <div>
-            <p className="text-sm font-medium mb-1">Admin Note</p>
-            <Textarea
-              placeholder="Add internal note..."
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-            />
-          </div>
-
-          <Button onClick={handleSave}>Save Changes</Button>
+            {/* ACTION */}
+            <div className="flex justify-end">
+              <Button type="submit">Save Changes</Button>
+            </div>
+          </form>
         </CardContent>
       </Card>
 
