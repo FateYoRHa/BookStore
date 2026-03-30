@@ -13,8 +13,13 @@ export async function getAdminOrders(req, res) {
 export async function updateOrder(req, res) {
   try {
     const id = req.params.id;
-    const { status } = req.body;
-    const order = await adminOrderService.updateOrderService({ id, status });
+    const { status, trackingNumber, note } = req.body;
+    const order = await adminOrderService.updateOrderService({
+      id,
+      status,
+      trackingNumber,
+      note,
+    });
     res.status(200).json(order);
   } catch (error) {
     console.error("Error updating order", error);

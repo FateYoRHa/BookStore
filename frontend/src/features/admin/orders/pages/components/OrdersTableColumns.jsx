@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, MoreHorizontal } from "lucide-react";
+import { Eye, MoreHorizontal, Pen } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const OrdersTableColumns = () => [
@@ -146,11 +146,19 @@ const OrdersTableColumns = () => [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center">
               <DropdownMenuItem>
-                <Link to={`/admin/order/detail/${order.orderCode}`}>
+                <Link
+                  to={`/admin/order/detail/${order.orderCode}`}
+                  className="inline-flex items-center gap-2">
                   <Eye /> View Order
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>Update</DropdownMenuItem>
+              <DropdownMenuItem className="inline-flex">
+                <Link
+                  to={`/admin/order/update/${order.orderCode}`}
+                  className="inline-flex items-center gap-2">
+                  <Pen /> Update Order
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem className="text-red-500">
                 Cancel
               </DropdownMenuItem>

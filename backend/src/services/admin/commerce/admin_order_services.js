@@ -21,10 +21,14 @@ export async function getAdminOrdersService() {
   return orders;
 }
 export async function updateOrderService(order) {
-  const { id, status } = order;
+  const { id, status, trackingNumber, note } = order;
   const updateOrder = await Order.findOneAndUpdate(
     { orderCode: id },
-    { status: status },
+    {
+      status: status,
+      shipping: { trackingNumber: trackingNumber },
+      note,
+    },
     { new: true },
   );
   return updateOrder;

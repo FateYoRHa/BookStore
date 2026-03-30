@@ -1,11 +1,5 @@
-import { CheckCircle, Truck, Package, Clipboard, Package2 } from "lucide-react";
-export const steps = [
-  { key: "pending", label: "Pending", icon: CheckCircle },
-  { key: "paid", label: "Preparing", icon: Package2 },
-  { key: "shipped", label: "Shipped", icon: Truck },
-  { key: "out_for_delivery", label: "Out for Delivery", icon: Package },
-  { key: "delivered", label: "Delivered", icon: Clipboard },
-];
+import { steps } from "./constantValues";
+
 export const formatPhone = (phoneNumber) => {
   if (!phoneNumber) return "-";
   const cleaned = ("" + phoneNumber).replace(/\D/g, "");

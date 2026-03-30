@@ -5,12 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { CheckCircle, Truck, Package, Clipboard, Package2 } from "lucide-react";
 import { useGetAdminOrderDetail } from "../../hooks/admin_order_hooks";
 import { useParams } from "react-router-dom";
-import {
-  steps,
-  formatDate,
-  formatPhone,
-  getProgress,
-} from "../../utils/helpers";
+import { formatDate, formatPhone, getProgress } from "../../utils/helpers";
+import { steps } from "../../utils/constantValues";
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -29,7 +25,7 @@ const OrderDetails = () => {
         {/* Order Info */}
         <Card>
           <CardHeader>
-            <CardTitle>Order ORD-12345</CardTitle>
+            <CardTitle>Order: {order?.orderCode}</CardTitle>
             <p className="text-sm text-muted-foreground">
               Placed on {formatDate(order?.createdAt)}
             </p>

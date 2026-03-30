@@ -34,6 +34,7 @@ import AdminAuthors from "@/features/admin/authors/pages/AdminAuthors";
 import AdminCategories from "@/features/admin/categories/pages/AdminCategories";
 import AdminOrders from "@/features/admin/orders/pages/AdminOrders";
 import OrderDetails from "@/features/admin/orders/pages/components/OrderDetails";
+import OrderUpdate from "@/features/admin/orders/pages/components/OrderUpdate";
 export default function AppRouter() {
   return (
     <Routes>
@@ -129,6 +130,14 @@ export default function AppRouter() {
           element={
             <RouteGuard>
               <OrderDetails />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/admin/order/update/:id"
+          element={
+            <RouteGuard>
+              <OrderUpdate />
             </RouteGuard>
           }
         />
