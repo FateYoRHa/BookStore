@@ -182,16 +182,59 @@ const OrderUpdate = () => {
             Placed on {formatDate(order?.createdAt)}
           </p>
         </CardHeader>
-        <CardContent>
-          <p className="font-semibold">Customer</p>
-          <p className="text-sm text-muted-foreground">{customer?.name}</p>
-          <p className="text-sm text-muted-foreground">
-            +{formatPhone(customer?.phone)}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {address?.street}, {address?.city}, {address?.zipCode},{" "}
-            {address?.country}
-          </p>
+
+        <CardContent className="space-y-6">
+          {/* Customer Info */}
+          <div>
+            <p className="font-semibold">Customer</p>
+            <p className="text-sm text-muted-foreground">{customer?.name}</p>
+            <p className="text-sm text-muted-foreground">
+              +{formatPhone(customer?.phone)}
+            </p>
+          </div>
+
+          {/* Shipping Address */}
+          <div>
+            <p className="font-semibold">Shipping Address</p>
+            <p className="text-sm text-muted-foreground">
+              {address?.street}, {address?.city}, {address?.zipCode},{" "}
+              {address?.country}
+            </p>
+          </div>
+
+          {/* Payment Section */}
+          <div>
+            <p className="font-semibold">Payment</p>
+
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-sm text-muted-foreground">Method:</span>
+              <span className="text-sm">{order?.payment?.method || "N/A"}</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Status:</span>
+              <Badge
+                variant={
+                  order?.payment?.status === "paid"
+                    ? "default"
+                    : order?.payment?.status === "failed"
+                      ? "destructive"
+                      : "secondary"
+                }
+                className="uppercase">
+                {order?.payment?.status || "pending"}
+              </Badge>
+            </div>
+
+            {order?.payment?.transactionId && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  Transaction ID:
+                </span>
+                <span className="text-sm">{order.payment.transactionId}</span>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
