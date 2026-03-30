@@ -8,3 +8,7 @@ export const getAdminOrderDetailRequest = async (orderCode) => {
   const res = await api.get(`/admin/order/detail/${orderCode}`);
   return res.data;
 };
+export const updateAdminOrderRequest = async (orderCode) => {
+  const res = await api.put(`/admin/orders/${orderCode}`);
+  return res.data;
+};
