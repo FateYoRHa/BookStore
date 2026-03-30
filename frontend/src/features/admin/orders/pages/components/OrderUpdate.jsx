@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -8,22 +8,30 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetAdminOrderDetail } from "../../hooks/admin_order_hooks";
+import {
+  useGetAdminOrderDetail,
+  useUpdateAdminOrder,
+} from "../../hooks/admin_order_hooks";
 import { formatDate, formatPhone, getProgress } from "../../utils/helpers";
 import { steps, STATUS_ACTIONS } from "../../utils/constantValues";
 import { updateOrderSchema } from "../../orderSchema";
 import { cn } from "@/lib/utils";
 import { ConfirmAction } from "@/components/ConfirmAction";
 import FormFieldError from "@/components/forms/FormFieldError";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 const OrderUpdate = () => {
   const { id } = useParams();
   const { data: order, isPending } = useGetAdminOrderDetail(id);
+  const { mutate } = useUpdateAdminOrder();
+  const [isUpdating, setIsUpdating] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm({
     resolver: zodResolver(updateOrderSchema),
     defaultValues: {
@@ -39,7 +47,7 @@ const OrderUpdate = () => {
     if (!order) return;
     reset({
       status: order?.status,
-      note: "",
+      note: order?.note || "",
       trackingNumber: order?.shipping?.trackingNumber || "",
     });
   }, [order, reset]);
@@ -50,16 +58,26 @@ const OrderUpdate = () => {
   const customer = order?.customer;
   const address = order?.shippingAddress;
   const handleUpdateStatus = (action) => {
-    status = action;
-    console.log(status);
+    setValue("status", action);
   };
   const handleSave = (data) => {
+    setIsUpdating(true);
     const payload = {
       ...data,
       status: status,
+      orderCode: order?.orderCode,
     };
-    console.log("UPDATE ORDER:", payload);
-    // TODO: call mutation hook here
+    mutate(payload, {
+      onSuccess: () => {
+        toast.success(`ORDER: ${payload.orderCode} was updated successfully.`);
+      },
+      onError: () => {
+        toast.error("Order update failed.");
+      },
+      onSettled: () => {
+        setIsUpdating(false);
+      },
+    });
   };
   const action = STATUS_ACTIONS[status];
   return (
@@ -142,7 +160,15 @@ const OrderUpdate = () => {
 
             {/* ACTION */}
             <div className="flex justify-end">
-              <Button type="submit">Save Changes</Button>
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating ? (
+                  <>
+                    <Spinner /> Updating...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
             </div>
           </form>
         </CardContent>
