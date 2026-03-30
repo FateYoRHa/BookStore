@@ -47,9 +47,9 @@ const orderSchema = new Schema(
       ref: "Payment",
     },
     shipping: {
-      trackingNumber: String,
-      courier: String,
-      shippedAt: Date,
+      trackingNumber: { type: String, default: null },
+      courier: { type: String, default: null },
+      shippedAt: { type: Date, default: null },
     },
     deliveryFee: { type: Number, required: true },
   },
