@@ -19,15 +19,8 @@ import {
   formatDate,
   formatPhone,
   getProgress,
+  STATUS_ACTIONS,
 } from "../../utils/helpers";
-const STATUS_OPTIONS = [
-  "pending",
-  "paid",
-  "shipped",
-  "out_for_delivery",
-  "delivered",
-  "cancelled",
-];
 
 const OrderUpdate = () => {
   const { id } = useParams();
@@ -76,8 +69,10 @@ const OrderUpdate = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {STATUS_OPTIONS.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s.replaceAll("_", " ")}
+                    <SelectItem
+                      key={s}
+                      value={s}>
+                      {s.status.replaceAll("_", " ")}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -91,6 +86,7 @@ const OrderUpdate = () => {
                 placeholder="Enter tracking number"
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
+                disabled={order?.status === "shipped"}
               />
             </div>
           </div>
