@@ -35,6 +35,13 @@ const bookSchema = new Schema(
       default: "available",
     },
     deletedAt: { type: Date, default: null, index: true },
+    analytics: {
+      viewCount: { type: Number, default: 0 },
+      purchaseCount: { type: Number, default: 0 },
+      wishlistCount: { type: Number, default: 0 },
+    },
+    lastViewedAt: Date,
+    score: { type: Number, default: 0 },
   },
   {
     timestamps: true,
@@ -42,6 +49,8 @@ const bookSchema = new Schema(
     toObject: { virtuals: true },
   },
 );
+bookSchema.index({ "analytics.purchaseCount": -1 });
+bookSchema.index({ "analytics.viewCount": -1 });
 // VIRTUAL SCHEMA FOR IMAGE
 bookSchema.virtual("reviews", {
   ref: "Review",
