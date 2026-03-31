@@ -29,3 +29,10 @@ export const ORDER_STATUSES = {
   CANCELLED: "cancelled",
   FAILED: "payment failed",
 };
+
+export const ANALYTICS_TYPES = {
+  VISIT: "visit",
+  VIEW_BOOK: "view_book",
+  PURCHASE: "purchase",
+  WISHLIST: "wishlist",
+};

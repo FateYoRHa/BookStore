@@ -1,13 +1,13 @@
 // CORE
-export { default as Book } from "./core/Book.js"
-export { default as Author } from "./core/Author.js"
+export { default as Book } from "./core/Book.js";
+export { default as Author } from "./core/Author.js";
 export { default as User } from "./core/User.js";
 export { default as Customer } from "./core/Customer.js";
 export { default as Category } from "./core/Category.js";
 export { default as Inventory } from "./core/Inventory.js";
 
 // analytics
-export { default as BookView } from "./analytics/BookView.js";
+export { default as AnalyticEvent } from "./analytics/AnalyticsEvent.js";
 export { default as SearchHistory } from "./analytics/SearchHistory.js";
 
 // content
