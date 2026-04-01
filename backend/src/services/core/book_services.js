@@ -89,7 +89,6 @@ export async function getBookService(id) {
     await trackEventService({
       type: "view_book",
       book: book._id,
-      customer: user?._id,
     });
     return book;
   } catch (error) {
