@@ -78,6 +78,10 @@ export async function getBookService(id) {
       error.status = 401;
       throw error;
     }
+    await Book.updateOne(
+      { bookCode: id },
+      { $inc: { "analytics.viewCount": 1 } },
+    );
     return book;
   } catch (error) {
     throw error;

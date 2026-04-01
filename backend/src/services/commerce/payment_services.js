@@ -1,4 +1,4 @@
-import { Cart, Order, Payment } from "../../model/index.js";
+import { Cart, Order, Payment, Book } from "../../model/index.js";
 import * as inventoryService from "../../services/core/inventory_services.js";
 import {
   PAYMENT_STATUSES,
@@ -224,6 +224,16 @@ export async function paymentWebhookService(event) {
 
       order.status = ORDER_STATUSES.PAID;
       await order.save();
+      await Book.bulkWrite(
+        order.items.map((item) => ({
+          updateOne: {
+            filter: { _id: item.book },
+            update: {
+              $inc: { "analytics.purchaseCount": item.quantity },
+            },
+          },
+        })),
+      );
       // Optional: clear cart
       await inventoryService.updateInventoryService(order.items);
       await Cart.findOneAndUpdate({ customer: order.customer }, { items: [] });
