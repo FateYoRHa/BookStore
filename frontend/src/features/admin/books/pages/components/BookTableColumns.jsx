@@ -2,14 +2,27 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { ListPlus, Pencil, Trash } from "lucide-react";
+import {
+  BadgePlus,
+  ListPlus,
+  MoreHorizontal,
+  Pencil,
+  Trash,
+} from "lucide-react";
 import { ArrowUpDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 export const BooksColumns = ({
   onEdit,
   onDelete,
   onReAdd,
   isDeleting,
   isReAdding,
+  onFeatured,
 }) => [
   {
     id: "book",
@@ -177,35 +190,54 @@ export const BooksColumns = ({
     cell: ({ row }) => {
       const book = row.original;
       return (
-        <div className="flex justify-end gap-2">
-          <Button
-            size="icon"
-            variant="ghost"
-            /* Pass selected book to parent handler, Parent decides what to do (open modal, navigate, etc.) */
-            onClick={() => onEdit(book)}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          {book.deletedAt ? (
-            <Button
-              size="icon"
-              variant="ghost"
-              disabled={isReAdding}
-              onClick={() => onReAdd(book.bookCode)}>
-              <ListPlus className="h-4 w-4 text-success" />
-            </Button>
-          ) : (
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => onDelete(book.bookCode)}
-              disabled={isDeleting}>
-              {isDeleting ? (
-                <Spinner className="h-4 w-4" />
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="ghost">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="center" className="w-40">
+              <DropdownMenuItem
+                onClick={() => onEdit(book)}
+                className="flex items-center gap-2">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => onFeatured(book)}
+                className="flex items-center gap-2">
+                <BadgePlus className="h-4 w-4" />
+                Feature
+              </DropdownMenuItem>
+
+              {book.deletedAt ? (
+                <DropdownMenuItem
+                  onClick={() => onReAdd(book.bookCode)}
+                  disabled={isReAdding}
+                  className="flex items-center gap-2">
+                  <ListPlus className="h-4 w-4 text-success" />
+                  Re-add
+                </DropdownMenuItem>
               ) : (
-                <Trash className="h-4 w-4 text-destructive" />
+                <DropdownMenuItem
+                  onClick={() => onDelete(book.bookCode)}
+                  disabled={isDeleting}
+                  className="flex items-center gap-2">
+                  {isDeleting ? (
+                    <Spinner className="h-4 w-4" />
+                  ) : (
+                    <>
+                      <Trash className="h-4 w-4 text-destructive" />
+                      Remove
+                    </>
+                  )}
+                </DropdownMenuItem>
               )}
-            </Button>
-          )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       );
     },
