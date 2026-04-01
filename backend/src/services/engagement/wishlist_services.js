@@ -20,7 +20,7 @@ export async function addToWishlistService(wishlist) {
   await trackEventService({
     type: "wishlist",
     book: book._id,
-    customer: user?._id,
+    customer: customer,
   });
   return addToWishlist;
 }
@@ -47,7 +47,7 @@ export async function removeFromWishlistService(wishlist) {
   await trackEventService({
     type: "wishlist",
     book: book._id,
-    customer: user?._id,
+    customer: customer,
   });
   return addToWishlist;
 }
