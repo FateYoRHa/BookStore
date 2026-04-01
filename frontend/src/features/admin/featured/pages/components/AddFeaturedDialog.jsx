@@ -5,60 +5,65 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Field, FieldSet } from "@/components/ui/field";
+import { Field, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
+  SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { featuredSections } from "@/features/admin/utils/constantValues";
 
-const AddFeaturedDialog = ({ open, setOpen, featured }) => {
+const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTitle>Feature Item</DialogTitle>
-        <DialogDescription>
-          Feature an Item, Book, an Author or Category
-        </DialogDescription>
         <DialogContent>
+          <DialogHeader className="items-center">
+            <DialogTitle>Feature {itemType}</DialogTitle>
+            <DialogDescription>
+              Feature a {itemType} for customers to checkout
+            </DialogDescription>
+          </DialogHeader>
           <Field>
             <FieldLabel>Type</FieldLabel>
-            <Input placeholder="Type" disabled />
+            <Input placeholder="Type" value={itemType} readOnly />
           </Field>
           <Field>
-            <FieldLabel>Id</FieldLabel>
-            <Input />
+            <FieldLabel>Featured Item</FieldLabel>
+            <Input value={featured?.title} readOnly />
+            <Input value={featured?._id} hidden readOnly />
           </Field>
           <Field>
             <FieldLabel>Section</FieldLabel>
-            <Select>
+            <Select value="">
               <SelectTrigger>
                 <SelectValue placeholder="Select section" />
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem>Hero</SelectItem>
-
-                <SelectItem>New Arrivals</SelectItem>
-
-                <SelectItem>Most Popular</SelectItem>
+                {featuredSections?.map((feat) => (
+                  <SelectItem key={feat} value={feat}>
+                    <span className="capitalize">{feat}</span>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </Field>
-          <div className="flex flex-row">
-            <FieldSet>
-              <Field>
-                <FieldLabel>Start From</FieldLabel>
-                <Input type="date" />
-              </Field>
-              <span>to</span>
-              <Field>
-                <FieldLabel>Start From</FieldLabel>
-                <Input type="date" />
-              </Field>
-            </FieldSet>
+          <div className="flex items-end gap-3">
+            <Field className="flex-1">
+              <FieldLabel>Start From</FieldLabel>
+              <Input type="date" />
+            </Field>
+
+            <span className="pb-2 text-sm text-muted-foreground">to</span>
+
+            <Field className="flex-1">
+              <FieldLabel>Ends In</FieldLabel>
+              <Input type="date" />
+            </Field>
           </div>
         </DialogContent>
       </Dialog>
