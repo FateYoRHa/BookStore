@@ -1,4 +1,5 @@
 import { Book, Category } from "../../model/index.js";
+import { trackEventService } from "../analytics/analytics_services.js";
 
 export async function getBooksService(filters) {
   try {
@@ -78,6 +79,17 @@ export async function getBookService(id) {
       error.status = 401;
       throw error;
     }
+
+    // UPDATE ANALYTICS for TRACKING
+    await Book.updateOne(
+      { bookCode: id },
+      { $inc: { "analytics.viewCount": 1 } },
+    );
+    // TRACK EVENT
+    await trackEventService({
+      type: "view_book",
+      book: book._id,
+    });
     return book;
   } catch (error) {
     throw error;
