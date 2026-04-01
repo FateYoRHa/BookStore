@@ -10,10 +10,18 @@ export async function addToWishlistService(wishlist) {
     },
     { upsert: true, new: true },
   );
+
+  // UPDATE ANALYTICS for TRACKING
   await Book.updateOne(
     { book: book },
     { $inc: { "analytics.wishlistCount": 1 } },
   );
+  // TRACK EVENT
+  await trackEventService({
+    type: "wishlist",
+    book: book._id,
+    customer: user?._id,
+  });
   return addToWishlist;
 }
 
@@ -29,10 +37,18 @@ export async function removeFromWishlistService(wishlist) {
     },
     { new: true },
   );
+
+  // UPDATE ANALYTICS for TRACKING
   await Book.updateOne(
     { bookCode: id },
     { $inc: { "analytics.viewCount": -1 } },
   );
+  // TRACK EVENT
+  await trackEventService({
+    type: "wishlist",
+    book: book._id,
+    customer: user?._id,
+  });
   return addToWishlist;
 }
 
