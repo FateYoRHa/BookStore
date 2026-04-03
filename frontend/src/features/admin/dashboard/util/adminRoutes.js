@@ -4,6 +4,7 @@ import {
   Users,
   ChartBarStacked,
   Package,
+  Sparkle,
 } from "lucide-react";
 
 export const adminRoutes = [
@@ -12,4 +13,5 @@ export const adminRoutes = [
   { title: "Authors", url: "/admin/authors", icon: Users },
   { title: "Categories", url: "/admin/categories", icon: ChartBarStacked },
   { title: "Orders", url: "/admin/orders", icon: Package },
+  { title: "Featured", url: "/admin/featured", icon: Sparkle },
 ];
