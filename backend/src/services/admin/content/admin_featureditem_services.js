@@ -1,11 +1,11 @@
 import { Featured } from "../../../model/index.js";
 
 export async function addFeaturedItemService(featuredItem) {
-  const { itemType, item, priority, starDate, endDate } = featuredItem;
+  const { itemType, itemId, section, starDate, endDate } = featuredItem;
   return await Featured.create({
     itemType,
-    item,
-    priority,
+    item: itemId,
+    section,
     starDate,
     endDate,
   });
