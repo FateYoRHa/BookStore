@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import {
+  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, MoreHorizontal } from "lucide-react";
-import { DropdownMenu } from "radix-ui";
+import { Eye, MoreHorizontal, Pen } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const FeaturedTableColumns = () => [
@@ -71,7 +71,9 @@ const FeaturedTableColumns = () => [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center">
               <DropdownMenuItem>
-                <Link to={``} className="inline-flex items-center gap-2">
+                <Link
+                  to={`/admin/featured`}
+                  className="inline-flex items-center gap-2">
                   <Eye /> View Featured
                 </Link>
               </DropdownMenuItem>
