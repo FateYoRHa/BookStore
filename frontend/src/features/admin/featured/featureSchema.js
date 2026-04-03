@@ -1,5 +1,15 @@
 import { z } from "zod";
-const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format.");
+
+const objectId = z.preprocess(
+  (val) => {
+    if (typeof val === "object" && val !== null && "_id" in val) {
+      return val._id;
+    }
+    return val;
+  },
+  z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId"),
+);
+
 export const addFeaturedItemSchema = z
   .object({
     itemId: objectId,
@@ -8,7 +18,9 @@ export const addFeaturedItemSchema = z
       required_error: "Item type is required",
     }),
 
-    section: z.string().min(1, "Section is required"),
+    section: z.enum(["hero", "best-seller", "new-arrival"], {
+      required_error: "Section is required",
+    }),
 
     startDate: z.coerce.date({
       required_error: "Start date is required",
