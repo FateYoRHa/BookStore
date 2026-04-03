@@ -25,6 +25,7 @@ import FormFieldError from "@/components/forms/FormFieldError";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
   const { mutate: addFeatured } = useFeatureItem();
@@ -62,10 +63,10 @@ const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
 
   const onSubmit = (item) => {
     setIsPending(true);
-    console.log(item);
     addFeatured(item, {
       onSuccess: () => {
         toast.success(`${item?.itemType} added to featured successfully.`);
+        setOpen(false);
       },
       onError: () => {
         toast.error(`Adding ${item?.itemType} to featured failed.`);
@@ -74,7 +75,6 @@ const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
         setIsPending(false);
       },
     });
-    setOpen(false);
   };
   return (
     <div>
@@ -167,8 +167,17 @@ const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
                 <FormFieldError error={errors?.endDate} />
               </Field>
             </div>
-
-            <Button type="submit">Feature {itemType}</Button>
+            <div className="flex justify-end gap-2">
+              <Button type="submit">
+                {isPending ? (
+                  <>
+                    <Spinner /> Adding...
+                  </>
+                ) : (
+                  `Feature ${itemType}`
+                )}
+              </Button>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
