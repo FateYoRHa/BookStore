@@ -2,12 +2,12 @@ import * as featuredItemService from "../../../services/admin/content/admin_feat
 
 export async function addFeaturedItem(req, res) {
   try {
-    const { itemType, itemId, section, starDate, endDate } = req.body;
+    const { itemType, itemId, section, startDate, endDate } = req.body;
     const featuredItem = await featuredItemService.addFeaturedItemService({
       itemType,
       itemId,
       section,
-      starDate,
+      startDate,
       endDate,
     });
     res.status(201).json(featuredItem);
