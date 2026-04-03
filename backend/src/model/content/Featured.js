@@ -1,4 +1,5 @@
 import { mongoose, Schema } from "mongoose";
+import { FEATURED_SECTIONS } from "../../constants/constant_values";
 const featuredItemSchema = new Schema(
   {
     itemType: {
@@ -13,7 +14,7 @@ const featuredItemSchema = new Schema(
     },
     section: {
       type: String,
-      enum: ["hero", "best-seller", "new-arrival", "popular"],
+      enum: Object.values(FEATURED_SECTIONS),
       required: true,
       index: true,
     },
