@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useGetAdminBooks } from "../hooks/admin_books_hooks";
 import EditBook from "./components/EditBook";
 import AddBook from "./components/AddBook";
+import AddFeaturedDialog from "../../featured/pages/components/AddFeaturedDialog";
 import { Button } from "@/components/ui/button";
 import { BookPlus } from "lucide-react";
 import {
@@ -15,7 +16,10 @@ const AdminBooks = () => {
   const { data } = useGetAdminBooks();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [openFeatured, setOpenFeatured] = useState(false);
+
   const [editBook, setEditBook] = useState(null);
+  const [featureBook, setFeatureBook] = useState(null);
   const { mutate: removeBook, isPending: isDeleting } = useRemoveAdminBook();
   const { mutate: reAddMutate, isPending: isReAdding } = useReAddAdminBook();
 
@@ -43,12 +47,17 @@ const AdminBooks = () => {
       },
     });
   };
+  const onFeatured = (book) => {
+    setFeatureBook(book);
+    setOpenFeatured(true);
+  };
   const columns = BooksColumns({
     onEdit,
     onDelete,
     onReAdd,
     isDeleting,
     isReAdding,
+    onFeatured,
   });
   return (
     // TODO remove page scroll
@@ -65,6 +74,14 @@ const AdminBooks = () => {
 
       {/* Add dialog */}
       <AddBook open={open} setOpen={setOpen} />
+
+      {/* Add Featured Dialog */}
+      <AddFeaturedDialog
+        featured={featureBook}
+        open={openFeatured}
+        setOpen={setOpenFeatured}
+        itemType="Book"
+      />
     </div>
   );
 };

@@ -1,14 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import { ArrowUpDown, ListPlus, Pencil, Trash } from "lucide-react";
+import {
+  ArrowUpDown,
+  ListPlus,
+  Pencil,
+  Trash,
+  BadgePlus,
+  MoreHorizontal,
+} from "lucide-react";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 const AuthorTableColumns = ({
   onEdit,
   onDelete,
   onReAdd,
   isDeleting,
   isReAdding,
+  onFeatured,
 }) => [
   {
     header: "Author Code",
@@ -102,36 +116,54 @@ const AuthorTableColumns = ({
       const author = row.original;
 
       return (
-        <div className="flex justify-center gap-2">
-          <Button size="icon" variant="ghost" onClick={() => onEdit(author)}>
-            <Pencil className="h-4 w-4" />
-          </Button>
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="ghost">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
 
-          {author.deletedAt ? (
-            <Button
-              size="icon"
-              variant="ghost"
-              disabled={isReAdding}
-              onClick={() => onReAdd(author._id)}>
-              {isReAdding ? (
-                <Spinner className="h-4 w-4" />
+            <DropdownMenuContent align="center" className="w-40">
+              <DropdownMenuItem
+                onClick={() => onEdit(author)}
+                className="flex items-center gap-2">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => onFeatured(author)}
+                className="flex items-center gap-2">
+                <BadgePlus className="h-4 w-4" />
+                Feature
+              </DropdownMenuItem>
+
+              {author.deletedAt ? (
+                <DropdownMenuItem
+                  onClick={() => onReAdd(author.authorCode)}
+                  disabled={isReAdding}
+                  className="flex items-center gap-2">
+                  <ListPlus className="h-4 w-4 text-success" />
+                  Re-add
+                </DropdownMenuItem>
               ) : (
-                <ListPlus className="h-4 w-4 text-green-500" />
+                <DropdownMenuItem
+                  onClick={() => onDelete(author.authorCode)}
+                  disabled={isDeleting}
+                  className="flex items-center gap-2">
+                  {isDeleting ? (
+                    <Spinner className="h-4 w-4" />
+                  ) : (
+                    <>
+                      <Trash className="h-4 w-4 text-destructive" />
+                      Remove
+                    </>
+                  )}
+                </DropdownMenuItem>
               )}
-            </Button>
-          ) : (
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => onDelete(author._id)}
-              disabled={isDeleting}>
-              {isDeleting ? (
-                <Spinner className="h-4 w-4" />
-              ) : (
-                <Trash className="h-4 w-4 text-destructive" />
-              )}
-            </Button>
-          )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       );
     },

@@ -1,18 +1,18 @@
-import * as featuredItemService from "../../../services/content/featureditem_services.js";
+import * as featuredItemService from "../../../services/admin/content/admin_featureditem_services.js";
 
 export async function addFeaturedItem(req, res) {
   try {
-    const { itemType, item, priority, starDate, endDate } = req.body;
+    const { itemType, itemId, section, starDate, endDate } = req.body;
     const featuredItem = await featuredItemService.addFeaturedItemService({
       itemType,
-      item,
-      priority,
+      itemId,
+      section,
       starDate,
       endDate,
     });
     res.status(201).json(featuredItem);
   } catch (error) {
-    console.log("Error Getting Featured Item", error);
+    console.log("Error Adding Featured Item", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }

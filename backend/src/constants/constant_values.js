@@ -36,3 +36,9 @@ export const ANALYTICS_TYPES = {
   PURCHASE: "purchase",
   WISHLIST: "wishlist",
 };
+export const FEATURED_SECTIONS = {
+  HERO: "hero",
+  BEST_SETTER: "best-seller",
+  NEW_ARRIVAL: "new-arrival",
+  POPULAR: "popular",
+};

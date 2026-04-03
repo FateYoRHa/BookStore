@@ -10,9 +10,13 @@ import {
 } from "../hooks/admin_author_hooks";
 import { User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AddFeaturedDialog from "../../featured/pages/components/AddFeaturedDialog";
 const AdminAuthors = () => {
   const [openAddForm, setOpenAddForm] = useState(false);
   const [openEditForm, setOpenEditForm] = useState(false);
+  const [openFeatured, setOpenFeatured] = useState(false);
+
+  const [featureAuthor, setFeatureAuthor] = useState(null);
   const [editAuthor, setEditAuthor] = useState(null);
   const { mutate: removeAuthor, isPending: isRemoving } =
     useRemoveAdminAuthor();
@@ -31,11 +35,16 @@ const AdminAuthors = () => {
   const handleReAddAuthor = (author) => {
     reAddAuthor(author);
   };
+  const handleFeature = (author) => {
+    setFeatureAuthor(author);
+    setOpenFeatured(true);
+  };
   const { data } = useGetAdminAuthors();
   const column = AuthorTableColumns({
     onEdit: handleEditAuthor,
     onDelete: handleDeleteAuthor,
     onReAdd: handleReAddAuthor,
+    onFeatured: handleFeature,
     isDeleting: isRemoving,
     isReAdding: isReAdding,
   });
@@ -51,6 +60,13 @@ const AdminAuthors = () => {
         open={openEditForm}
         setOpen={setOpenEditForm}
         author={editAuthor}
+      />
+
+      <AddFeaturedDialog
+        featured={featureAuthor}
+        open={openFeatured}
+        setOpen={setOpenFeatured}
+        itemType="Author"
       />
     </div>
   );
