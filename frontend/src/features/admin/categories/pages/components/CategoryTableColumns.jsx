@@ -1,13 +1,20 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ListPlus, Pencil, Trash } from "lucide-react";
+import { ListPlus, Pencil, Trash, BadgePlus, MoreHorizontal } from "lucide-react";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 const CategoryTableColumns = ({
   onEdit,
   onRemove,
   onReAdd,
   isRemoving,
   isReAdding,
+  onFeatured,
 }) => [
   {
     accessorKey: "categoryCode",
@@ -78,28 +85,54 @@ const CategoryTableColumns = ({
       const category = row.original;
 
       return (
-        <div className="flex justify-center gap-2">
-          <Button size="icon" variant="ghost" onClick={() => onEdit(category)}>
-            <Pencil className="h-4 w-4" />
-          </Button>
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="ghost">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
 
-          {category.deletedAt ? (
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => onReAdd(category.categoryCode)}
-              disabled={isReAdding}>
-              <ListPlus className="h-4 w-4 text-green-500" />
-            </Button>
-          ) : (
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => onRemove(category.categoryCode)}
-              disabled={isRemoving}>
-              <Trash className="h-4 w-4 text-destructive" />
-            </Button>
-          )}
+            <DropdownMenuContent align="center" className="w-40">
+              <DropdownMenuItem
+                onClick={() => onEdit(category)}
+                className="flex items-center gap-2">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => onFeatured(category)}
+                className="flex items-center gap-2">
+                <BadgePlus className="h-4 w-4" />
+                Feature
+              </DropdownMenuItem>
+
+              {category.deletedAt ? (
+                <DropdownMenuItem
+                  onClick={() => onReAdd(category.categoryCode)}
+                  disabled={isReAdding}
+                  className="flex items-center gap-2">
+                  <ListPlus className="h-4 w-4 text-success" />
+                  Re-add
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem
+                  onClick={() => onRemove(category.categoryCode)}
+                  disabled={isRemoving}
+                  className="flex items-center gap-2">
+                  {isRemoving ? (
+                    <Spinner className="h-4 w-4" />
+                  ) : (
+                    <>
+                      <Trash className="h-4 w-4 text-destructive" />
+                      Remove
+                    </>
+                  )}
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       );
     },
