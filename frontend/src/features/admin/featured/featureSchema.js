@@ -18,7 +18,7 @@ export const addFeaturedItemSchema = z
       required_error: "Item type is required",
     }),
 
-    section: z.enum(["hero", "best-seller", "new-arrival"], {
+    section: z.enum(["hero", "best-seller", "new-arrival", "popular"], {
       required_error: "Section is required",
     }),
 

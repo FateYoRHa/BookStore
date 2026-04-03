@@ -13,7 +13,7 @@ const featuredItemSchema = new Schema(
     },
     section: {
       type: String,
-      enum: ["hero", "best-seller", "new-arrival"],
+      enum: ["hero", "best-seller", "new-arrival", "popular"],
       required: true,
       index: true,
     },
