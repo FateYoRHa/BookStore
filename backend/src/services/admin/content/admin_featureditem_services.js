@@ -1,5 +1,9 @@
 import { Featured } from "../../../model/index.js";
 
+export async function getFeaturedItemsService() {
+  return await Featured.find().populate("item").sort({ createdAt: -1 });
+}
+
 export async function addFeaturedItemService(featuredItem) {
   const { itemType, itemId, section, startDate, endDate } = featuredItem;
   return await Featured.create({

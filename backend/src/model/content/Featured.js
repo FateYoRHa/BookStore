@@ -1,5 +1,5 @@
 import { mongoose, Schema } from "mongoose";
-import { FEATURED_SECTIONS } from "../../constants/constant_values";
+import { FEATURED_SECTIONS } from "../../constants/constant_values.js";
 const featuredItemSchema = new Schema(
   {
     itemType: {
