@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addFeaturedItemSchema } from "../../featureSchema";
@@ -24,9 +24,11 @@ import { useFeatureItem } from "../../hooks/feature_hooks";
 import FormFieldError from "@/components/forms/FormFieldError";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
   const { mutate: addFeatured } = useFeatureItem();
+  const [isPending, setIsPending] = useState(false);
 
   const {
     control,
@@ -34,11 +36,9 @@ const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
-    watch,
   } = useForm({
     defaultValues: {
-      itemId: featured?._id || "",
+      itemId: "",
       itemType,
       section: "",
       startDate: "",
@@ -48,9 +48,32 @@ const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
     mode: "onChange",
   });
 
+  // Load author data
+  useEffect(() => {
+    if (!featured) return;
+    reset({
+      itemId: featured?._id || "",
+      itemType: itemType || "",
+      section: "",
+      startDate: "",
+      endDate: "",
+    });
+  }, [featured, reset]);
+
   const onSubmit = (item) => {
+    setIsPending(true);
     console.log(item);
-    // addFeatured(item);
+    addFeatured(item, {
+      onSuccess: () => {
+        toast.success(`${item?.itemType} added to featured successfully.`);
+      },
+      onError: () => {
+        toast.error(`Adding ${item?.itemType} to featured failed.`);
+      },
+      onSettled: () => {
+        setIsPending(false);
+      },
+    });
     setOpen(false);
   };
   return (
@@ -64,10 +87,18 @@ const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
             </DialogDescription>
           </DialogHeader>
           {/* FORM */}
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}>
             <Field>
               <FieldLabel>Type</FieldLabel>
-              <Input {...register("itemType")} value={itemType} readOnly />
+              <Input
+                {...register("itemType")}
+                readOnly
+                className={cn(
+                  errors?.itemType &&
+                    "border-red-500 focus-visible:ring-red-500",
+                )}
+              />
               <FormFieldError error={errors?.itemType} />
             </Field>
             <Field>
@@ -76,12 +107,7 @@ const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
                 value={featured?.title || featured?.penName || featured?.name}
                 readOnly
               />
-              <Input
-                {...register("itemId")}
-                value={featured?._id}
-                hidden
-                readOnly
-              />
+              <Input type="hidden" {...register("itemId")} />
               <FormFieldError error={errors?.itemId} />
             </Field>
             <Controller
