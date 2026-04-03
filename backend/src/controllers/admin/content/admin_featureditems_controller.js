@@ -2,7 +2,8 @@ import * as featuredItemService from "../../../services/admin/content/admin_feat
 
 export async function getFeaturedItems(req, res) {
   try {
-    await featuredItemService.getFeaturedItemsService();
+    const featured = await featuredItemService.getFeaturedItemsService();
+    res.status(200).json(featured);
   } catch (error) {
     res
       .status(error.status || 500)
