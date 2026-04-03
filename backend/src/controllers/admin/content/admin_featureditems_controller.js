@@ -1,5 +1,14 @@
 import * as featuredItemService from "../../../services/admin/content/admin_featureditem_services.js";
 
+export async function getFeaturedItems(req, res) {
+  try {
+    await featuredItemService.getFeaturedItemsService();
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal server error." });
+  }
+}
 export async function addFeaturedItem(req, res) {
   try {
     const { itemType, itemId, section, startDate, endDate } = req.body;
