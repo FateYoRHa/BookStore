@@ -33,7 +33,10 @@ const AddFeaturedDialog = ({ open, setOpen, featured, itemType }) => {
           </Field>
           <Field>
             <FieldLabel>Featured Item</FieldLabel>
-            <Input value={featured?.title} readOnly />
+            <Input
+              value={featured?.title || featured?.penName || featured?.name}
+              readOnly
+            />
             <Input value={featured?._id} hidden readOnly />
           </Field>
           <Field>
