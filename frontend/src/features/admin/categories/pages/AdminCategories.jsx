@@ -10,10 +10,14 @@ import {
   useRemoveAdminCategory,
 } from "../hooks/admin_category_hooks";
 import EditCategory from "./components/EditCategory";
+import AddFeaturedDialog from "../../featured/pages/components/AddFeaturedDialog";
 
 const AdminCategories = () => {
   const [openAddForm, setOpenAddForm] = useState(false);
   const [openEditForm, setOpenEditForm] = useState(false);
+  const [openFeatured, setOpenFeatured] = useState(false);
+
+  const [featureCategory, setFeatureCategory] = useState(null);
   const [category, setCategory] = useState(null);
   const { data } = useAdminGetCategories();
   const { mutate: remove, isPending: isRemoving } = useRemoveAdminCategory();
@@ -33,11 +37,16 @@ const AdminCategories = () => {
     reAdd(category);
   };
 
+  const handleFeature = (category) => {
+    setFeatureCategory(category);
+    setOpenFeatured(true);
+  };
   // table columns
   const columns = CategoryTableColumns({
     onEdit: handleEditCategory,
     onRemove: handleRemoveCategory,
     onReAdd: handleReAddCategory,
+    onFeatured: handleFeature,
     isRemoving,
     isReadding,
   });
@@ -56,6 +65,14 @@ const AdminCategories = () => {
         open={openEditForm}
         setOpen={setOpenEditForm}
         category={category}
+      />
+      {/* OPEN FEATURE CATEGORY FORM */}
+
+      <AddFeaturedDialog
+        featured={featureCategory}
+        open={openFeatured}
+        setOpen={setOpenFeatured}
+        itemType="Category"
       />
     </div>
   );
