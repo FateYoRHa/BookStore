@@ -13,9 +13,15 @@ const FeaturedTableColumns = () => [
     id: "item",
     header: "Featured Item",
     cell: ({ row }) => {
-      const item = row.original;
+      const item = row.original.item;
+      const imageUrl = item?.images?.[0]?.url || item?.images?.[0]?.image?.url;
       return (
         <div className="flex items-center gap-3 max-w-[250px] mx-auto">
+          <img
+            src={item?.image?.url || imageUrl}
+            alt={item?.penName || item?.name || item?.title}
+            className="h-10 w-10 rounded-md object-cover border shrink-0"
+          />
           <span className="font-medium break-words whitespace-normal text-left">
             {item?.penName || item?.name || item?.title}
           </span>
@@ -46,8 +52,16 @@ const FeaturedTableColumns = () => [
     header: "Duration",
     cell: ({ row }) => {
       const item = row.original;
-      const startDate = new Date(item?.startDate).toLocaleDateString();
-      const endDate = new Date(item?.endDate).toLocaleDateString();
+      const startDate = new Date(item?.startDate).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "2-digit",
+      });
+      const endDate = new Date(item?.endDate).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
       return (
         <div className="flex items-center gap-3 max-w-[250px] mx-auto">
           <span className="font-medium text-center">{`${startDate} to ${endDate}`}</span>
