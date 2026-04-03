@@ -85,7 +85,7 @@ router.put("/banners/:id", adminOnly, adminBanners.updateBanner);
 router.delete("/banners/:id", adminOnly, adminBanners.deactivateBanner);
 
 // FEATUREDITEMS
-
+router.get("/featureditems", adminOnly, adminFeaturedItems.getFeaturedItems);
 router.post("/featureditems", adminOnly, adminFeaturedItems.addFeaturedItem);
 router.put(
   "/featureditems/:id",
