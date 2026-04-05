@@ -30,13 +30,20 @@ api.interceptors.response.use(
     if (originalRequest?.skipAuthRefresh) {
       return Promise.reject(error);
     }
+    // explicit guard for refresh endpoint
+    const isRefreshRequest = originalRequest.url?.includes("/auth/refresh");
+    if (isRefreshRequest) {
+      return Promise.reject(error);
+    }
     // If 401 AND request hasn't already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; // prevent infinite loop
 
       try {
         // Call refresh endpoint
-        const res = await api.post("/auth/refresh");
+        const res = await api.post("/auth/refresh", null, {
+          skipAuthRefresh: true,
+        });
 
         const newAccessToken = res.data.accessToken;
         // Save new token in Zustand
