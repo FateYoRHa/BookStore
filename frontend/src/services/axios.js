@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "@/features/auth/store/authStore.js";
+import { getOrCreateDeviceId } from "@/lib/utils";
 // This is your centralized HTTP client.
 // ALL API calls go through this instance.
 
@@ -19,7 +20,8 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
+  // send device id to backend
+  config.headers["x-device-id"] = getOrCreateDeviceId();
   return config;
 });
 api.interceptors.response.use(
