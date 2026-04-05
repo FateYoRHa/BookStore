@@ -40,9 +40,11 @@ export async function register(req, res) {
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
+    const deviceId = req.headers["x-device-id"];
     const { accessToken, refreshToken } = await authService.loginService({
       email,
       password,
+      deviceId,
     });
 
     // res.cookie("refreshToken", refreshToken, {
@@ -72,8 +74,10 @@ export async function login(req, res) {
 export async function refresh(req, res) {
   try {
     // get refresh token from cookie and send to refresh service
+    const deviceId = req.headers["x-device-id"];
     const { accessToken, refreshToken } = await authService.refreshService(
       req.cookies.refreshToken,
+      deviceId,
     );
     // set new cookie
     // res.cookie("refreshToken", refreshToken, {
