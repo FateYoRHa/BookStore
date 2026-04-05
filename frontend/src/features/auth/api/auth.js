@@ -4,12 +4,16 @@ import api from "../../../services/axios.js";
 // It contains NO UI logic.
 
 export const loginRequest = async (data) => {
-  const response = await api.post("/auth/login", data);
+  const response = await api.post("/auth/login", data, {
+    skipAuthRefresh: true,
+  });
   return response.data;
 };
 
 export const signupRequest = async (data) => {
-  const response = await api.post("/auth/register", data);
+  const response = await api.post("/auth/register", data, {
+    skipAuthRefresh: true,
+  });
   return response.data;
 };
 

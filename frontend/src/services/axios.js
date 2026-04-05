@@ -27,7 +27,9 @@ api.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
-
+    if (originalRequest?.skipAuthRefresh) {
+      return Promise.reject(error);
+    }
     // If 401 AND request hasn't already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; // prevent infinite loop
