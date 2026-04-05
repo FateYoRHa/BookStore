@@ -78,26 +78,7 @@ export async function refreshService(refToken) {
     }
     // verify refresh token
     const payload = verifyRefreshToken(refToken);
-    // find token using user id
-    const token = await RefreshToken.findOne({ user: payload.sub });
-    if (!token) {
-      const error = new Error("Token not recognized");
-      error.status = 403;
-      throw error;
-    }
-    if (token.expiresAt < new Date()) {
-      const error = new Error("Token expired");
-      error.status = 401;
-      throw error;
-    }
-    // compare token with hashed token
-    const storedToken = await token.compareRefreshToken(refToken);
 
-    if (!storedToken) {
-      const error = new Error("Token not recognized");
-      error.status = 403;
-      throw error;
-    }
     const tokens = await RefreshToken.find({ user: payload.sub });
     if (!tokens) return;
     let matchedToken = null;
@@ -110,6 +91,16 @@ export async function refreshService(refToken) {
         matchedToken = t;
         break;
       }
+    }
+    if (!matchedToken) {
+      const error = new Error("Token not recognized");
+      error.status = 403;
+      throw error;
+    }
+    if (matchedToken.expiresAt < new Date()) {
+      const error = new Error("Token expired");
+      error.status = 401;
+      throw error;
     }
     // REFRESH ROTATION
     await RefreshToken.deleteOne({ _id: matchedToken._id });
