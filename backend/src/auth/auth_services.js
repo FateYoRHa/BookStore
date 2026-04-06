@@ -38,7 +38,7 @@ export async function registerService(user) {
 }
 
 export async function loginService(login) {
-  const { email, password } = login;
+  const { email, password, deviceId } = login;
   const user = await User.findOne({ email: email });
   if (!user) {
     const error = new Error(
@@ -59,71 +59,78 @@ export async function loginService(login) {
   // ISSUE TOKEN
   const accessToken = signAccessToken(user);
   const refreshToken = signRefreshToken(user);
-  // Store refresh token connected to user id
-  await RefreshToken.create({
-    user: user._id,
-    token: refreshToken,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  });
+  // Store refresh token connected to user id and device id
+  await RefreshToken.findOneAndUpdate(
+    { user: user._id, deviceId },
+    {
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+    { upsert: true, new: true },
+  );
 
   return { accessToken, refreshToken };
 }
 
-export async function refreshService(refToken) {
+export async function refreshService(refToken, deviceId) {
   try {
     if (!refToken) {
       const error = new Error("Token not recognized");
       error.status = 401;
       throw error;
     }
+    if (!deviceId) {
+      const error = new Error("Device ID is required");
+      error.status = 400;
+      throw error;
+    }
     // verify refresh token
     const payload = verifyRefreshToken(refToken);
-    // find token using user id
-    const token = await RefreshToken.findOne({ user: payload.sub });
+    const token = await RefreshToken.findOne({
+      user: payload.sub,
+      deviceId,
+    });
+
     if (!token) {
       const error = new Error("Token not recognized");
       error.status = 403;
       throw error;
     }
+
     if (token.expiresAt < new Date()) {
       const error = new Error("Token expired");
       error.status = 401;
       throw error;
     }
-    // compare token with hashed token
-    const storedToken = await token.compareRefreshToken(refToken);
+    const isMatch = await token.compareRefreshToken(refToken);
 
-    if (!storedToken) {
-      const error = new Error("Token not recognized");
+    if (!isMatch) {
+      // reuse detection
+      await RefreshToken.deleteMany({ user: payload.sub });
+
+      const error = new Error("Token reuse detected");
       error.status = 403;
       throw error;
     }
-    const tokens = await RefreshToken.find({ user: payload.sub });
-    if (!tokens) return;
-    let matchedToken = null;
-    // loop through to find correct token
-    for (const t of tokens) {
-      // compare each hash
-      const isMatch = await t.compareRefreshToken(refToken);
-      if (isMatch) {
-        // match correct one
-        matchedToken = t;
-        break;
-      }
-    }
-    // REFRESH ROTATION
-    await RefreshToken.deleteOne({ _id: matchedToken._id });
 
     // check db for user
     const user = await User.findById(payload.sub);
+    if (!user) {
+      const error = new Error("User not found");
+      error.status = 404;
+      throw error;
+    }
     // ISSUE TOKENs
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
-    await RefreshToken.create({
-      user: user._id,
-      token: refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    });
+    await RefreshToken.findOneAndUpdate(
+      { user: user._id, deviceId },
+      {
+        token: refreshToken,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+      { new: true },
+    );
 
     return { accessToken, refreshToken };
   } catch (error) {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "@/features/auth/store/authStore.js";
+import { getOrCreateDeviceId } from "@/lib/utils";
 // This is your centralized HTTP client.
 // ALL API calls go through this instance.
 
@@ -19,7 +20,8 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
+  // send device id to backend
+  config.headers["x-device-id"] = getOrCreateDeviceId();
   return config;
 });
 api.interceptors.response.use(
@@ -27,14 +29,23 @@ api.interceptors.response.use(
 
   async (error) => {
     const originalRequest = error.config;
-
+    if (originalRequest?.skipAuthRefresh) {
+      return Promise.reject(error);
+    }
+    // explicit guard for refresh endpoint
+    const isRefreshRequest = originalRequest.url?.includes("/auth/refresh");
+    if (isRefreshRequest) {
+      return Promise.reject(error);
+    }
     // If 401 AND request hasn't already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; // prevent infinite loop
 
       try {
         // Call refresh endpoint
-        const res = await api.post("/auth/refresh");
+        const res = await api.post("/auth/refresh", null, {
+          skipAuthRefresh: true,
+        });
 
         const newAccessToken = res.data.accessToken;
         // Save new token in Zustand

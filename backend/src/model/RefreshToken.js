@@ -7,6 +7,7 @@ const refreshTokenSchema = new Schema(
       ref: "User",
       required: true,
     },
+    deviceId: { type: String, required: true },
     token: {
       type: String,
       required: true,
