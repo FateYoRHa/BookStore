@@ -104,7 +104,8 @@ export async function refresh(req, res) {
 
 export async function logout(req, res) {
   try {
-    await authService.logoutService(req.cookies.refreshToken);
+    const deviceId = req.headers["x-device-id"];
+    await authService.logoutService(req.cookies.refreshToken, deviceId);
     return res.status(200).json({
       message: "Logged out successfully",
     });

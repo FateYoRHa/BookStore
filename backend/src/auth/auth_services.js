@@ -139,28 +139,21 @@ export async function refreshService(refToken, deviceId) {
   }
 }
 
-export async function logoutService(refreshToken) {
+export async function logoutService(refreshToken, deviceId) {
   try {
     if (!refreshToken) return;
+    if (!deviceId) {
+      const error = new Error("Device ID is required");
+      error.status = 400;
+      throw error;
+    }
     // verify refresh token
     const payload = verifyRefreshToken(refreshToken);
-    // find all tokens that belong to user
-    const tokens = await RefreshToken.find({ user: payload.sub });
-    if (!tokens) return;
-    let matchedToken = null;
-    // loop through to find correct token
-    for (const t of tokens) {
-      // compare each hash
-      const isMatch = await t.compareRefreshToken(refreshToken);
-      if (isMatch) {
-        // match correct one
-        matchedToken = t;
-        break;
-      }
-    }
-
-    if (!matchedToken) throw error;
-    return await RefreshToken.deleteOne({ _id: matchedToken._id });
+    const token = await RefreshToken.findOne({
+      user: payload.sub,
+      deviceId,
+    });
+    return await RefreshToken.deleteOne({ _id: token._id });
   } catch (error) {
     console.log("Error logout service", error.message || error);
     throw error;
