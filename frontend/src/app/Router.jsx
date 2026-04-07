@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import AdminRoutes from "./RouteGuard";
 import LoginPage from "../features/auth/pages/AuthPage";
 
 // PUBLIC PAGES
@@ -48,7 +47,7 @@ export default function AppRouter() {
         <Route
           path="/profile"
           element={
-            <RouteGuard>
+            <RouteGuard allowedRoles={["customer"]}>
               <Profile />
             </RouteGuard>
           }
@@ -57,18 +56,25 @@ export default function AppRouter() {
         <Route
           path="/cart"
           element={
-            <RouteGuard>
+            <RouteGuard allowedRoles={["customer"]}>
               <Cart />
             </RouteGuard>
           }
         />
-        <Route path="/customer/orders" element={<CustomerOrders />} />
+        <Route
+          path="/customer/orders"
+          element={
+            <RouteGuard allowedRoles={["customer"]}>
+              <CustomerOrders />
+            </RouteGuard>
+          }
+        />
 
         <Route path="/categories" element={<Categories />} />
         <Route
           path="/wishlist"
           element={
-            <RouteGuard>
+            <RouteGuard allowedRoles={["customer"]}>
               <CustomerWishlist />
             </RouteGuard>
           }
