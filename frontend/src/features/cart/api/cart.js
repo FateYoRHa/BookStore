@@ -1,5 +1,4 @@
 import api from "@/services/axios";
-
 export const getCartRequest = async () => {
   const response = await api.get("/commerce/cart");
   return response.data;

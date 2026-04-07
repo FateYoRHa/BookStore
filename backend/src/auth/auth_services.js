@@ -1,5 +1,6 @@
 import { User } from "../model/index.js";
 import { RefreshToken } from "../model/RefreshToken.js";
+import bcrypt from "bcrypt";
 import {
   signAccessToken,
   signRefreshToken,
@@ -10,7 +11,12 @@ import { createCustomerService } from "../services/core/customer_services.js";
 
 export async function registerService(user) {
   try {
-    const { email, password } = user;
+    const { email, password, deviceId } = user;
+    if (!deviceId) {
+      const error = new Error("Device ID is required");
+      error.status = 400;
+      throw error;
+    }
     const emailUsed = await User.findOne({ email: email });
     if (emailUsed) {
       const error = new Error("Email is already taken.");
@@ -27,6 +33,7 @@ export async function registerService(user) {
 
     await RefreshToken.create({
       user: registerUser._id,
+      deviceId,
       token: refreshToken,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
@@ -39,6 +46,11 @@ export async function registerService(user) {
 
 export async function loginService(login) {
   const { email, password, deviceId } = login;
+  if (!deviceId) {
+    const error = new Error("Device ID is required");
+    error.status = 400;
+    throw error;
+  }
   const user = await User.findOne({ email: email });
   if (!user) {
     const error = new Error(
@@ -59,11 +71,12 @@ export async function loginService(login) {
   // ISSUE TOKEN
   const accessToken = signAccessToken(user);
   const refreshToken = signRefreshToken(user);
+  const hashedRefreshToken = await bcrypt.hash(refreshToken, 12);
   // Store refresh token connected to user id and device id
   await RefreshToken.findOneAndUpdate(
     { user: user._id, deviceId },
     {
-      token: refreshToken,
+      token: hashedRefreshToken,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
     { upsert: true, new: true },
@@ -123,10 +136,11 @@ export async function refreshService(refToken, deviceId) {
     // ISSUE TOKENs
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 12);
     await RefreshToken.findOneAndUpdate(
       { user: user._id, deviceId },
       {
-        token: refreshToken,
+        token: hashedRefreshToken,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
       { new: true },

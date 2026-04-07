@@ -3,10 +3,12 @@ import * as authService from "./auth_services.js";
 export async function register(req, res) {
   try {
     const { email, password } = req.body;
+    const deviceId = req.headers["x-device-id"];
 
     const { accessToken, refreshToken } = await authService.registerService({
       email,
       password,
+      deviceId,
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
