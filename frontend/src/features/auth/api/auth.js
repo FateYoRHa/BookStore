@@ -1,4 +1,4 @@
-import api from "../../../services/axios.js";
+import api from "@/services/axios";
 
 // This function ONLY performs the HTTP request.
 // It contains NO UI logic.
