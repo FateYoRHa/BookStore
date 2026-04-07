@@ -1,15 +1,17 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { toast } from "sonner";
-export default function RouteGuard({ children }) {
+
+export default function RouteGuard({ children, allowedRoles = ["admin"] }) {
   const user = useAuthStore((state) => state.user);
-  // not logged in
-  // TODO toggle modal/dialog instead of navigating
+
+  // Not logged in.
   if (!user) {
     return <Navigate to="/login" replace />;
-  } 
-  // not admin
-  if (user.role !== "admin") {
+  }
+
+  // Block users whose role is not allowed for this route.
+  if (!allowedRoles.includes(user.role)) {
     toast.warning("Unauthorized");
     return <Navigate to="/" replace />;
   }
