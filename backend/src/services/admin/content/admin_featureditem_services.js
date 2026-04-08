@@ -6,13 +6,14 @@ export async function getFeaturedItemsService() {
 
 export async function addFeaturedItemService(featuredItem) {
   const { itemType, itemId, section, startDate, endDate } = featuredItem;
-  return await Featured.create({
+  const newFeaturedItem = new Featured({
     itemType,
     item: itemId,
     section,
     startDate,
     endDate,
   });
+  return await newFeaturedItem.save();
 }
 export async function updateFeaturedItemService(featuredItem) {
   const { id, itemType, item, priority, starDate, endDate } = featuredItem;
