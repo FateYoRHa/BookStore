@@ -13,7 +13,15 @@ export const useGetFeaturedItems = () => {
     refetchOnWindowFocus: false,
   });
 };
-
+// GET FEATURED ITEM
+export const useGetFeaturedItem = (id) => {
+  return useQuery({
+    queryKey: [ "featured", id ],
+    queryFn: () => getFeaturedItemsRequest(id),
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: false,
+  });
+};
 // ADD FEATURED ITEM MUTATION
 export const useFeatureItem = () => {
   const queryClient = useQueryClient();
