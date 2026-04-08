@@ -10,6 +10,14 @@ import { Link } from "react-router-dom";
 
 const FeaturedTableColumns = () => [
   {
+    header: "Featured Code",
+    accessorKey: "featuredCode",
+    meta: { className: "text-center" },
+    cell: ({ getValue }) => (
+      <span className="font-mono block text-center">{getValue()}</span>
+    ),
+  },
+  {
     id: "item",
     header: "Featured Item",
     cell: ({ row }) => {
