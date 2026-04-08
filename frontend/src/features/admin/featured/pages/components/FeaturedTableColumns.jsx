@@ -10,6 +10,14 @@ import { Link } from "react-router-dom";
 
 const FeaturedTableColumns = () => [
   {
+    header: "Featured Code",
+    accessorKey: "featuredCode",
+    meta: { className: "text-center" },
+    cell: ({ getValue }) => (
+      <span className="font-mono block text-center">{getValue()}</span>
+    ),
+  },
+  {
     id: "item",
     header: "Featured Item",
     cell: ({ row }) => {
@@ -86,7 +94,7 @@ const FeaturedTableColumns = () => [
             <DropdownMenuContent align="center">
               <DropdownMenuItem>
                 <Link
-                  to={`/admin/featured`}
+                  to={`/admin/featured/${item?.featuredCode}`}
                   className="inline-flex items-center gap-2">
                   <Eye /> View Featured
                 </Link>
