@@ -17,13 +17,17 @@ export const normalizeFeaturedItem = (data) => {
             value: item?.categories?.map((c) => c.name).join(", "),
           },
           { label: "Publisher", value: item?.publisher },
-          { label: "ISBN", value: item?.dataCode },
+          { label: "ISBN", value: item?.bookCode },
           { label: "Language", value: item?.language },
           { label: "Pages", value: item?.pages },
         ],
         extra: {
           rating: item?.reviews,
           price: item?.price,
+        },
+        featuredMeta: {
+          startDate: { label: "Start Date", value: data?.startDate },
+          endDate: { label: "End Date", value: data?.endDate },
         },
       };
 
@@ -37,6 +41,10 @@ export const normalizeFeaturedItem = (data) => {
         description: item?.bio,
         meta: [],
         extra: {},
+        featuredMeta: {
+          startDate: { label: "Start Date", value: data?.startDate },
+          endDate: { label: "End Date", value: data?.endDate },
+        },
       };
 
     case "Category":
@@ -49,6 +57,10 @@ export const normalizeFeaturedItem = (data) => {
         description: item?.description,
         meta: [],
         extra: {},
+        featuredMeta: {
+          startDate: { label: "Start Date", value: data?.startDate },
+          endDate: { label: "End Date", value: data?.endDate },
+        },
       };
 
     default:
