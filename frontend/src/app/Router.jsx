@@ -35,6 +35,7 @@ import AdminOrders from "@/features/admin/orders/pages/AdminOrders";
 import OrderDetails from "@/features/admin/orders/pages/components/OrderDetails";
 import OrderUpdate from "@/features/admin/orders/pages/components/OrderUpdate";
 import AdminFeatured from "@/features/admin/featured/pages/AdminFeatured";
+import ViewFeaturedItem from "@/features/admin/featured/pages/components/ViewFeaturedItem";
 export default function AppRouter() {
   return (
     <Routes>
@@ -154,6 +155,14 @@ export default function AppRouter() {
           element={
             <RouteGuard>
               <AdminFeatured />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/admin/featured/:id"
+          element={
+            <RouteGuard>
+              <ViewFeaturedItem />
             </RouteGuard>
           }
         />
