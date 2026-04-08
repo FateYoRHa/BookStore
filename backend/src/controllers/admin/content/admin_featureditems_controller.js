@@ -10,6 +10,21 @@ export async function getFeaturedItems(req, res) {
       .json({ message: error.message || "Internal server error." });
   }
 }
+
+export async function getFeaturedItem(req, res) {
+  try {
+    const featuredItem = await featuredItemService.getFeaturedItemService(
+      req.params.id,
+    );
+    res.status(200).json(featuredItem);
+  } catch (error) {
+    console.log("Error Getting Featured Item", error);
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Internal Server Error" });
+  }
+}
+
 export async function addFeaturedItem(req, res) {
   try {
     const { itemType, itemId, section, startDate, endDate } = req.body;
