@@ -94,7 +94,7 @@ const FeaturedTableColumns = () => [
             <DropdownMenuContent align="center">
               <DropdownMenuItem>
                 <Link
-                  to={`/admin/featured`}
+                  to={`/admin/featured/${item?.featuredCode}`}
                   className="inline-flex items-center gap-2">
                   <Eye /> View Featured
                 </Link>
