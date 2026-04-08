@@ -1,6 +1,7 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import {
   featureItemRequest,
+  getFeaturedItemRequest,
   getFeaturedItemsRequest,
 } from "../api/feature_api";
 
@@ -17,7 +18,7 @@ export const useGetFeaturedItems = () => {
 export const useGetFeaturedItem = (id) => {
   return useQuery({
     queryKey: [ "featured", id ],
-    queryFn: () => getFeaturedItemsRequest(id),
+    queryFn: () => getFeaturedItemRequest(id),
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
   });
