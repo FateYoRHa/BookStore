@@ -1,7 +1,10 @@
 import Autoplay from "embla-carousel-autoplay";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useGetFeaturedItem } from "../../hooks/feature_hooks";
+import {
+  useGetFeaturedItem,
+  useUpdateFeaturedItem,
+} from "../../hooks/feature_hooks";
 import { normalizeFeaturedItem } from "../../utils/normalizeFeaturedItem";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -30,6 +33,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 // Maps API/input variants to the canonical section slugs used by Select/Zod.
 const SECTION_ALIAS_MAP = {
@@ -56,12 +61,12 @@ const ViewFeaturedItem = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetFeaturedItem(id);
   const [isUpdating, setIsUpdating] = useState(false);
+  const { mutate: updateFeaturedItem, isPending } = useUpdateFeaturedItem();
   // Guards against repeated reset() calls when data object references change.
   const lastInitializedRef = useRef("");
 
   // Normalize the featured item data for easier rendering
   const featuredItem = normalizeFeaturedItem(data);
-  console.log(data?.endDate)
   const {
     control,
     register,
@@ -130,8 +135,11 @@ const ViewFeaturedItem = () => {
     reset,
   ]);
 
-  const handleToggleEdit = () => {
-    setIsUpdating((prev) => !prev);
+  const handleToggleEdit = (event) => {
+    if (!isUpdating) {
+      event.preventDefault();
+      setIsUpdating(true);
+    }
   };
 
   const handleCancelEdit = () => {
@@ -149,8 +157,18 @@ const ViewFeaturedItem = () => {
     });
     setIsUpdating(false);
   };
-  const onSubmit = (data) => {
-    console.log(data);
+
+  const onSubmit = (featured) => {
+    featured = { ...featured, id: data?.featuredCode };
+    updateFeaturedItem(featured, {
+      onSuccess: () => {
+        toast.success("Featured item updated successfully");
+        setIsUpdating(false);
+      },
+      onError: () => {
+        toast.error("Failed to update featured item");
+      },
+    });
   };
   // Keeps carousel autoplay plugin instance stable across re-renders.
   const plugin = useRef(Autoplay({ delay: 5000 }));
@@ -249,9 +267,21 @@ const ViewFeaturedItem = () => {
                         </Button>
                       )}
                       <Button
-                        type={!isUpdating ? "submit" : "button"}
-                        onClick={handleToggleEdit}>
-                        {isUpdating ? "Done" : "Edit Featured Details"}
+                        type="submit"
+                        onClick={handleToggleEdit}
+                        disabled={isPending}>
+                        {isUpdating ? (
+                          isPending ? (
+                            <>
+                              <Spinner />
+                              Saving...
+                            </>
+                          ) : (
+                            "Save Changes"
+                          )
+                        ) : (
+                          "Edit Featured Details"
+                        )}
                       </Button>
                     </div>
                   </div>
