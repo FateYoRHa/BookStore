@@ -44,14 +44,14 @@ export async function addFeaturedItem(req, res) {
 
 export async function updateFeaturedItem(req, res) {
   try {
-    const { itemType, item, priority, starDate, endDate } = req.body;
-    const id = req.params;
+    const { itemType, itemId, section, startDate, endDate } = req.body;
+    const id = req.params.id;
     const featuredItem = await featuredItemService.updateFeaturedItemService({
       id,
       itemType,
-      item,
-      priority,
-      starDate,
+      itemId,
+      section,
+      startDate,
       endDate,
     });
     res.status(200).json(featuredItem);
