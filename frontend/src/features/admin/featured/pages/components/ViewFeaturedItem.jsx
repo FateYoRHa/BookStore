@@ -1,5 +1,5 @@
 import Autoplay from "embla-carousel-autoplay";
-import { Fragment, useRef } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetFeaturedItem } from "../../hooks/feature_hooks";
 import { normalizeFeaturedItem } from "../../utils/normalizeFeaturedItem";
@@ -13,28 +13,84 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Rating } from "@/components/rating";
 import ViewFeaturedItemSkeleton from "./ViewFeaturedItemSkeleton";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addFeaturedItemSchema } from "../../featureSchema";
+import { cn } from "@/lib/utils";
+import FormFieldError from "@/components/forms/FormFieldError";
+import { Button } from "@/components/ui/button";
 
 const ViewFeaturedItem = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetFeaturedItem(id);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Normalize the featured item data for easier rendering
   const featuredItem = normalizeFeaturedItem(data);
-  // FEATURED DATES
-  const startDate = new Date(
-    featuredItem?.featuredMeta?.startDate?.value,
-  ).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
+
+  const {
+    register,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      itemId: "",
+      itemType: "",
+      section: "",
+      startDate: "",
+      endDate: "",
+    },
+    resolver: zodResolver(addFeaturedItemSchema),
+    mode: "onChange",
   });
-  const endDate = new Date(
-    featuredItem?.featuredMeta?.endDate?.value,
-  ).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formatDateForInput = (rawDate) => {
+    if (!rawDate) return "";
+
+    const parsedDate = rawDate instanceof Date ? rawDate : new Date(rawDate);
+    if (Number.isNaN(parsedDate.getTime())) return "";
+
+    const year = parsedDate.getFullYear();
+    const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(parsedDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const formValues = useMemo(() => {
+    const itemId =
+      typeof data?.item === "object" ? data.item?._id : (data?.item ?? "");
+
+    return {
+      itemId,
+      itemType: data?.itemType ?? "",
+      section: data?.section ?? "",
+      startDate: formatDateForInput(data?.startDate),
+      endDate: formatDateForInput(data?.endDate),
+    };
+  }, [
+    data?.item,
+    data?.itemType,
+    data?.section,
+    data?.startDate,
+    data?.endDate,
+  ]);
+
+  useEffect(() => {
+    if (!data?._id) return;
+
+    reset(formValues);
+  }, [data?._id, formValues, reset]);
+
+  const handleToggleEdit = () => {
+    setIsUpdating((prev) => !prev);
+  };
+
+  const handleCancelEdit = () => {
+    reset(formValues);
+    setIsUpdating(false);
+  };
+
   // Carousel stuff
   const plugin = useRef(Autoplay({ delay: 5000 }));
 
@@ -119,23 +175,52 @@ const ViewFeaturedItem = () => {
           <section className="mt-5">
             <Card>
               <CardContent className="space-y-6 p-6">
-                <h3 className="text-xl font-semibold">Featured Details</h3>
-
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-xl font-semibold">Featured Details</h3>
+                  <div className="flex items-center gap-2">
+                    {isUpdating && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleCancelEdit}>
+                        Cancel
+                      </Button>
+                    )}
+                    <Button type="button" onClick={handleToggleEdit}>
+                      {isUpdating ? "Done" : "Edit Featured Details"}
+                    </Button>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-y-2 gap-x-6 text-sm">
-                  <span className="font-semibold text-black">
-                    {featuredItem?.featuredMeta?.startDate?.label ||
-                      "Start Date"}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {startDate || "-"}
-                  </span>
-
-                  <span className="font-semibold text-black">
-                    {featuredItem?.featuredMeta?.endDate?.label || "End Date"}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {endDate || "-"}
-                  </span>
+                  <div className="flex flex-col gap-y-2 gap-x-6 text-sm">
+                    <span className="font-semibold text-black">
+                      {featuredItem?.featuredMeta?.startDate?.label ||
+                        "Start Date"}
+                    </span>
+                    <Input
+                      {...register("startDate")}
+                      type="date"
+                      readOnly={!isUpdating}
+                      className={cn(
+                        errors?.startDate &&
+                          "border-red-500 focus-visible:ring-red-500",
+                      )}
+                    />
+                    <FormFieldError error={errors?.startDate} />
+                    <span className="font-semibold text-black">
+                      {featuredItem?.featuredMeta?.endDate?.label || "End Date"}
+                    </span>
+                    <Input
+                      {...register("endDate")}
+                      type="date"
+                      readOnly={!isUpdating}
+                      className={cn(
+                        errors?.endDate &&
+                          "border-red-500 focus-visible:ring-red-500",
+                      )}
+                    />
+                    <FormFieldError error={errors?.endDate} />
+                  </div>
                 </div>
               </CardContent>
             </Card>
