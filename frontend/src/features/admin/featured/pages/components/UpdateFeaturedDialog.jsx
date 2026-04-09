@@ -24,6 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 // Maps API/input variants to the canonical section slugs used by Select/Zod.
 const SECTION_ALIAS_MAP = {
@@ -123,8 +125,21 @@ const UpdateFeaturedDialog = ({ open, setOpen, item }) => {
     reset,
   ]);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = (featured) => {
+    setIsUpdating(true);
+    featured = { ...featured, id: item?.featuredCode };
+    updateFeaturedItem(featured, {
+      onSuccess: () => {
+        toast.success("Featured item updated successfully");
+        setOpen(false);
+      },
+      onError: () => {
+        toast.error("Failed to update featured item");
+      },
+      onSettled: () => {
+        setIsUpdating(false);
+      },
+    });
   };
   return (
     <div>
@@ -218,7 +233,15 @@ const UpdateFeaturedDialog = ({ open, setOpen, item }) => {
               />
             </Field>
             <div className="flex justify-end gap-2">
-              <Button type="submit">Update Feature </Button>
+              <Button type="submit">
+                {isUpdating ? (
+                  <>
+                    <Spinner /> Updating...
+                  </>
+                ) : (
+                  "Update"
+                )}
+              </Button>
             </div>
           </form>
         </DialogContent>
