@@ -12,3 +12,8 @@ export const featureItemRequest = async (item) => {
   const res = await api.post("/admin/featureditems", item);
   return res.data;
 };
+
+export const updateFeaturedItemRequest = async (item) => {
+  const res = await api.put(`/admin/featureditems/${item.id}`, item);
+  return res.data;
+};
