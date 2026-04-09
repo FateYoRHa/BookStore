@@ -9,7 +9,7 @@ import {
 import { Eye, MoreHorizontal, Pen } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const FeaturedTableColumns = () => [
+const FeaturedTableColumns = ({ onUpdate }) => [
   {
     header: "Featured Code",
     accessorKey: "featuredCode",
@@ -131,10 +131,10 @@ const FeaturedTableColumns = () => [
                   <Eye /> View Featured
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="inline-flex">
-                <Link to={``} className="inline-flex items-center gap-2">
-                  <Pen /> Update Featured
-                </Link>
+              <DropdownMenuItem
+                onClick={() => onUpdate(item)}
+                className="flex items-center gap-2">
+                <Pen className="h-4 w-4" /> Update Featured
               </DropdownMenuItem>
               <DropdownMenuItem className="text-red-500">End</DropdownMenuItem>
             </DropdownMenuContent>
