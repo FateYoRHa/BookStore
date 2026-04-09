@@ -1,5 +1,5 @@
 import Autoplay from "embla-carousel-autoplay";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetFeaturedItem } from "../../hooks/feature_hooks";
 import { normalizeFeaturedItem } from "../../utils/normalizeFeaturedItem";
@@ -14,25 +14,60 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Rating } from "@/components/rating";
 import ViewFeaturedItemSkeleton from "./ViewFeaturedItemSkeleton";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addFeaturedItemSchema } from "../../featureSchema";
 import { cn } from "@/lib/utils";
 import FormFieldError from "@/components/forms/FormFieldError";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { featuredSections } from "@/features/admin/utils/constantValues";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Maps API/input variants to the canonical section slugs used by Select/Zod.
+const SECTION_ALIAS_MAP = {
+  hero: "hero",
+  "best-seller": "best-seller",
+  "best seller": "best-seller",
+  best_seller: "best-seller",
+  bestseller: "best-seller",
+  "new-arrival": "new-arrival",
+  "new arrival": "new-arrival",
+  new_arrival: "new-arrival",
+  newarrival: "new-arrival",
+  popular: "popular",
+};
+
+// Normalizes any incoming section value to a valid slug or empty string.
+const normalizeSectionValue = (value) => {
+  if (typeof value !== "string") return "";
+  const normalizedKey = value.trim().toLowerCase();
+  return SECTION_ALIAS_MAP[normalizedKey] || "";
+};
 
 const ViewFeaturedItem = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetFeaturedItem(id);
   const [isUpdating, setIsUpdating] = useState(false);
+  // Guards against repeated reset() calls when data object references change.
+  const lastInitializedRef = useRef("");
 
   // Normalize the featured item data for easier rendering
   const featuredItem = normalizeFeaturedItem(data);
-
+  console.log(data?.endDate)
   const {
+    control,
     register,
     formState: { errors },
     reset,
+    handleSubmit,
   } = useForm({
     defaultValues: {
       itemId: "",
@@ -42,7 +77,8 @@ const ViewFeaturedItem = () => {
       endDate: "",
     },
     resolver: zodResolver(addFeaturedItemSchema),
-    mode: "onChange",
+    mode: "onTouched",
+    reValidateMode: "onChange",
   });
   const formatDateForInput = (rawDate) => {
     if (!rawDate) return "";
@@ -57,41 +93,66 @@ const ViewFeaturedItem = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const formValues = useMemo(() => {
-    const itemId =
-      typeof data?.item === "object" ? data.item?._id : (data?.item ?? "");
+  useEffect(() => {
+    if (!data?._id) return;
 
-    return {
+    // Signature of server values used to initialize the form.
+    const initKey = [
+      data._id,
+      typeof data.item === "object" ? data.item?._id : data.item,
+      data.itemType,
+      data.section,
+      data.startDate,
+      data.endDate,
+    ].join("|");
+
+    if (lastInitializedRef.current === initKey) return;
+
+    const itemId =
+      typeof data.item === "object" ? data.item?._id : (data.item ?? "");
+
+    reset({
       itemId,
-      itemType: data?.itemType ?? "",
-      section: data?.section ?? "",
-      startDate: formatDateForInput(data?.startDate),
-      endDate: formatDateForInput(data?.endDate),
-    };
+      itemType: data.itemType ?? "",
+      section: normalizeSectionValue(data.section),
+      startDate: formatDateForInput(data.startDate),
+      endDate: formatDateForInput(data.endDate),
+    });
+
+    lastInitializedRef.current = initKey;
   }, [
+    data?._id,
+    data?.endDate,
     data?.item,
     data?.itemType,
     data?.section,
     data?.startDate,
-    data?.endDate,
+    reset,
   ]);
-
-  useEffect(() => {
-    if (!data?._id) return;
-
-    reset(formValues);
-  }, [data?._id, formValues, reset]);
 
   const handleToggleEdit = () => {
     setIsUpdating((prev) => !prev);
   };
 
   const handleCancelEdit = () => {
-    reset(formValues);
+    if (!data?._id) return;
+
+    const itemId =
+      typeof data.item === "object" ? data.item?._id : (data.item ?? "");
+
+    reset({
+      itemId,
+      itemType: data.itemType ?? "",
+      section: normalizeSectionValue(data.section),
+      startDate: formatDateForInput(data.startDate),
+      endDate: formatDateForInput(data.endDate),
+    });
     setIsUpdating(false);
   };
-
-  // Carousel stuff
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+  // Keeps carousel autoplay plugin instance stable across re-renders.
   const plugin = useRef(Autoplay({ delay: 5000 }));
 
   return (
@@ -173,57 +234,115 @@ const ViewFeaturedItem = () => {
             </CardContent>
           </Card>
           <section className="mt-5">
-            <Card>
-              <CardContent className="space-y-6 p-6">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-xl font-semibold">Featured Details</h3>
-                  <div className="flex items-center gap-2">
-                    {isUpdating && (
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Card>
+                <CardContent className="space-y-6 p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-xl font-semibold">Featured Details</h3>
+                    <div className="flex items-center gap-2">
+                      {isUpdating && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleCancelEdit}>
+                          Cancel
+                        </Button>
+                      )}
                       <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleCancelEdit}>
-                        Cancel
+                        type={!isUpdating ? "submit" : "button"}
+                        onClick={handleToggleEdit}>
+                        {isUpdating ? "Done" : "Edit Featured Details"}
                       </Button>
-                    )}
-                    <Button type="button" onClick={handleToggleEdit}>
-                      {isUpdating ? "Done" : "Edit Featured Details"}
-                    </Button>
+                    </div>
                   </div>
-                </div>
-                <div className="grid grid-cols-2 gap-y-2 gap-x-6 text-sm">
-                  <div className="flex flex-col gap-y-2 gap-x-6 text-sm">
-                    <span className="font-semibold text-black">
-                      {featuredItem?.featuredMeta?.startDate?.label ||
-                        "Start Date"}
-                    </span>
-                    <Input
-                      {...register("startDate")}
-                      type="date"
-                      readOnly={!isUpdating}
-                      className={cn(
-                        errors?.startDate &&
-                          "border-red-500 focus-visible:ring-red-500",
-                      )}
-                    />
-                    <FormFieldError error={errors?.startDate} />
-                    <span className="font-semibold text-black">
-                      {featuredItem?.featuredMeta?.endDate?.label || "End Date"}
-                    </span>
-                    <Input
-                      {...register("endDate")}
-                      type="date"
-                      readOnly={!isUpdating}
-                      className={cn(
-                        errors?.endDate &&
-                          "border-red-500 focus-visible:ring-red-500",
-                      )}
-                    />
-                    <FormFieldError error={errors?.endDate} />
+                  <div className="grid grid-cols-2 gap-y-2 gap-x-6 text-sm">
+                    <Field className="flex flex-col gap-y-2 gap-x-6 text-sm">
+                      <FieldLabel className="font-semibold text-black">
+                        Item Type
+                      </FieldLabel>
+                      <Input
+                        {...register("itemType")}
+                        readOnly
+                        className={cn(
+                          errors?.itemType &&
+                            "border-red-500 focus-visible:ring-red-500",
+                        )}
+                      />
+                      <FormFieldError error={errors?.itemType} />
+                      <Controller
+                        name="section"
+                        control={control}
+                        render={({ field }) => {
+                          return (
+                            <Field>
+                              <FieldLabel>Section</FieldLabel>
+
+                              <Select
+                                value={
+                                  normalizeSectionValue(field.value) ||
+                                  normalizeSectionValue(data?.section)
+                                }
+                                disabled={!isUpdating}
+                                onValueChange={field.onChange}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Section" />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                  {featuredSections?.map((feat) => (
+                                    <SelectItem key={feat} value={feat}>
+                                      <span className="capitalize">{feat}</span>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+
+                              <FormFieldError
+                                error={isUpdating ? errors?.section : undefined}
+                              />
+                            </Field>
+                          );
+                        }}
+                      />
+                    </Field>
+                    <Field className="flex flex-col gap-y-2 gap-x-6 text-sm">
+                      <FieldLabel className="font-semibold text-black">
+                        {featuredItem?.featuredMeta?.startDate?.label ||
+                          "Start Date"}
+                      </FieldLabel>
+                      <Input
+                        {...register("startDate")}
+                        type="date"
+                        readOnly={!isUpdating}
+                        className={cn(
+                          errors?.startDate &&
+                            "border-red-500 focus-visible:ring-red-500",
+                        )}
+                      />
+                      <FormFieldError
+                        error={isUpdating ? errors?.startDate : undefined}
+                      />
+                      <FieldLabel className="font-semibold text-black">
+                        {featuredItem?.featuredMeta?.endDate?.label ||
+                          "End Date"}
+                      </FieldLabel>
+                      <Input
+                        {...register("endDate")}
+                        type="date"
+                        readOnly={!isUpdating}
+                        className={cn(
+                          errors?.endDate &&
+                            "border-red-500 focus-visible:ring-red-500",
+                        )}
+                      />
+                      <FormFieldError
+                        error={isUpdating ? errors?.endDate : undefined}
+                      />
+                    </Field>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </form>
           </section>
         </>
       )}
