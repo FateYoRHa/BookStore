@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -63,7 +64,7 @@ const FeaturedTableColumns = () => [
       const startDate = new Date(item?.startDate).toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",
-        year: "2-digit",
+        year: "numeric",
       });
       const endDate = new Date(item?.endDate).toLocaleDateString("en-US", {
         month: "long",
@@ -73,6 +74,37 @@ const FeaturedTableColumns = () => [
       return (
         <div className="flex items-center gap-3 max-w-[250px] mx-auto">
           <span className="font-medium text-center">{`${startDate} to ${endDate}`}</span>
+        </div>
+      );
+    },
+  },
+  {
+    id: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const item = row.original;
+      let status = "Ongoing";
+      const now = new Date();
+      const startDate = new Date(item?.startDate);
+      const endDate = new Date(item?.endDate);
+      if (now < startDate) {
+        status = "Upcoming";
+      } else if (now > endDate) {
+        status = "Ended";
+      }
+
+      return (
+        <div className="flex items-center gap-3 max-w-[250px] mx-auto">
+          <Badge
+            variant={
+              status === "Ongoing"
+                ? "success"
+                : status === "Upcoming"
+                  ? "warning"
+                  : "destructive"
+            }>
+            {status}
+          </Badge>
         </div>
       );
     },
