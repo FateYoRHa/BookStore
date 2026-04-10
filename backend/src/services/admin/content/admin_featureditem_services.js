@@ -1,7 +1,25 @@
 import { Featured } from "../../../model/index.js";
 
 export async function getFeaturedItemsService() {
-  return await Featured.find().populate("item").sort({ createdAt: -1 });
+  let featuredItems = await Featured.find().populate("item");
+  if (!featuredItems) {
+    const error = new Error("Featured item not found");
+    error.status = 404;
+    throw error;
+  }
+  // POPULATE IMAGES FOR BOOKS
+  featuredItems = await Promise.all(
+    featuredItems.map(async (featured) => {
+      if (featured.itemType === "Book") {
+        await featured.populate({
+          path: "item",
+          populate: { path: "images", select: "image" },
+        });
+      }
+      return featured;
+    }),
+  );
+  return featuredItems;
 }
 
 export async function getFeaturedItemService(id) {
