@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DashboardCards from "./components/DashboardCards";
 import DashboardCharts from "./components/DashboardCharts";
 import { useGetDashboardRevenue } from "./hooks/admin_dashboard_hooks";
-import { dashboardRevenue } from "./util/dashboardStats";
+import { dashboardRevenue, revenueChartData } from "./util/dashboardStats";
 const AdminDashboard = () => {
   const { data: revenue } = useGetDashboardRevenue();
   return (
@@ -18,7 +18,10 @@ const AdminDashboard = () => {
             <div className="flex flex-col gap-4 md:gap-6">
               <DashboardCards data={dashboardRevenue(revenue)} />
               <div className="px-4 lg:px-6">
-                <DashboardCharts />
+                <DashboardCharts
+                  chartData={revenueChartData(revenue?.revenue?.summary)}
+                  title="Revenue Summary"
+                />
               </div>
               {/* <DataTable data={data} /> */}
             </div>
