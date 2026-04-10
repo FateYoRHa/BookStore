@@ -6,15 +6,16 @@ import { Outlet } from "react-router-dom";
 export default function AdminLayout() {
   return (
     <SidebarProvider
+      className="h-svh overflow-hidden"
       style={{
         "--sidebar-width": "calc(var(--spacing) * 72)",
         "--header-height": "calc(var(--spacing) * 12)",
       }}>
       <DashboardSidebar variant="inset" />
-      <SidebarInset className="h-screen overflow-hidden">
+      <SidebarInset className="h-full min-h-0 overflow-hidden">
         <DashboardHeader />
 
-        <div className="flex flex-col overflow-hidden">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <Outlet />
         </div>
       </SidebarInset>
