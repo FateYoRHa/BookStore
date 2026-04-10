@@ -13,3 +13,10 @@ export const dashboardRevenue = (revenue) => ({
   },
   card4: { label: "Today", value: `₱${revenue?.revenue?.todayRevenue || 0}` },
 });
+
+export const revenueChartData = (data) => {
+  return data?.map((item) => ({
+    date: item?.updatedAt,
+    totalRevenue: item?.totalAmount || 0,
+  }));
+};
