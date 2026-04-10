@@ -41,9 +41,9 @@ const DataTable = ({ data, columns }) => {
   });
   const rowModel = table.getRowModel();
   return (
-    <>
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
       <TableFilter table={table} />
-      <div className="flex flex-col h-full rounded-2xl border bg-background  overflow-x-auto">
+      <div className="flex min-h-0 flex-1 flex-col rounded-2xl border bg-background overflow-x-auto">
         <div className="flex-1 overflow-auto">
           <Table className="min-w-full table-fixed">
             <TableHeader className="sticky top-0 bg-background z-10">
@@ -75,7 +75,7 @@ const DataTable = ({ data, columns }) => {
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className={`align-top whitespace-normal break-words ${
+                        className={`align-top whitespace-normal wrap-break-word ${
                           cell.column.columnDef.meta?.className
                         }`}>
                         {flexRender(
@@ -115,7 +115,7 @@ const DataTable = ({ data, columns }) => {
           </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

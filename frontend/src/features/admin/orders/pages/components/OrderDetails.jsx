@@ -19,7 +19,7 @@ const OrderDetails = () => {
   const customer = order?.customer;
   const address = order?.shippingAddress;
   return (
-    <div className="p-6 space-y-6 overflow-auto">
+    <div className="flex min-h-0 flex-1 flex-col space-y-6 overflow-auto p-6">
       {/* Top Section */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Order Info */}

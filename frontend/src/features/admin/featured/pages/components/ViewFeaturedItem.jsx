@@ -174,7 +174,8 @@ const ViewFeaturedItem = () => {
   const plugin = useRef(Autoplay({ delay: 5000 }));
 
   return (
-    <main className="container max-w-7xl mx-auto px-6 py-16 overflow-auto">
+    <main className="flex min-h-0 flex-1 overflow-auto px-6 py-16">
+      <div className="mx-auto w-full max-w-7xl">
       {isLoading || !featuredItem ? (
         <ViewFeaturedItemSkeleton />
       ) : (
@@ -376,6 +377,7 @@ const ViewFeaturedItem = () => {
           </section>
         </>
       )}
+      </div>
     </main>
   );
 };
