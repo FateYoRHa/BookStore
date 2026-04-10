@@ -1,9 +1,22 @@
 import { Order } from "../../model/index.js";
+import { ORDER_STATUSES } from "../../constants/constant_values.js";
+
+const NON_REVENUE_ORDER_STATUSES = [
+  ORDER_STATUSES.CANCELLED,
+  ORDER_STATUSES.FAILED,
+  ORDER_STATUSES.PENDING,
+];
 
 export async function getDashboardRevenueService() {
   try {
     const revenueSummary = await getRevenueSummaryService();
+    const summary = await Order.find({
+      status: { $nin: NON_REVENUE_ORDER_STATUSES },
+    })
+      .select("totalAmount updatedAt")
+      .lean();
     return {
+      summary,
       totalRevenue: revenueSummary.totalRevenue,
       thisYearRevenue: revenueSummary.thisYearRevenue,
       lastSixMonthsRevenue: revenueSummary.lastSixMonthsRevenue,
@@ -46,7 +59,7 @@ const getRevenueSummaryService = async () => {
       {
         $match: {
           status: {
-            $nin: ["cancelled", "payment failed", "pending"],
+            $nin: NON_REVENUE_ORDER_STATUSES,
           },
         },
       },
