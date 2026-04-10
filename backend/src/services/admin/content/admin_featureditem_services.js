@@ -48,10 +48,10 @@ export async function addFeaturedItemService(featuredItem) {
   return await newFeaturedItem.save();
 }
 export async function updateFeaturedItemService(featuredItem) {
-  const { id, itemType, item, priority, starDate, endDate } = featuredItem;
-  return await Featured.findByIdAndUpdate(
-    id,
-    { itemType, item, priority, starDate, endDate },
+  const { id, itemType, itemId, section, startDate, endDate } = featuredItem;
+  return await Featured.findOneAndUpdate(
+    { featuredCode: id },
+    { itemType, itemId, section, startDate, endDate },
     { new: true },
   );
 }

@@ -3,6 +3,7 @@ import {
   featureItemRequest,
   getFeaturedItemRequest,
   getFeaturedItemsRequest,
+  updateFeaturedItemRequest,
 } from "../api/feature_api";
 
 // GET FEATURED ITEMS
@@ -17,7 +18,7 @@ export const useGetFeaturedItems = () => {
 // GET FEATURED ITEM
 export const useGetFeaturedItem = (id) => {
   return useQuery({
-    queryKey: [ "featured", id ],
+    queryKey: ["featured", id],
     queryFn: () => getFeaturedItemRequest(id),
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: false,
@@ -29,7 +30,17 @@ export const useFeatureItem = () => {
   return useMutation({
     mutationFn: (item) => featureItemRequest(item),
     onSuccess: () => {
-      queryClient.invalidateQueries(["features"]);
+      queryClient.invalidateQueries(["featured"]);
+    },
+  });
+};
+// UPDATE FEATURED ITEM MUTATION
+export const useUpdateFeaturedItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (item) => updateFeaturedItemRequest(item),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["featured"]);
     },
   });
 };
