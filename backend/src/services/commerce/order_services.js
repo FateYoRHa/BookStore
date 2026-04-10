@@ -11,7 +11,7 @@ export async function getCustomerOrdersService(userId) {
     .populate({
       path: "items.book",
       select: "bookCode title",
-      populate: [{ path: "images", match: { type: "cover" } }],
+      populate: [{ path: "images", select: "image", match: { type: "cover" } }],
     })
     .populate("payment", "method")
     .sort({ createdAt: -1 });

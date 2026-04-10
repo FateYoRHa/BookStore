@@ -135,31 +135,33 @@ const CustomerOrders = () => {
                     {/* Items */}
                     <TableCell className="px-4 py-4">
                       <div className="flex flex-col gap-3">
-                        {itemsToRender.map((item) => (
-                          <div
-                            key={item.book._id}
-                            className="flex items-center gap-3">
-                            {/* Image */}
-                            <div className="h-14 w-10 overflow-hidden rounded border bg-muted">
-                              <img
-                                src={item.book.images?.[0]?.url}
-                                alt={item.book.title}
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
+                        {itemsToRender.map((item) => {
+                          return (
+                            <div
+                              key={item?.book?._id}
+                              className="flex items-center gap-3">
+                              {/* Image */}
+                              <div className="h-14 w-10 overflow-hidden rounded border bg-muted">
+                                <img
+                                  src={item?.book?.images?.[0]?.image?.url}
+                                  alt={item?.book?.title}
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
 
-                            {/* Title */}
-                            <div className="flex flex-col">
-                              <span className="text-sm font-medium leading-tight">
-                                {item.book.title}
-                              </span>
+                              {/* Title */}
+                              <div className="flex flex-col">
+                                <span className="text-sm font-medium leading-tight">
+                                  {item?.book?.title}
+                                </span>
 
-                              <span className="text-xs text-muted-foreground">
-                                Qty: {item.quantity}
-                              </span>
+                                <span className="text-xs text-muted-foreground">
+                                  Qty: {item?.quantity}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
 
                         {/* "+X more items" indicator */}
 
