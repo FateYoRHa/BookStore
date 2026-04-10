@@ -141,7 +141,7 @@ const AuthorTableColumns = ({
 
               {author.deletedAt ? (
                 <DropdownMenuItem
-                  onClick={() => onReAdd(author.authorCode)}
+                  onClick={() => onReAdd(author._id)}
                   disabled={isReAdding}
                   className="flex items-center gap-2">
                   <ListPlus className="h-4 w-4 text-success" />
@@ -149,7 +149,7 @@ const AuthorTableColumns = ({
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem
-                  onClick={() => onDelete(author.authorCode)}
+                  onClick={() => onDelete(author._id)}
                   disabled={isDeleting}
                   className="flex items-center gap-2">
                   {isDeleting ? (
