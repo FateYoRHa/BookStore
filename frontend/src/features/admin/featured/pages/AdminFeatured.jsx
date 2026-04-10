@@ -4,7 +4,7 @@ import { useGetFeaturedItems } from "../hooks/feature_hooks";
 import FeaturedTableColumns from "./components/FeaturedTableColumns";
 import UpdateFeaturedDialog from "./components/UpdateFeaturedDialog";
 const AdminFeatured = () => {
-  const { data, isPending: isFetching } = useGetFeaturedItems();
+  const { data } = useGetFeaturedItems();
 
   const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -14,7 +14,7 @@ const AdminFeatured = () => {
   };
   const columns = FeaturedTableColumns({ onUpdate: handleUpdate });
   return (
-    <div className="flex flex-col flex-1 p-4 overflow-auto min-w-0">
+    <div className="flex min-h-0 flex-1 flex-col min-w-0 overflow-hidden p-4">
       <DataTable data={data} columns={columns} />
 
       <UpdateFeaturedDialog

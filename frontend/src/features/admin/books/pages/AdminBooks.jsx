@@ -60,8 +60,7 @@ const AdminBooks = () => {
     onFeatured,
   });
   return (
-    // TODO remove page scroll
-    <div className="flex flex-col flex-1 p-4 overflow-auto min-w-0">
+    <div className="flex min-h-0 flex-1 flex-col min-w-0 overflow-hidden p-4">
       <Button onClick={onAdd} className="self-end mb-4">
         <BookPlus className="h-4 w-4" />
         Add Book

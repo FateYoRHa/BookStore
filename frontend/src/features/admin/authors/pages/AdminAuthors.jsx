@@ -49,7 +49,7 @@ const AdminAuthors = () => {
     isReAdding: isReAdding,
   });
   return (
-    <div className="flex flex-col flex-1 p-4 overflow-auto min-w-0">
+    <div className="flex min-h-0 flex-1 flex-col min-w-0 overflow-hidden p-4">
       <Button onClick={handleAddAuthor} className="self-end mb-4">
         <User2 className="h-4 w-4" />
         Add Author
