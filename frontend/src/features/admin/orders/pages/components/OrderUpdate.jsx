@@ -81,7 +81,7 @@ const OrderUpdate = () => {
   };
   const action = STATUS_ACTIONS[status];
   return (
-    <div className="p-6 space-y-6 overflow-auto">
+    <div className="flex min-h-0 flex-1 flex-col space-y-6 overflow-auto p-6">
       {/* Editable Section */}
       <Card>
         <CardHeader>
