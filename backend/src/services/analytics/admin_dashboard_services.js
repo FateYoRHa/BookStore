@@ -3,7 +3,7 @@ import {
   ORDER_STATUSES,
   PAYMENT_STATUSES,
 } from "../../constants/constant_values.js";
-import { getRevenueSummaryService } from "../../utis/dashboardDataHelper.js";
+import { getCustomerSummaryService, getRevenueSummaryService } from "../../utis/dashboardDataHelper.js";
 
 const NON_REVENUE_ORDER_STATUSES = [
   ORDER_STATUSES.CANCELLED,
@@ -65,5 +65,21 @@ export async function getDashboardRevenueService() {
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch dashboard revenue");
+  }
+}
+
+export async function getDashboardCustomerSummaryService() {
+  try {
+    const totalCustomers = await Customer.find().select("createdAt");
+    const summary = await getCustomerSummaryService(totalCustomers);
+    console.log("Customer summary:", summary);
+    return {
+      totalCustomers: summary.totalCustomers,
+      newCustomersThisYear: summary.newCustomersThisYear,
+      newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
+      newCustomersToday: summary.newCustomersToday,
+    };
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch customer summary");
   }
 }
