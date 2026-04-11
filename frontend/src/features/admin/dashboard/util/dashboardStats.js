@@ -16,7 +16,9 @@ export const dashboardRevenue = (revenue) => ({
 
 export const revenueChartData = (data) => {
   return data?.map((item) => ({
-    date: item?.updatedAt,
+    date: item?.payment?.paidAt
+      ? new Date(item.payment.paidAt).toLocaleDateString()
+      : "",
     data1: item?.totalAmount || 0,
   }));
 };
