@@ -4,3 +4,10 @@ export const revenueChartConfig = {
     color: "var(--chart-1)",
   },
 };
+
+export const customerChartConfig = {
+  data1: {
+    label: "New Customers",
+    color: "var(--chart-2)",
+  },
+};
