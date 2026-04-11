@@ -27,7 +27,7 @@ export const getRevenueSummaryService = async (orders = []) => {
     // Start date for "last 6 months" window.
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    
+
     const summary = orders.reduce(
       (accumulator, currentOrder) => {
         const orderAmount = Number(currentOrder?.totalAmount) || 0;
@@ -71,5 +71,76 @@ export const getRevenueSummaryService = async (orders = []) => {
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch revenue summary");
+  }
+};
+
+export const getCustomerSummaryService = async (customers = []) => {
+  try {
+    // Build the current date once to keep all time filters consistent.
+    const now = new Date();
+
+    // Start of the current year (Jan 1, 00:00:00.000).
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+    // Start of today in local server time.
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
+
+    // End of today in local server time.
+    const endOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+    );
+
+    // Start date for "last 6 months" window.
+    const sixMonthsAgo = new Date(now);
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const summary = customers.reduce(
+      (accumulator, currentCustomer) => {
+        const createdAt = currentCustomer?.createdAt
+          ? new Date(currentCustomer.createdAt)
+          : null;
+
+        accumulator.totalCustomers += 1;
+
+        if (!paidAt || Number.isNaN(paidAt.getTime())) {
+          return accumulator;
+        }
+
+        if (createdAt >= startOfYear) {
+          accumulator.newCustomersThisYear += 1;
+        }
+
+        if (createdAt >= sixMonthsAgo) {
+          accumulator.newCustomersLastSixMonths += 1;
+        }
+
+        if (createdAt >= startOfToday && createdAt < endOfToday) {
+          accumulator.newCustomersToday += 1;
+        }
+
+        return accumulator;
+      },
+      {
+        totalCustomers: 0,
+        newCustomersThisYear: 0,
+        newCustomersLastSixMonths: 0,
+        newCustomersToday: 0,
+      },
+    );
+
+    return {
+      totalCustomers: summary.totalCustomers,
+      newCustomersThisYear: summary.newCustomersThisYear,
+      newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
+      newCustomersToday: summary.newCustomersToday,
+    };
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch customer summary");
   }
 };
