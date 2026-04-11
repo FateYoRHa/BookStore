@@ -13,21 +13,50 @@ const NON_REVENUE_ORDER_STATUSES = [
 export async function getDashboardRevenueService() {
   try {
     const revenueSummary = await getRevenueSummaryService();
-    const summary = await Order.find({
-      status: { $nin: NON_REVENUE_ORDER_STATUSES },
-    })
-      .populate({
-        path: "payment",
-        select: { paidAt: 1, status: 1 },
-        match: { status: PAYMENT_STATUSES.PAID },
-      })
-      .select("totalAmount")
-      .lean();
-
-    const paidSummary = summary.filter((order) => order.payment);
+    const summary = await Order.aggregate([
+      {
+        $match: {
+          status: { $nin: NON_REVENUE_ORDER_STATUSES },
+        },
+      },
+      {
+        $lookup: {
+          from: "payments",
+          let: { paymentId: "$payment" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$paymentId"] },
+              },
+            },
+            {
+              $match: {
+                status: PAYMENT_STATUSES.PAID,
+              },
+            },
+            {
+              $project: {
+                paidAt: 1,
+                status: 1,
+              },
+            },
+          ],
+          as: "payment",
+        },
+      },
+      {
+        $unwind: "$payment",
+      },
+      {
+        $project: {
+          totalAmount: 1,
+          payment: 1,
+        },
+      },
+    ]);
 
     return {
-      summary: paidSummary,
+      summary,
       totalRevenue: revenueSummary.totalRevenue,
       thisYearRevenue: revenueSummary.thisYearRevenue,
       lastSixMonthsRevenue: revenueSummary.lastSixMonthsRevenue,
