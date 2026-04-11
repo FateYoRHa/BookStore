@@ -1,5 +1,8 @@
 import { Order } from "../../model/index.js";
-import { ORDER_STATUSES } from "../../constants/constant_values.js";
+import {
+  ORDER_STATUSES,
+  PAYMENT_STATUSES,
+} from "../../constants/constant_values.js";
 
 const NON_REVENUE_ORDER_STATUSES = [
   ORDER_STATUSES.CANCELLED,
@@ -10,11 +13,48 @@ const NON_REVENUE_ORDER_STATUSES = [
 export async function getDashboardRevenueService() {
   try {
     const revenueSummary = await getRevenueSummaryService();
-    const summary = await Order.find({
-      status: { $nin: NON_REVENUE_ORDER_STATUSES },
-    })
-      .select("totalAmount updatedAt")
-      .lean();
+    const summary = await Order.aggregate([
+      {
+        $match: {
+          status: { $nin: NON_REVENUE_ORDER_STATUSES },
+        },
+      },
+      {
+        $lookup: {
+          from: "payments",
+          let: { paymentId: "$payment" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$paymentId"] },
+              },
+            },
+            {
+              $match: {
+                status: PAYMENT_STATUSES.PAID,
+              },
+            },
+            {
+              $project: {
+                paidAt: 1,
+                status: 1,
+              },
+            },
+          ],
+          as: "payment",
+        },
+      },
+      {
+        $unwind: "$payment",
+      },
+      {
+        $project: {
+          totalAmount: 1,
+          payment: 1,
+        },
+      },
+    ]);
+
     return {
       summary,
       totalRevenue: revenueSummary.totalRevenue,
@@ -52,15 +92,27 @@ const getRevenueSummaryService = async () => {
     // Start date for "last 6 months" window.
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
     // One query, multiple buckets: total, this year, last 6 months, and today.
     const [summary] = await Order.aggregate([
+      // Join payment docs so filters can use payment status and paidAt.
+      {
+        $lookup: {
+          from: "payments",
+          localField: "payment",
+          foreignField: "_id",
+          as: "payment",
+        },
+      },
+      {
+        $unwind: "$payment",
+      },
       // Ignore non-revenue order statuses before doing any calculations.
       {
         $match: {
           status: {
             $nin: NON_REVENUE_ORDER_STATUSES,
           },
+          "payment.status": PAYMENT_STATUSES.PAID,
         },
       },
       // Compute multiple totals in parallel from the same filtered dataset.
@@ -79,7 +131,7 @@ const getRevenueSummaryService = async () => {
             // Keep only orders created from the start of this year.
             {
               $match: {
-                createdAt: { $gte: startOfYear },
+                "payment.paidAt": { $gte: startOfYear },
               },
             },
             // Sum this year's order amounts.
@@ -94,7 +146,7 @@ const getRevenueSummaryService = async () => {
             // Keep only orders created in the last 6 months.
             {
               $match: {
-                createdAt: { $gte: sixMonthsAgo },
+                "payment.paidAt": { $gte: sixMonthsAgo },
               },
             },
             // Sum order amounts for the 6-month window.
@@ -109,7 +161,7 @@ const getRevenueSummaryService = async () => {
             // Keep only orders created today.
             {
               $match: {
-                createdAt: {
+                "payment.paidAt": {
                   $gte: startOfToday,
                   $lt: endOfToday,
                 },
