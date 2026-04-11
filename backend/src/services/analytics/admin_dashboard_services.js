@@ -1,4 +1,4 @@
-import { Order } from "../../model/index.js";
+import { Customer, Order } from "../../model/index.js";
 import {
   ORDER_STATUSES,
   PAYMENT_STATUSES,
@@ -72,7 +72,6 @@ export async function getDashboardCustomerSummaryService() {
   try {
     const totalCustomers = await Customer.find().select("createdAt");
     const summary = await getCustomerSummaryService(totalCustomers);
-    console.log("Customer summary:", summary);
     return {
       totalCustomers: summary.totalCustomers,
       newCustomersThisYear: summary.newCustomersThisYear,
