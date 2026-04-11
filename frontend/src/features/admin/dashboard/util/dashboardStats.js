@@ -17,6 +17,6 @@ export const dashboardRevenue = (revenue) => ({
 export const revenueChartData = (data) => {
   return data?.map((item) => ({
     date: item?.updatedAt,
-    totalRevenue: item?.totalAmount || 0,
+    data1: item?.totalAmount || 0,
   }));
 };

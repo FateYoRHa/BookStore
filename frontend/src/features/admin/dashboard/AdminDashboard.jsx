@@ -3,6 +3,7 @@ import DashboardCards from "./components/DashboardCards";
 import DashboardCharts from "./components/DashboardCharts";
 import { useGetDashboardRevenue } from "./hooks/admin_dashboard_hooks";
 import { dashboardRevenue, revenueChartData } from "./util/dashboardStats";
+import { revenueChartConfig } from "./util/chartConfig";
 const AdminDashboard = () => {
   const { data: revenue } = useGetDashboardRevenue();
   return (
@@ -21,6 +22,7 @@ const AdminDashboard = () => {
                 <DashboardCharts
                   chartData={revenueChartData(revenue?.revenue?.summary)}
                   title="Revenue Summary"
+                  chartConfig={revenueChartConfig}
                 />
               </div>
               {/* <DataTable data={data} /> */}

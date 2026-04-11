@@ -24,12 +24,7 @@ import {
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-const chartConfig = {
-  totalRevenue: {
-    label: "Revenue",
-    color: "var(--chart-1)",
-  },
-};
+
 
 const TIME_RANGE_DAYS = {
   "7d": 7,
@@ -61,7 +56,7 @@ const buildDateSeries = (rawData, days) => {
     const key = toLocalDateKey(item?.date);
     if (!key) return;
 
-    const amount = Number(item?.totalRevenue ?? item?.totalAmount ?? 0);
+    const amount = Number(item?.data1 ?? item?.totalAmount ?? 0);
     totalsByDay.set(key, (totalsByDay.get(key) || 0) + amount);
   });
 
@@ -71,7 +66,7 @@ const buildDateSeries = (rawData, days) => {
     const key = toLocalDateKey(cursor);
     series.push({
       date: key,
-      totalRevenue: totalsByDay.get(key) || 0,
+      data1: totalsByDay.get(key) || 0,
     });
     cursor.setDate(cursor.getDate() + 1);
   }
@@ -79,7 +74,7 @@ const buildDateSeries = (rawData, days) => {
   return series;
 };
 
-const DashboardCharts = ({ chartData, title }) => {
+const DashboardCharts = ({ chartData, title, chartConfig }) => {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = useState("7d");
   const activeTimeRange = isMobile ? "7d" : timeRange;
@@ -140,7 +135,7 @@ const DashboardCharts = ({ chartData, title }) => {
           className="aspect-auto h-[250px] w-full">
           <AreaChart data={filteredData}>
             <defs>
-              <linearGradient id="revenue" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="data1" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
                   stopColor="var(--chart-1)"
@@ -153,7 +148,7 @@ const DashboardCharts = ({ chartData, title }) => {
                 />
               </linearGradient>
 
-              {/* <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="data2" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
                   stopColor="var(--chart-2)"
@@ -164,7 +159,7 @@ const DashboardCharts = ({ chartData, title }) => {
                   stopColor="var(--chart-2)"
                   stopOpacity={0.05}
                 />
-              </linearGradient> */}
+              </linearGradient>
             </defs>
             <CartesianGrid
               vertical={false}
@@ -200,18 +195,18 @@ const DashboardCharts = ({ chartData, title }) => {
               }
             />
             <Area
-              dataKey="totalRevenue"
+              dataKey="data1"
               stroke="var(--chart-1)"
-              fill="url(#revenue)"
+              fill="url(#data1)"
               strokeWidth={2}
             />
-            {/* 
+            
             <Area
-              dataKey="mobile"
+              dataKey="data2"
               stroke="var(--chart-2)"
-              fill="url(#fillMobile)"
+              fill="url(#data2)"
               strokeWidth={2}
-            /> */}
+            />
           </AreaChart>
         </ChartContainer>
       </CardContent>
