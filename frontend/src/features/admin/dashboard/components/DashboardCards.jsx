@@ -8,100 +8,100 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TrendingDown, TrendingUp } from "lucide-react";
-const DashboardCards = () => {
+const DashboardCards = ({ data }) => {
   return (
     <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <Card className="rounded-lg shadow-md p-6 bg-[var(--card)] text-[var(--card-foreground)] border border-[var(--border)]">
         <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
+          <CardDescription>{data?.card1.label}</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
+            {data.card1.value.toLocaleString()}
           </CardTitle>
-          <CardAction>
+          {/* <CardAction>
             <Badge
               variant="secondary"
               className="bg-[var(--color-positive-light)] text-[var(--color-positive)]">
               <TrendingUp />
               +12.5%
             </Badge>
-          </CardAction>
+          </CardAction> */}
         </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+        {/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             Trending up this month <TrendingUp className="size-4" />
           </div>
           <div className="text-muted-foreground">
             Visitors for the last 6 months
           </div>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
       <Card className="rounded-lg shadow-md p-6 bg-[var(--card)] text-[var(--card-foreground)] border border-[var(--border)]">
         <CardHeader>
-          <CardDescription>New Customers</CardDescription>
+          <CardDescription>{data?.card2.label}</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
+            {data.card2.value.toLocaleString()}
           </CardTitle>
-          <CardAction>
+          {/* <CardAction>
             <Badge
               variant="secondary"
               className="bg-[var(--color-negative-light)] text-[var(--color-negative)]">
               <TrendingDown />
               -20%
             </Badge>
-          </CardAction>
+          </CardAction> */}
         </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period <TrendingDown className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
-        </CardFooter>
+        {/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+              Down 20% this period <TrendingDown className="size-4" />
+            </div>
+            <div className="text-muted-foreground">
+              Acquisition needs attention
+            </div>
+          </CardFooter> */}
       </Card>
       <Card className="rounded-lg shadow-md p-6 bg-[var(--card)] text-[var(--card-foreground)] border border-[var(--border)]">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription>{data?.card3.label}</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
+            {data.card3.value.toLocaleString()}
           </CardTitle>
-          <CardAction>
+          {/* <CardAction>
             <Badge
               variant="secondary"
               className="bg-[var(--color-positive-light)] text-[var(--color-positive)]">
               <TrendingUp />
               +12.5%
             </Badge>
-          </CardAction>
+          </CardAction> */}
         </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+        {/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             Strong user retention <TrendingUp className="size-4" />
           </div>
           <div className="text-muted-foreground">Engagement exceed targets</div>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
       <Card className="rounded-lg shadow-md p-6 bg-[var(--card)] text-[var(--card-foreground)] border border-[var(--border)]">
         <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
+          <CardDescription>{data?.card4.label}</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
+            {data.card4.value.toLocaleString()}
           </CardTitle>
-          <CardAction>
+          {/* <CardAction>
             <Badge
               variant="secondary"
               className="bg-[var(--color-positive-light)] text-[var(--color-positive)]">
               <TrendingUp />
               +4.5%
             </Badge>
-          </CardAction>
+          </CardAction> */}
         </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+        {/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             Steady performance increase <TrendingUp className="size-4" />
           </div>
           <div className="text-muted-foreground">Meets growth projections</div>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
     </div>
   );

@@ -8,6 +8,7 @@ import * as adminHomePageSection from "../controllers/admin/content/admin_homepa
 import * as adminMedia from "../controllers/admin/content/admin_media_controller.js";
 import * as adminBanners from "../controllers/admin/content/admin_banners_controller.js";
 import * as adminFeaturedItems from "../controllers/admin/content/admin_featureditems_controller.js";
+import * as adminDashboard from "../controllers/admin/analytics/admin_dashboard_controller.js";
 
 import { adminOnly } from "../middleware/roles.js";
 import { uploadImage, requireFiles } from "../middleware/upload.js";
@@ -98,5 +99,8 @@ router.delete(
   adminOnly,
   adminFeaturedItems.removeFeaturedItem,
 );
+
+// DASHBOARD
+router.get("/dashboard/revenue", adminOnly, adminDashboard.getDashboardRevenue);
 
 export default router;
