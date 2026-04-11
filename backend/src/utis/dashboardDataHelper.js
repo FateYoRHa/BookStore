@@ -108,7 +108,7 @@ export const getCustomerSummaryService = async (customers = []) => {
 
         accumulator.totalCustomers += 1;
 
-        if (!paidAt || Number.isNaN(paidAt.getTime())) {
+        if (!createdAt || Number.isNaN(createdAt.getTime())) {
           return accumulator;
         }
 
