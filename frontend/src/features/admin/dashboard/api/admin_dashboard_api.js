@@ -8,4 +8,4 @@ export const getDashboardRevenueRequest = async () => {
 export const getDashboardCustomerSummaryRequest = async () => {
   const response = await api.get("/admin/dashboard/customer-summary");
   return response.data;
-}
+};

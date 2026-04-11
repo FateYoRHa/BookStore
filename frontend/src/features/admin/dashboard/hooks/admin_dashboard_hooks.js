@@ -14,7 +14,7 @@ export const useGetDashboardRevenue = () => {
 
 export const useGetDashboardCustomerSummary = () => {
   return useQuery({
-    queryKey: ["dashboardCustomerSummary"],
+    queryKey: ["dashboardCustomers"],
     queryFn: () => getDashboardCustomerSummaryRequest(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
