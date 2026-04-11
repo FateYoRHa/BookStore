@@ -3,7 +3,10 @@ import {
   ORDER_STATUSES,
   PAYMENT_STATUSES,
 } from "../../constants/constant_values.js";
-import { getCustomerSummaryService, getRevenueSummaryService } from "../../utis/dashboardDataHelper.js";
+import {
+  getCustomerSummaryService,
+  getRevenueSummaryService,
+} from "../../utis/dashboardDataHelper.js";
 
 const NON_REVENUE_ORDER_STATUSES = [
   ORDER_STATUSES.CANCELLED,
@@ -70,9 +73,10 @@ export async function getDashboardRevenueService() {
 
 export async function getDashboardCustomerSummaryService() {
   try {
-    const totalCustomers = await Customer.find().select("createdAt");
-    const summary = await getCustomerSummaryService(totalCustomers);
+    const customers = await Customer.find().select({ createdAt: 1 });
+    const summary = await getCustomerSummaryService(customers);
     return {
+      customers,
       totalCustomers: summary.totalCustomers,
       newCustomersThisYear: summary.newCustomersThisYear,
       newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
