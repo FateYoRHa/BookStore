@@ -1,9 +1,12 @@
-import { Order } from "../../model/index.js";
+import { Customer, Order } from "../../model/index.js";
 import {
   ORDER_STATUSES,
   PAYMENT_STATUSES,
 } from "../../constants/constant_values.js";
-import { getRevenueSummaryService } from "../../utis/dashboardDataHelper.js";
+import {
+  getCustomerSummaryService,
+  getRevenueSummaryService,
+} from "../../utis/dashboardDataHelper.js";
 
 const NON_REVENUE_ORDER_STATUSES = [
   ORDER_STATUSES.CANCELLED,
@@ -65,5 +68,33 @@ export async function getDashboardRevenueService() {
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch dashboard revenue");
+  }
+}
+
+export async function getDashboardCustomerSummaryService() {
+  try {
+    const [customers, totalCustomers] = await Promise.all([
+      Customer.find().select({ createdAt: 1, isActive: 1 }).lean(),
+      Customer.countDocuments(),
+    ]);
+    const customerOrders = await Order.find({
+      customer: { $in: customers.map((c) => c._id) },
+    })
+      .select({ customer: 1, status: 1, updatedAt: 1 })
+      .lean();
+
+    const summary = await getCustomerSummaryService(customers, customerOrders);
+    return {
+      customers,
+      totalCustomers,
+      newCustomersThisYear: summary.newCustomersThisYear,
+      newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
+      newCustomersLastSevenDays: summary.newCustomersLastSevenDays,
+      newCustomersToday: summary.newCustomersToday,
+      activeCustomers: summary.activeCustomers,
+      returningCustomers: summary.returningCustomers,
+    };
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch customer summary");
   }
 }

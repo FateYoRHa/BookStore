@@ -1,18 +1,21 @@
-export const dashboardRevenue = (revenue) => ({
-  card1: {
+export const dashboardRevenue = (revenue) => [
+  {
     label: "Total Revenue",
-    value: `₱${revenue?.revenue?.totalRevenue || 0}`,
+    value: `₱${revenue?.revenue?.totalRevenue?.toLocaleString() || 0}`,
   },
-  card2: {
+  {
     label: "This Year",
-    value: `₱${revenue?.revenue?.thisYearRevenue || 0}`,
+    value: `₱${revenue?.revenue?.thisYearRevenue?.toLocaleString() || 0}`,
   },
-  card3: {
+  {
     label: "Last 6 Months",
-    value: `₱${revenue?.revenue?.lastSixMonthsRevenue || 0}`,
+    value: `₱${revenue?.revenue?.lastSixMonthsRevenue?.toLocaleString() || 0}`,
   },
-  card4: { label: "Today", value: `₱${revenue?.revenue?.todayRevenue || 0}` },
-});
+  {
+    label: "Today",
+    value: `₱${revenue?.revenue?.todayRevenue?.toLocaleString() || 0}`,
+  },
+];
 
 export const revenueChartData = (data) => {
   return data?.map((item) => ({
@@ -20,5 +23,43 @@ export const revenueChartData = (data) => {
       ? new Date(item.payment.paidAt).toLocaleDateString()
       : "",
     data1: item?.totalAmount || 0,
+  }));
+};
+
+export const dashboardCustomerSummary = (customers) => [
+  {
+    label: "Total Customers",
+    value: customers?.customerSummary?.totalCustomers || 0,
+  },
+  {
+    label: "New Customers This Year",
+    value: customers?.customerSummary?.newCustomersThisYear || 0,
+  },
+  {
+    label: "New Customers Last 6 Months",
+    value: customers?.customerSummary?.newCustomersLastSixMonths || 0,
+  },
+  {
+    label: "New Customers Last 7 Days",
+    value: customers?.customerSummary?.newCustomersLastSevenDays || 0,
+  },
+  {
+    label: "New Customers Today",
+    value: customers?.customerSummary?.newCustomersToday || 0,
+  },
+  {
+    label: "Active Customers",
+    value: customers?.customerSummary?.activeCustomers || 0,
+  },
+  {
+    label: "Returning Customers",
+    value: customers?.customerSummary?.returningCustomers || 0,
+  },
+];
+
+export const getCustomerSummaryChartData = (data) => {
+  return data?.map((item) => ({
+    date: item?.createdAt || "",
+    data1: item?.createdAt ? 1 : 0,
   }));
 };

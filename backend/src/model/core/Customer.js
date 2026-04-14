@@ -30,6 +30,7 @@ const customerSchema = new Schema(
       url: String,
       public_id: String,
     },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

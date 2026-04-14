@@ -102,5 +102,10 @@ router.delete(
 
 // DASHBOARD
 router.get("/dashboard/revenue", adminOnly, adminDashboard.getDashboardRevenue);
+router.get(
+  "/dashboard/customer-summary",
+  adminOnly,
+  adminDashboard.getDashboardCustomerSummary,
+);
 
 export default router;
