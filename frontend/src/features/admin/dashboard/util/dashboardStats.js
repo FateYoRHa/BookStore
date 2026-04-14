@@ -54,9 +54,8 @@ export const dashboardCustomerSummary = (customers) => [
 ];
 
 export const getCustomerSummaryChartData = (data) => {
-  console.log(data);
   return data?.map((item) => ({
-    date: item?.createdAt ? new Date(item.createdAt).toLocaleDateString() : "",
+    date: item?.createdAt || "",
     data1: item?.createdAt ? 1 : 0,
   }));
 };
