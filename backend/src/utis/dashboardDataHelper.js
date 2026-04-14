@@ -28,9 +28,6 @@ export const getRevenueSummaryService = async (orders = []) => {
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    // Start date for a 90-day window used to mark returning customers.
-    const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-
     const summary = orders.reduce(
       (accumulator, currentOrder) => {
         const orderAmount = Number(currentOrder?.totalAmount) || 0;
@@ -84,6 +81,7 @@ export const getCustomerSummaryService = async (
   try {
     // Build the current date once to keep all time filters consistent.
     const now = new Date();
+    const lastSevenDaysStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     // Start of the current year (Jan 1, 00:00:00.000).
     const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -160,7 +158,8 @@ export const getCustomerSummaryService = async (
           accumulator.newCustomersLastSixMonths += 1;
         }
 
-        if (hasOrders) {
+        if (createdAt >= lastSevenDaysStart) {
+          accumulator.newCustomersLastSevenDays += 1;
         }
 
         if (createdAt >= startOfToday && createdAt < endOfToday) {
@@ -182,6 +181,7 @@ export const getCustomerSummaryService = async (
         returningCustomers: 0,
         newCustomersThisYear: 0,
         newCustomersLastSixMonths: 0,
+        newCustomersLastSevenDays: 0,
         newCustomersToday: 0,
       },
     );
@@ -192,6 +192,7 @@ export const getCustomerSummaryService = async (
       totalCustomers: summary.totalCustomers,
       newCustomersThisYear: summary.newCustomersThisYear,
       newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
+      newCustomersLastSevenDays: summary.newCustomersLastSevenDays,
       newCustomersToday: summary.newCustomersToday,
     };
   } catch (error) {

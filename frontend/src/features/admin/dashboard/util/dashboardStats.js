@@ -40,6 +40,10 @@ export const dashboardCustomerSummary = (customers) => [
     value: customers?.customerSummary?.newCustomersLastSixMonths || 0,
   },
   {
+    label: "New Customers Last 7 Days",
+    value: customers?.customerSummary?.newCustomersLastSevenDays || 0,
+  },
+  {
     label: "New Customers Today",
     value: customers?.customerSummary?.newCustomersToday || 0,
   },

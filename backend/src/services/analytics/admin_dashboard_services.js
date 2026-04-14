@@ -89,6 +89,7 @@ export async function getDashboardCustomerSummaryService() {
       totalCustomers,
       newCustomersThisYear: summary.newCustomersThisYear,
       newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
+      newCustomersLastSevenDays: summary.newCustomersLastSevenDays,
       newCustomersToday: summary.newCustomersToday,
       activeCustomers: summary.activeCustomers,
       returningCustomers: summary.returningCustomers,
