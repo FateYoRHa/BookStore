@@ -8,6 +8,6 @@ export const revenueChartConfig = {
 export const customerChartConfig = {
   data1: {
     label: "New Customers",
-    color: "var(--chart-2)",
+    color: "var(--chart-1)",
   },
 };
