@@ -73,14 +73,30 @@ export async function getDashboardRevenueService() {
 
 export async function getDashboardCustomerSummaryService() {
   try {
-    const customers = await Customer.find().select({ createdAt: 1 });
-    const summary = await getCustomerSummaryService(customers);
+    const startOfCurrentYear = new Date(new Date().getFullYear(), 0, 1);
+    const [customers, totalCustomers] = await Promise.all([
+      Customer.find({
+        createdAt: { $gte: startOfCurrentYear },
+      })
+        .select({ _id: 0, createdAt: 1, isActive: 1 })
+        .lean(),
+      Customer.countDocuments(),
+    ]);
+    const [customerOrders] = await Order.find({
+      customer: customers.map((c) => c._id),
+    })
+      .select({ customer: 1, status: 1, updatedAt: 1 })
+      .lean();
+
+    const summary = await getCustomerSummaryService(customers, customerOrders);
     return {
       customers,
-      totalCustomers: summary.totalCustomers,
+      totalCustomers,
       newCustomersThisYear: summary.newCustomersThisYear,
       newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
       newCustomersToday: summary.newCustomersToday,
+      activeCustomers: summary.activeCustomers,
+      returningCustomers: summary.returningCustomers,
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch customer summary");
