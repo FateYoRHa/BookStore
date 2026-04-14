@@ -1,19 +1,19 @@
 export const dashboardRevenue = (revenue) => [
   {
     label: "Total Revenue",
-    value: `₱${revenue?.revenue?.totalRevenue || 0}`,
+    value: `₱${revenue?.revenue?.totalRevenue?.toLocaleString() || 0}`,
   },
   {
     label: "This Year",
-    value: `₱${revenue?.revenue?.thisYearRevenue || 0}`,
+    value: `₱${revenue?.revenue?.thisYearRevenue?.toLocaleString() || 0}`,
   },
   {
     label: "Last 6 Months",
-    value: `₱${revenue?.revenue?.lastSixMonthsRevenue || 0}`,
+    value: `₱${revenue?.revenue?.lastSixMonthsRevenue?.toLocaleString() || 0}`,
   },
   {
     label: "Today",
-    value: `₱${revenue?.revenue?.todayRevenue || 0}`,
+    value: `₱${revenue?.revenue?.todayRevenue?.toLocaleString() || 0}`,
   },
 ];
 
