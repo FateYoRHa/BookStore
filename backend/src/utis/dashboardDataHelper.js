@@ -28,6 +28,9 @@ export const getRevenueSummaryService = async (orders = []) => {
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
+    // Start date for a 90-day window used to mark returning customers.
+    const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+
     const summary = orders.reduce(
       (accumulator, currentOrder) => {
         const orderAmount = Number(currentOrder?.totalAmount) || 0;
@@ -74,7 +77,10 @@ export const getRevenueSummaryService = async (orders = []) => {
   }
 };
 
-export const getCustomerSummaryService = async (customers = []) => {
+export const getCustomerSummaryService = async (
+  customers = [],
+  customerOrders = [],
+) => {
   try {
     // Build the current date once to keep all time filters consistent.
     const now = new Date();
@@ -100,14 +106,38 @@ export const getCustomerSummaryService = async (customers = []) => {
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
+    // Start date for a 90-day window used to mark returning customers.
+    const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+    // true only when a customer has at least 2 completed orders in the last 3 months
     const summary = customers.reduce(
       (accumulator, currentCustomer) => {
+        const isActive = currentCustomer?.isActive || false;
+        const completedOrdersInLastThreeMonths = customerOrders.reduce(
+          (count, order) => {
+            const isCurrentCustomer =
+              order.customer.toString() === currentCustomer._id.toString();
+            const isCompleted = order.status === "completed";
+            const isWithinThreeMonths = order.updatedAt
+              ? new Date(order.updatedAt) >= threeMonthsAgo
+              : false;
+
+            if (isCurrentCustomer && isCompleted && isWithinThreeMonths) {
+              return count + 1;
+            }
+
+            return count;
+          },
+          0,
+        );
+
+        const hasOrders = completedOrdersInLastThreeMonths >= 2;
+
         const createdAt = currentCustomer?.createdAt
           ? new Date(currentCustomer.createdAt)
           : null;
 
-        accumulator.totalCustomers += 1;
-
+        // DATE STUFF
         if (!createdAt || Number.isNaN(createdAt.getTime())) {
           return accumulator;
         }
@@ -124,9 +154,18 @@ export const getCustomerSummaryService = async (customers = []) => {
           accumulator.newCustomersToday += 1;
         }
 
+        // Active and Returning Customers Section
+        if (isActive) {
+          accumulator.activeCustomers += 1;
+        } else if (hasOrders) {
+          accumulator.returningCustomers += 1;
+        }
+
         return accumulator;
       },
       {
+        activeCustomers: 0,
+        returningCustomers: 0,
         totalCustomers: 0,
         newCustomersThisYear: 0,
         newCustomersLastSixMonths: 0,
@@ -135,6 +174,8 @@ export const getCustomerSummaryService = async (customers = []) => {
     );
 
     return {
+      activeCustomers: summary.activeCustomers,
+      returningCustomers: summary.returningCustomers,
       totalCustomers: summary.totalCustomers,
       newCustomersThisYear: summary.newCustomersThisYear,
       newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
