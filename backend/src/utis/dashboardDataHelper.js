@@ -81,7 +81,9 @@ export const getCustomerSummaryService = async (
   try {
     // Build the current date once to keep all time filters consistent.
     const now = new Date();
-    const lastSevenDaysStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const lastSevenDaysStart = new Date(
+      now.getTime() - 7 * 24 * 60 * 60 * 1000,
+    );
 
     // Start of the current year (Jan 1, 00:00:00.000).
     const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -134,7 +136,7 @@ export const getCustomerSummaryService = async (
     // true only when a customer has at least 2 completed orders in the last 3 months
     const summary = customers.reduce(
       (accumulator, currentCustomer) => {
-        const isActive = currentCustomer?.isActive || false;
+        const isActive = currentCustomer?.isActive !== false;
         const customerId = currentCustomer?._id?.toString();
         const completedOrdersInLastThreeMonths = customerId
           ? completedOrdersByCustomerInLastThreeMonths.get(customerId) || 0
