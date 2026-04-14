@@ -109,28 +109,38 @@ export const getCustomerSummaryService = async (
     // Start date for a 90-day window used to mark returning customers.
     const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
 
+    const completedOrdersByCustomerInLastThreeMonths = customerOrders.reduce(
+      (countsByCustomer, order) => {
+        const isCompleted = order.status === "delivered";
+        const updatedAt = order.updatedAt ? new Date(order.updatedAt) : null;
+        const isWithinThreeMonths =
+          updatedAt &&
+          !Number.isNaN(updatedAt.getTime()) &&
+          updatedAt >= threeMonthsAgo;
+        const customerId = order?.customer?.toString();
+
+        if (!customerId || !isCompleted || !isWithinThreeMonths) {
+          return countsByCustomer;
+        }
+
+        countsByCustomer.set(
+          customerId,
+          (countsByCustomer.get(customerId) || 0) + 1,
+        );
+
+        return countsByCustomer;
+      },
+      new Map(),
+    );
+
     // true only when a customer has at least 2 completed orders in the last 3 months
     const summary = customers.reduce(
       (accumulator, currentCustomer) => {
         const isActive = currentCustomer?.isActive || false;
-        const completedOrdersInLastThreeMonths = customerOrders.reduce(
-          (count, order) => {
-            const isCurrentCustomer =
-              order.customer.toString() === currentCustomer._id.toString();
-            const isCompleted = order.status === "completed";
-            const isWithinThreeMonths = order.updatedAt
-              ? new Date(order.updatedAt) >= threeMonthsAgo
-              : false;
-
-            if (isCurrentCustomer && isCompleted && isWithinThreeMonths) {
-              return count + 1;
-            }
-
-            return count;
-          },
-          0,
-        );
-
+        const customerId = currentCustomer?._id?.toString();
+        const completedOrdersInLastThreeMonths = customerId
+          ? completedOrdersByCustomerInLastThreeMonths.get(customerId) || 0
+          : 0;
         const hasOrders = completedOrdersInLastThreeMonths >= 2;
 
         const createdAt = currentCustomer?.createdAt
@@ -150,6 +160,9 @@ export const getCustomerSummaryService = async (
           accumulator.newCustomersLastSixMonths += 1;
         }
 
+        if (hasOrders) {
+        }
+
         if (createdAt >= startOfToday && createdAt < endOfToday) {
           accumulator.newCustomersToday += 1;
         }
@@ -157,7 +170,8 @@ export const getCustomerSummaryService = async (
         // Active and Returning Customers Section
         if (isActive) {
           accumulator.activeCustomers += 1;
-        } else if (hasOrders) {
+        }
+        if (hasOrders) {
           accumulator.returningCustomers += 1;
         }
 
@@ -166,7 +180,6 @@ export const getCustomerSummaryService = async (
       {
         activeCustomers: 0,
         returningCustomers: 0,
-        totalCustomers: 0,
         newCustomersThisYear: 0,
         newCustomersLastSixMonths: 0,
         newCustomersToday: 0,

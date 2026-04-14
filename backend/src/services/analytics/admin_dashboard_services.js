@@ -73,17 +73,12 @@ export async function getDashboardRevenueService() {
 
 export async function getDashboardCustomerSummaryService() {
   try {
-    const startOfCurrentYear = new Date(new Date().getFullYear(), 0, 1);
     const [customers, totalCustomers] = await Promise.all([
-      Customer.find({
-        createdAt: { $gte: startOfCurrentYear },
-      })
-        .select({ _id: 0, createdAt: 1, isActive: 1 })
-        .lean(),
+      Customer.find().select({ createdAt: 1, isActive: 1 }).lean(),
       Customer.countDocuments(),
     ]);
-    const [customerOrders] = await Order.find({
-      customer: customers.map((c) => c._id),
+    const customerOrders = await Order.find({
+      customer: { $in: customers.map((c) => c._id) },
     })
       .select({ customer: 1, status: 1, updatedAt: 1 })
       .lean();
