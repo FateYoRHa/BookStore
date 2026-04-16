@@ -20,7 +20,7 @@ const DashboardCards = ({ data }) => {
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {card.value}
             </CardTitle>
-            {card.rate && (
+            {card.rate !== undefined && card.rate !== null && (
               <CardAction>
                 <Badge
                   variant="secondary"

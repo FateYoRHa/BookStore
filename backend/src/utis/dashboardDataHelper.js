@@ -220,7 +220,6 @@ export async function getDashboardPerformanceSummaryHelper(orders = []) {
       cancelledOrdersRate: orders.length
         ? roundToTwoDecimals(((summary.cancelled || 0) / orders.length) * 100)
         : 0,
-      totalOrders: orders.length,
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch performance summary");

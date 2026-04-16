@@ -110,7 +110,7 @@ export async function getDashboardPerformanceSummaryService() {
       await getDashboardPerformanceSummaryHelper(orders);
     return {
       orders,
-      totalOrders: performanceSummary.totalOrders,
+      totalOrders,
       completedOrders: performanceSummary.completedOrders,
       cancelledOrders: performanceSummary.cancelledOrders,
       pendingOrders: performanceSummary.pendingOrders,
