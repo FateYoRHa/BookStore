@@ -90,8 +90,8 @@ export const dashboardPerformaceSummary = (performance) => [
 export const getPerformanceSummaryChartData = (data) => {
   return data?.map((item) => ({
     date: item?.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "",
-    data1: item?.status === "Completed" ? 1 : 0,
-    data2: item?.status === "Pending" ? 1 : 0,
-    data3: item?.status === "Cancelled" ? 1 : 0,
+    data1: item?.status === "delivered" ? 1 : 0,
+    data2: item?.status === "pending" ? 1 : 0,
+    data3: item?.status === "cancelled" ? 1 : 0,
   }));
 };
