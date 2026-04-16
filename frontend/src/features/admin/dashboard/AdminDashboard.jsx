@@ -23,7 +23,6 @@ const AdminDashboard = () => {
   const { data: revenue } = useGetDashboardRevenue();
   const { data: customers } = useGetDashboardCustomerSummary();
   const { data: performance } = useGetDashboardPerformanceSummary();
-  console.log(performance)
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-auto">
       <Tabs defaultValue="revenue" className="space-y-6">
