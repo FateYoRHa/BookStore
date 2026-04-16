@@ -24,8 +24,6 @@ import {
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-
-
 const TIME_RANGE_DAYS = {
   "7d": 7,
   "30d": 30,
@@ -43,7 +41,7 @@ const toLocalDateKey = (value) => {
   return `${year}-${month}-${day}`;
 };
 
-const buildDateSeries = (rawData, days) => {
+const buildDateSeries = (rawData, days, seriesKeys) => {
   const endDate = new Date();
   endDate.setHours(23, 59, 59, 999);
 
@@ -56,18 +54,29 @@ const buildDateSeries = (rawData, days) => {
     const key = toLocalDateKey(item?.date);
     if (!key) return;
 
-    const amount = Number(item?.data1 ?? item?.totalAmount ?? 0);
-    totalsByDay.set(key, (totalsByDay.get(key) || 0) + amount);
+    const existingTotals = totalsByDay.get(key) || {};
+    const nextTotals = { ...existingTotals };
+
+    seriesKeys.forEach((seriesKey) => {
+      const amount = Number(item?.[seriesKey] ?? 0);
+      nextTotals[seriesKey] = (nextTotals[seriesKey] || 0) + amount;
+    });
+
+    totalsByDay.set(key, nextTotals);
   });
 
   const series = [];
   const cursor = new Date(startDate);
   while (cursor <= endDate) {
     const key = toLocalDateKey(cursor);
-    series.push({
-      date: key,
-      data1: totalsByDay.get(key) || 0,
+    const dayTotals = totalsByDay.get(key) || {};
+    const row = { date: key };
+
+    seriesKeys.forEach((seriesKey) => {
+      row[seriesKey] = dayTotals[seriesKey] || 0;
     });
+
+    series.push(row);
     cursor.setDate(cursor.getDate() + 1);
   }
 
@@ -79,6 +88,11 @@ const DashboardCharts = ({ chartData, title, chartConfig }) => {
   const [timeRange, setTimeRange] = useState("7d");
   const activeTimeRange = isMobile ? "7d" : timeRange;
 
+  const seriesKeys = useMemo(() => {
+    const keys = Object.keys(chartConfig || {});
+    return keys.length > 0 ? keys : ["data1"];
+  }, [chartConfig]);
+
   const handleTimeRangeChange = (nextRange) => {
     if (!nextRange) return;
     setTimeRange(nextRange);
@@ -86,8 +100,8 @@ const DashboardCharts = ({ chartData, title, chartConfig }) => {
 
   const filteredData = useMemo(() => {
     const days = TIME_RANGE_DAYS[activeTimeRange] ?? 7;
-    return buildDateSeries(chartData, days);
-  }, [chartData, activeTimeRange]);
+    return buildDateSeries(chartData, days, seriesKeys);
+  }, [chartData, activeTimeRange, seriesKeys]);
   return (
     <Card className="@container/card">
       <CardHeader>
@@ -135,31 +149,27 @@ const DashboardCharts = ({ chartData, title, chartConfig }) => {
           className="aspect-auto h-[250px] w-full">
           <AreaChart data={filteredData}>
             <defs>
-              <linearGradient id="data1" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--chart-1)"
-                  stopOpacity={0.5}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--chart-1)"
-                  stopOpacity={0.05}
-                />
-              </linearGradient>
+              {seriesKeys.map((seriesKey, index) => {
+                const seriesColor =
+                  chartConfig?.[seriesKey]?.color || `var(--chart-${index + 1})`;
 
-              <linearGradient id="data2" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--chart-2)"
-                  stopOpacity={0.5}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--chart-2)"
-                  stopOpacity={0.05}
-                />
-              </linearGradient>
+                return (
+                  <linearGradient
+                    key={seriesKey}
+                    id={`gradient-${seriesKey}`}
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1">
+                    <stop offset="5%" stopColor={seriesColor} stopOpacity={0.5} />
+                    <stop
+                      offset="95%"
+                      stopColor={seriesColor}
+                      stopOpacity={0.05}
+                    />
+                  </linearGradient>
+                );
+              })}
             </defs>
             <CartesianGrid
               vertical={false}
@@ -194,19 +204,20 @@ const DashboardCharts = ({ chartData, title, chartConfig }) => {
                 />
               }
             />
-            <Area
-              dataKey="data1"
-              stroke="var(--chart-1)"
-              fill="url(#data1)"
-              strokeWidth={2}
-            />
-            
-            <Area
-              dataKey="data2"
-              stroke="var(--chart-2)"
-              fill="url(#data2)"
-              strokeWidth={2}
-            />
+            {seriesKeys.map((seriesKey, index) => {
+              const seriesColor =
+                chartConfig?.[seriesKey]?.color || `var(--chart-${index + 1})`;
+
+              return (
+                <Area
+                  key={seriesKey}
+                  dataKey={seriesKey}
+                  stroke={seriesColor}
+                  fill={`url(#gradient-${seriesKey})`}
+                  strokeWidth={2}
+                />
+              );
+            })}
           </AreaChart>
         </ChartContainer>
       </CardContent>
