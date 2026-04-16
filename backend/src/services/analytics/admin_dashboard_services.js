@@ -5,6 +5,7 @@ import {
 } from "../../constants/constant_values.js";
 import {
   getCustomerSummaryService,
+  getDashboardPerformanceSummaryHelper,
   getRevenueSummaryService,
 } from "../../utis/dashboardDataHelper.js";
 
@@ -96,5 +97,27 @@ export async function getDashboardCustomerSummaryService() {
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch customer summary");
+  }
+}
+
+export async function getDashboardPerformanceSummaryService() {
+  try {
+    const [orders, totalOrders] = await Promise.all([
+      Order.find().select({ status: 1, updatedAt: 1 }).lean(),
+      Order.countDocuments(),
+    ]);
+    const performanceSummary =
+      await getDashboardPerformanceSummaryHelper(orders);
+    return {
+      orders,
+      totalOrders,
+      completedOrders: performanceSummary.completedOrders,
+      cancelledOrders: performanceSummary.cancelledOrders,
+      pendingOrders: performanceSummary.pendingOrders,
+      completedOrdersRate: performanceSummary.completedOrdersRate,
+      cancelledOrdersRate: performanceSummary.cancelledOrdersRate,
+    };
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch performance summary");
   }
 }

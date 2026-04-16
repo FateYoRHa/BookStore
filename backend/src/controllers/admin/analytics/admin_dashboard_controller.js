@@ -22,3 +22,15 @@ export async function getDashboardCustomerSummary(req, res) {
     });
   }
 }
+
+export async function getDashboardPerformanceSummary(req, res) {
+  try {
+    const performanceSummary =
+      await adminDashboardService.getDashboardPerformanceSummaryService();
+    res.status(200).json({ performanceSummary });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || "Failed to fetch dashboard performance summary",
+    });
+  }
+}

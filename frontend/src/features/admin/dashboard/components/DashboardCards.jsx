@@ -20,16 +20,24 @@ const DashboardCards = ({ data }) => {
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               {card.value}
             </CardTitle>
-            {/* <CardAction>
-            <Badge
-              variant="secondary"
-              className="bg-[var(--color-positive-light)] text-[var(--color-positive)]">
-              <TrendingUp />
-              +12.5%
-            </Badge>
-          </CardAction> */}
+            {card.rate !== undefined && card.rate !== null && (
+              <CardAction>
+                <Badge
+                  variant="secondary"
+                  className={`${card.type === "negative" ? "bg-[var(--color-negative-light)] text-destructive" : "bg-[var(--color-positive-light)] text-[var(--color-positive)]"}`}>
+                  {card.type === "negative" ? (
+                    <TrendingDown className="size-4" />
+                  ) : (
+                    <TrendingUp className="size-4" />
+                  )}
+                  {card.rate}%
+                </Badge>
+              </CardAction>
+            )}
           </CardHeader>
-          {/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
+          {/* 
+          "bg-[var(--color-positive-light)] text-[var(--color-positive)]">
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             Trending up this month <TrendingUp className="size-4" />
           </div>

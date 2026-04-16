@@ -201,3 +201,27 @@ export const getCustomerSummaryService = async (
     throw new Error(error.message || "Failed to fetch customer summary");
   }
 };
+
+export async function getDashboardPerformanceSummaryHelper(orders = []) {
+  try {
+    const summary = orders.reduce((accumulator, currentOrder) => {
+      const status = currentOrder?.status;
+      accumulator[status] = (accumulator[status] || 0) + 1;
+      return accumulator;
+    }, {});
+
+    return {
+      completedOrders: summary.delivered || 0,
+      pendingOrders: summary.pending || 0,
+      cancelledOrders: summary.cancelled || 0,
+      completedOrdersRate: orders.length
+        ? roundToTwoDecimals(((summary.delivered || 0) / orders.length) * 100)
+        : 0,
+      cancelledOrdersRate: orders.length
+        ? roundToTwoDecimals(((summary.cancelled || 0) / orders.length) * 100)
+        : 0,
+    };
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch performance summary");
+  }
+}

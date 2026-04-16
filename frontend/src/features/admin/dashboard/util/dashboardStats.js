@@ -63,3 +63,35 @@ export const getCustomerSummaryChartData = (data) => {
     data1: item?.createdAt ? 1 : 0,
   }));
 };
+
+export const dashboardPerformaceSummary = (performance) => [
+  {
+    label: "Total Orders",
+    value: performance?.performanceSummary?.totalOrders || 0,
+  },
+  {
+    label: "Completed Orders",
+    value: performance?.performanceSummary?.completedOrders || 0,
+    rate: performance?.performanceSummary?.completedOrdersRate || 0,
+    type: "positive",
+  },
+  {
+    label: "Pending Orders",
+    value: performance?.performanceSummary?.pendingOrders || 0,
+  },
+  {
+    label: "Cancelled Orders",
+    value: performance?.performanceSummary?.cancelledOrders || 0,
+    rate: performance?.performanceSummary?.cancelledOrdersRate || 0,
+    type: "negative",
+  },
+];
+
+export const getPerformanceSummaryChartData = (data) => {
+  return data?.map((item) => ({
+    date: item?.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "",
+    data1: item?.status === "delivered" ? 1 : 0,
+    data2: item?.status === "pending" ? 1 : 0,
+    data3: item?.status === "cancelled" ? 1 : 0,
+  }));
+};

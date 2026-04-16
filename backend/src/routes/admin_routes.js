@@ -107,5 +107,9 @@ router.get(
   adminOnly,
   adminDashboard.getDashboardCustomerSummary,
 );
-
+router.get(
+  "/dashboard/performance-summary",
+  adminOnly,
+  adminDashboard.getDashboardPerformanceSummary,
+);
 export default router;
