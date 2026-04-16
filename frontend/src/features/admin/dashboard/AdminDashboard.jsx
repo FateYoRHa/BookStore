@@ -3,6 +3,7 @@ import DashboardCards from "./components/DashboardCards";
 import DashboardCharts from "./components/DashboardCharts";
 import {
   useGetDashboardCustomerSummary,
+  useGetDashboardPerformanceSummary,
   useGetDashboardRevenue,
 } from "./hooks/admin_dashboard_hooks";
 import {
@@ -13,10 +14,16 @@ import {
   getPerformanceSummaryChartData,
   revenueChartData,
 } from "./util/dashboardStats";
-import { customerChartConfig, performanceChartConfig, revenueChartConfig } from "./util/chartConfig";
+import {
+  customerChartConfig,
+  performanceChartConfig,
+  revenueChartConfig,
+} from "./util/chartConfig";
 const AdminDashboard = () => {
   const { data: revenue } = useGetDashboardRevenue();
   const { data: customers } = useGetDashboardCustomerSummary();
+  const { data: performance } = useGetDashboardPerformanceSummary();
+  console.log(performance)
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-auto">
       <Tabs defaultValue="revenue" className="space-y-6">
