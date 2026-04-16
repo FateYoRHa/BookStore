@@ -98,3 +98,11 @@ export async function getDashboardCustomerSummaryService() {
     throw new Error(error.message || "Failed to fetch customer summary");
   }
 }
+
+export async function getDashboardPerformanceSummaryService() {
+  try {
+    
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch performance summary");
+  }
+}
