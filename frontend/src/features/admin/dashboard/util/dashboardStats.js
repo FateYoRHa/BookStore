@@ -68,22 +68,22 @@ export const dashboardPerformaceSummary = (performance) => [
   {
     label: "Total Orders",
     value: performance?.performanceSummary?.totalOrders || 0,
-    rate: performance?.performanceSummary?.totalOrdersRate || 0,
   },
   {
     label: "Completed Orders",
     value: performance?.performanceSummary?.completedOrders || 0,
     rate: performance?.performanceSummary?.completedOrdersRate || 0,
+    type: "positive",
   },
   {
     label: "Pending Orders",
     value: performance?.performanceSummary?.pendingOrders || 0,
-    rate: performance?.performanceSummary?.pendingOrdersRate || 0,
   },
   {
     label: "Cancelled Orders",
     value: performance?.performanceSummary?.cancelledOrders || 0,
     rate: performance?.performanceSummary?.cancelledOrdersRate || 0,
+    type: "negative",
   },
 ];
 
