@@ -1,3 +1,15 @@
+const mapTrendDirectionToType = (direction) => {
+  if (direction === "down") {
+    return "negative";
+  }
+
+  if (direction === "flat") {
+    return "neutral";
+  }
+
+  return "positive";
+};
+
 export const dashboardRevenue = (revenue) => [
   {
     label: "Total Revenue",
@@ -6,14 +18,32 @@ export const dashboardRevenue = (revenue) => [
   {
     label: "This Year",
     value: `₱${revenue?.revenue?.thisYearRevenue?.toLocaleString() || 0}`,
+    rate: revenue?.revenue?.comparisons?.year?.changeRate || 0,
+    type: mapTrendDirectionToType(revenue?.revenue?.comparisons?.year?.direction),
   },
   {
-    label: "Last 6 Months",
-    value: `₱${revenue?.revenue?.lastSixMonthsRevenue?.toLocaleString() || 0}`,
+    label: "This Month",
+    value: `₱${revenue?.revenue?.thisMonthRevenue?.toLocaleString() || 0}`,
+    rate: revenue?.revenue?.comparisons?.month?.changeRate || 0,
+    type: mapTrendDirectionToType(
+      revenue?.revenue?.comparisons?.month?.direction,
+    ),
+  },
+  {
+    label: "This Week",
+    value: `₱${revenue?.revenue?.thisWeekRevenue?.toLocaleString() || 0}`,
+    rate: revenue?.revenue?.comparisons?.week?.changeRate || 0,
+    type: mapTrendDirectionToType(revenue?.revenue?.comparisons?.week?.direction),
   },
   {
     label: "Today",
     value: `₱${revenue?.revenue?.todayRevenue?.toLocaleString() || 0}`,
+    rate: revenue?.revenue?.comparisons?.day?.changeRate || 0,
+    type: mapTrendDirectionToType(revenue?.revenue?.comparisons?.day?.direction),
+  },
+  {
+    label: "Last 6 Months",
+    value: `₱${revenue?.revenue?.lastSixMonthsRevenue?.toLocaleString() || 0}`,
   },
 ];
 

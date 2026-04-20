@@ -64,8 +64,15 @@ export async function getDashboardRevenueService() {
       summary,
       totalRevenue: revenueSummary.totalRevenue,
       thisYearRevenue: revenueSummary.thisYearRevenue,
+      lastYearRevenue: revenueSummary.lastYearRevenue,
       lastSixMonthsRevenue: revenueSummary.lastSixMonthsRevenue,
+      thisMonthRevenue: revenueSummary.thisMonthRevenue,
+      lastMonthRevenue: revenueSummary.lastMonthRevenue,
+      thisWeekRevenue: revenueSummary.thisWeekRevenue,
+      lastWeekRevenue: revenueSummary.lastWeekRevenue,
       todayRevenue: revenueSummary.todayRevenue,
+      yesterdayRevenue: revenueSummary.yesterdayRevenue,
+      comparisons: revenueSummary.comparisons,
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch dashboard revenue");
