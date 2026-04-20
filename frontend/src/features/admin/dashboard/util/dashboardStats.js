@@ -42,88 +42,92 @@ const getComparisonText = (
   return `${trendText} compared to ${comparisonPeriod}`;
 };
 
-export const dashboardRevenue = (revenue) => [
-  {
-    label: "Total Revenue",
-    value: `₱${revenue?.revenue?.totalRevenue?.toLocaleString() || 0}`,
-  },
-  {
-    label: "This Year",
-    value: `₱${revenue?.revenue?.thisYearRevenue?.toLocaleString() || 0}`,
-    rate: revenue?.revenue?.comparisons?.year?.changeRate || 0,
-    type: mapTrendDirectionToType(
-      revenue?.revenue?.comparisons?.year?.direction,
-    ),
-    comparisonPeriod: "last year",
-    comparisonText: getComparisonText(
-      revenue?.revenue?.comparisons?.year?.direction,
-      revenue?.revenue?.comparisons?.year?.changeRate || 0,
-      "last year",
-      revenue?.revenue?.comparisons?.year?.currentValue,
-      revenue?.revenue?.comparisons?.year?.previousValue,
-      true,
-    ),
-  },
-  {
-    label: "This 6 Months",
-    value: `₱${revenue?.revenue?.thisSixMonthsRevenue?.toLocaleString() || 0}`,
-    rate: revenue?.revenue?.comparisons?.sixMonths?.changeRate || 0,
-    type: mapTrendDirectionToType(revenue?.revenue?.comparisons?.sixMonths?.direction),
-    comparisonPeriod: "prior 6 months",
-    comparisonText: getComparisonText(revenue?.revenue?.comparisons?.sixMonths?.direction, revenue?.revenue?.comparisons?.sixMonths?.changeRate || 0, "the prior 6 months", revenue?.revenue?.comparisons?.sixMonths?.currentValue, revenue?.revenue?.comparisons?.sixMonths?.previousValue, true),
-  },
-  {
-    label: "This Month",
-    value: `₱${revenue?.revenue?.thisMonthRevenue?.toLocaleString() || 0}`,
-    rate: revenue?.revenue?.comparisons?.month?.changeRate || 0,
-    type: mapTrendDirectionToType(
-      revenue?.revenue?.comparisons?.month?.direction,
-    ),
-    comparisonPeriod: "last month",
-    comparisonText: getComparisonText(
-      revenue?.revenue?.comparisons?.month?.direction,
-      revenue?.revenue?.comparisons?.month?.changeRate || 0,
-      "last month",
-      revenue?.revenue?.comparisons?.month?.currentValue,
-      revenue?.revenue?.comparisons?.month?.previousValue,
-      true,
-    ),
-  },
-  {
-    label: "This Week",
-    value: `₱${revenue?.revenue?.thisWeekRevenue?.toLocaleString() || 0}`,
-    rate: revenue?.revenue?.comparisons?.week?.changeRate || 0,
-    type: mapTrendDirectionToType(
-      revenue?.revenue?.comparisons?.week?.direction,
-    ),
-    comparisonPeriod: "last week",
-    comparisonText: getComparisonText(
-      revenue?.revenue?.comparisons?.week?.direction,
-      revenue?.revenue?.comparisons?.week?.changeRate || 0,
-      "last week",
-      revenue?.revenue?.comparisons?.week?.currentValue,
-      revenue?.revenue?.comparisons?.week?.previousValue,
-      true,
-    ),
-  },
-  {
-    label: "Today",
-    value: `₱${revenue?.revenue?.todayRevenue?.toLocaleString() || 0}`,
-    rate: revenue?.revenue?.comparisons?.day?.changeRate || 0,
-    type: mapTrendDirectionToType(
-      revenue?.revenue?.comparisons?.day?.direction,
-    ),
-    comparisonPeriod: "yesterday",
-    comparisonText: getComparisonText(
-      revenue?.revenue?.comparisons?.day?.direction,
-      revenue?.revenue?.comparisons?.day?.changeRate || 0,
-      "yesterday",
-      revenue?.revenue?.comparisons?.day?.currentValue,
-      revenue?.revenue?.comparisons?.day?.previousValue,
-      true,
-    ),
-  },
-];
+export const dashboardRevenue = (revenue) => {
+  const revenueData = revenue?.revenue;
+  return [
+    {
+      label: "Total Revenue",
+      value: `₱${revenueData?.totalRevenue?.toLocaleString() || 0}`,
+    },
+    {
+      label: "This Year",
+      value: `₱${revenueData?.thisYearRevenue?.toLocaleString() || 0}`,
+      rate: revenueData?.comparisons?.year?.changeRate || 0,
+      type: mapTrendDirectionToType(revenueData?.comparisons?.year?.direction),
+      comparisonPeriod: "last year",
+      comparisonText: getComparisonText(
+        revenueData?.comparisons?.year?.direction,
+        revenueData?.comparisons?.year?.changeRate || 0,
+        "last year",
+        revenueData?.comparisons?.year?.currentValue,
+        revenueData?.comparisons?.year?.previousValue,
+        true,
+      ),
+    },
+    {
+      label: "This 6 Months",
+      value: `₱${revenueData?.thisSixMonthsRevenue?.toLocaleString() || 0}`,
+      rate: revenueData?.comparisons?.sixMonths?.changeRate || 0,
+      type: mapTrendDirectionToType(
+        revenueData?.comparisons?.sixMonths?.direction,
+      ),
+      comparisonPeriod: "prior 6 months",
+      comparisonText: getComparisonText(
+        revenueData?.comparisons?.sixMonths?.direction,
+        revenueData?.comparisons?.sixMonths?.changeRate || 0,
+        "the prior 6 months",
+        revenueData?.comparisons?.sixMonths?.currentValue,
+        revenueData?.comparisons?.sixMonths?.previousValue,
+        true,
+      ),
+    },
+    {
+      label: "This Month",
+      value: `₱${revenueData?.thisMonthRevenue?.toLocaleString() || 0}`,
+      rate: revenueData?.comparisons?.month?.changeRate || 0,
+      type: mapTrendDirectionToType(revenueData?.comparisons?.month?.direction),
+      comparisonPeriod: "last month",
+      comparisonText: getComparisonText(
+        revenueData?.comparisons?.month?.direction,
+        revenueData?.comparisons?.month?.changeRate || 0,
+        "last month",
+        revenueData?.comparisons?.month?.currentValue,
+        revenueData?.comparisons?.month?.previousValue,
+        true,
+      ),
+    },
+    {
+      label: "This Week",
+      value: `₱${revenueData?.thisWeekRevenue?.toLocaleString() || 0}`,
+      rate: revenueData?.comparisons?.week?.changeRate || 0,
+      type: mapTrendDirectionToType(revenueData?.comparisons?.week?.direction),
+      comparisonPeriod: "last week",
+      comparisonText: getComparisonText(
+        revenueData?.comparisons?.week?.direction,
+        revenueData?.comparisons?.week?.changeRate || 0,
+        "last week",
+        revenueData?.comparisons?.week?.currentValue,
+        revenueData?.comparisons?.week?.previousValue,
+        true,
+      ),
+    },
+    {
+      label: "Today",
+      value: `₱${revenueData?.todayRevenue?.toLocaleString() || 0}`,
+      rate: revenueData?.comparisons?.day?.changeRate || 0,
+      type: mapTrendDirectionToType(revenueData?.comparisons?.day?.direction),
+      comparisonPeriod: "yesterday",
+      comparisonText: getComparisonText(
+        revenueData?.comparisons?.day?.direction,
+        revenueData?.comparisons?.day?.changeRate || 0,
+        "yesterday",
+        revenueData?.comparisons?.day?.currentValue,
+        revenueData?.comparisons?.day?.previousValue,
+        true,
+      ),
+    },
+  ];
+};
 
 export const revenueChartData = (data) => {
   return data?.map((item) => ({
