@@ -15,6 +15,36 @@ const badgeClassByType = {
   positive: "bg-[var(--color-positive-light)] text-[var(--color-positive)]",
 };
 
+const highlightPercentage = (text, type) => {
+  // Parse comparison text and highlight only the percentage value.
+  const percentPattern = /(\d+\.?\d*)%/;
+  const match = text.match(percentPattern);
+
+  if (!match) {
+    return text;
+  }
+
+  const [fullMatch, percentValue] = match;
+  const beforePercent = text.substring(0, match.index);
+  const afterPercent = text.substring(match.index + fullMatch.length);
+
+  const percentHighlightColor = {
+    negative: "text-destructive font-bold",
+    neutral: "text-muted-foreground font-bold",
+    positive: "text-[var(--color-positive)] font-bold",
+  };
+
+  return (
+    <>
+      {beforePercent}
+      <span className={percentHighlightColor[type] || percentHighlightColor.positive}>
+        {percentValue}%
+      </span>
+      {afterPercent}
+    </>
+  );
+};
+
 const getFooterTitle = (cardLabel = "", metricName = "Metric") => {
   // Build a readable footer line from common dashboard period labels.
   if (cardLabel.includes("Today")) {
@@ -83,7 +113,7 @@ const DashboardCards = ({ data, metricName = "Metric" }) => {
             </div>
             {card.comparisonText && (
               <div className="text-muted-foreground">
-                {metricName} is {card.comparisonText}
+                {metricName} is {highlightPercentage(card.comparisonText, card.type)}
               </div>
             )}
           </CardFooter>

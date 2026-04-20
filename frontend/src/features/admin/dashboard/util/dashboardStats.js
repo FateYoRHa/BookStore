@@ -10,13 +10,36 @@ const mapTrendDirectionToType = (direction) => {
   return "positive";
 };
 
-const getComparisonText = (direction, changeRate, comparisonPeriod) => {
+const formatValue = (value, isRevenue = false) => {
+  // Format a numeric value with locale support and optional currency prefix.
+  const formattedNum = Number(value)?.toLocaleString() || 0;
+  return isRevenue ? `₱${formattedNum}` : formattedNum;
+};
+
+const getComparisonText = (
+  direction,
+  changeRate,
+  comparisonPeriod,
+  currentValue,
+  previousValue,
+  isRevenue = false,
+) => {
+  // Build comparison text with both current and previous period values.
   if (direction === "flat") {
     return `Unchanged compared to ${comparisonPeriod}`;
   }
 
   const action = direction === "up" ? "up" : "down";
-  return `${action} ${changeRate.toFixed(1)}% compared to ${comparisonPeriod}`;
+  const trendText = `${action} ${changeRate.toFixed(1)}%`;
+
+  // Include previous period value if available.
+  if (currentValue !== undefined && previousValue !== undefined) {
+    const current = formatValue(currentValue, isRevenue);
+    const previous = formatValue(previousValue, isRevenue);
+    return `${trendText} compared to ${comparisonPeriod} (${previous} → ${current})`;
+  }
+
+  return `${trendText} compared to ${comparisonPeriod}`;
 };
 
 export const dashboardRevenue = (revenue) => [
@@ -36,6 +59,9 @@ export const dashboardRevenue = (revenue) => [
       revenue?.revenue?.comparisons?.year?.direction,
       revenue?.revenue?.comparisons?.year?.changeRate || 0,
       "last year",
+      revenue?.revenue?.comparisons?.year?.currentValue,
+      revenue?.revenue?.comparisons?.year?.previousValue,
+      true,
     ),
   },
   {
@@ -54,6 +80,9 @@ export const dashboardRevenue = (revenue) => [
       revenue?.revenue?.comparisons?.month?.direction,
       revenue?.revenue?.comparisons?.month?.changeRate || 0,
       "last month",
+      revenue?.revenue?.comparisons?.month?.currentValue,
+      revenue?.revenue?.comparisons?.month?.previousValue,
+      true,
     ),
   },
   {
@@ -68,6 +97,9 @@ export const dashboardRevenue = (revenue) => [
       revenue?.revenue?.comparisons?.week?.direction,
       revenue?.revenue?.comparisons?.week?.changeRate || 0,
       "last week",
+      revenue?.revenue?.comparisons?.week?.currentValue,
+      revenue?.revenue?.comparisons?.week?.previousValue,
+      true,
     ),
   },
   {
@@ -82,6 +114,9 @@ export const dashboardRevenue = (revenue) => [
       revenue?.revenue?.comparisons?.day?.direction,
       revenue?.revenue?.comparisons?.day?.changeRate || 0,
       "yesterday",
+      revenue?.revenue?.comparisons?.day?.currentValue,
+      revenue?.revenue?.comparisons?.day?.previousValue,
+      true,
     ),
   },
 ];
