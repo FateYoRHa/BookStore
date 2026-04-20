@@ -65,6 +65,7 @@ export async function getDashboardRevenueService() {
       totalRevenue: revenueSummary.totalRevenue,
       thisYearRevenue: revenueSummary.thisYearRevenue,
       lastYearRevenue: revenueSummary.lastYearRevenue,
+      thisSixMonthsRevenue: revenueSummary.thisSixMonthsRevenue,
       lastSixMonthsRevenue: revenueSummary.lastSixMonthsRevenue,
       thisMonthRevenue: revenueSummary.thisMonthRevenue,
       lastMonthRevenue: revenueSummary.lastMonthRevenue,

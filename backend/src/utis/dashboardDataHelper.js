@@ -94,9 +94,12 @@ export const getRevenueSummaryService = async (orders = []) => {
     const startOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
     const endOfLastYear = startOfYear;
 
-    // Start date for "last 6 months" window.
-    const sixMonthsAgo = new Date(now);
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    // Current and previous 6-month boundaries.
+    const startOfThisSixMonths = new Date(now);
+    startOfThisSixMonths.setMonth(startOfThisSixMonths.getMonth() - 6);
+    const startOfLastSixMonths = new Date(startOfThisSixMonths);
+    startOfLastSixMonths.setMonth(startOfLastSixMonths.getMonth() - 6);
+    const endOfLastSixMonths = startOfThisSixMonths;
 
     const summary = orders.reduce(
       (accumulator, currentOrder) => {
@@ -119,7 +122,11 @@ export const getRevenueSummaryService = async (orders = []) => {
           accumulator.lastYearRevenue += orderAmount;
         }
 
-        if (paidAt >= sixMonthsAgo) {
+        if (paidAt >= startOfThisSixMonths) {
+          accumulator.thisSixMonthsRevenue += orderAmount;
+        }
+
+        if (paidAt >= startOfLastSixMonths && paidAt < endOfLastSixMonths) {
           accumulator.lastSixMonthsRevenue += orderAmount;
         }
 
@@ -153,6 +160,7 @@ export const getRevenueSummaryService = async (orders = []) => {
         totalRevenue: 0,
         thisYearRevenue: 0,
         lastYearRevenue: 0,
+        thisSixMonthsRevenue: 0,
         lastSixMonthsRevenue: 0,
         todayRevenue: 0,
         yesterdayRevenue: 0,
@@ -170,6 +178,10 @@ export const getRevenueSummaryService = async (orders = []) => {
         summary.thisMonthRevenue,
         summary.lastMonthRevenue,
       ),
+      sixMonths: getTrendFromPeriods(
+        summary.thisSixMonthsRevenue,
+        summary.lastSixMonthsRevenue,
+      ),
       year: getTrendFromPeriods(summary.thisYearRevenue, summary.lastYearRevenue),
     };
 
@@ -177,6 +189,7 @@ export const getRevenueSummaryService = async (orders = []) => {
       totalRevenue: roundToTwoDecimals(summary.totalRevenue),
       thisYearRevenue: roundToTwoDecimals(summary.thisYearRevenue),
       lastYearRevenue: roundToTwoDecimals(summary.lastYearRevenue),
+      thisSixMonthsRevenue: roundToTwoDecimals(summary.thisSixMonthsRevenue),
       lastSixMonthsRevenue: roundToTwoDecimals(summary.lastSixMonthsRevenue),
       thisMonthRevenue: roundToTwoDecimals(summary.thisMonthRevenue),
       lastMonthRevenue: roundToTwoDecimals(summary.lastMonthRevenue),
