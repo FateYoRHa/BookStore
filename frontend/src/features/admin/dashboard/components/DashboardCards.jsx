@@ -7,7 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { TrendingDown, TrendingUp } from "lucide-react";
+import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+
+const badgeClassByType = {
+  negative: "bg-[var(--color-negative-light)] text-destructive",
+  neutral: "bg-muted text-muted-foreground",
+  positive: "bg-[var(--color-positive-light)] text-[var(--color-positive)]",
+};
+
 const DashboardCards = ({ data }) => {
   return (
     <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -24,9 +31,13 @@ const DashboardCards = ({ data }) => {
               <CardAction>
                 <Badge
                   variant="secondary"
-                  className={`${card.type === "negative" ? "bg-[var(--color-negative-light)] text-destructive" : "bg-[var(--color-positive-light)] text-[var(--color-positive)]"}`}>
+                  className={
+                    badgeClassByType[card.type] || badgeClassByType.positive
+                  }>
                   {card.type === "negative" ? (
                     <TrendingDown className="size-4" />
+                  ) : card.type === "neutral" ? (
+                    <Minus className="size-4" />
                   ) : (
                     <TrendingUp className="size-4" />
                   )}
@@ -35,16 +46,14 @@ const DashboardCards = ({ data }) => {
               </CardAction>
             )}
           </CardHeader>
-          {/* 
-          "bg-[var(--color-positive-light)] text-[var(--color-positive)]">
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Trending up this month <TrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
-        </CardFooter> */}
+          {/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+              Trending up this month <TrendingUp className="size-4" />
+            </div>
+            <div className="text-muted-foreground">
+              Visitors for the last 6 months
+            </div>
+          </CardFooter> */}
         </Card>
       ))}
     </div>
