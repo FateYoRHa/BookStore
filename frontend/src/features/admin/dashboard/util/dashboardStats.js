@@ -65,8 +65,12 @@ export const dashboardRevenue = (revenue) => [
     ),
   },
   {
-    label: "Last 6 Months",
-    value: `₱${revenue?.revenue?.lastSixMonthsRevenue?.toLocaleString() || 0}`,
+    label: "This 6 Months",
+    value: `₱${revenue?.revenue?.thisSixMonthsRevenue?.toLocaleString() || 0}`,
+    rate: revenue?.revenue?.comparisons?.sixMonths?.changeRate || 0,
+    type: mapTrendDirectionToType(revenue?.revenue?.comparisons?.sixMonths?.direction),
+    comparisonPeriod: "prior 6 months",
+    comparisonText: getComparisonText(revenue?.revenue?.comparisons?.sixMonths?.direction, revenue?.revenue?.comparisons?.sixMonths?.changeRate || 0, "the prior 6 months", revenue?.revenue?.comparisons?.sixMonths?.currentValue, revenue?.revenue?.comparisons?.sixMonths?.previousValue, true),
   },
   {
     label: "This Month",
