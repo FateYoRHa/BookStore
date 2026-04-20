@@ -2,6 +2,53 @@
 
 const roundToTwoDecimals = (value) => Number(value.toFixed(2));
 
+const getTrendFromPeriods = (currentValue = 0, previousValue = 0) => {
+  // Avoid divide-by-zero while still surfacing direction for empty previous periods.
+  if (previousValue === 0) {
+    if (currentValue === 0) {
+      return {
+        currentValue: 0,
+        previousValue: 0,
+        changeAmount: 0,
+        changeRate: 0,
+        direction: "flat",
+      };
+    }
+
+    return {
+      currentValue: roundToTwoDecimals(currentValue),
+      previousValue: 0,
+      changeAmount: roundToTwoDecimals(currentValue),
+      changeRate: 100,
+      direction: "up",
+    };
+  }
+
+  const delta = currentValue - previousValue;
+  const rate = (delta / previousValue) * 100;
+
+  return {
+    currentValue: roundToTwoDecimals(currentValue),
+    previousValue: roundToTwoDecimals(previousValue),
+    changeAmount: roundToTwoDecimals(delta),
+    changeRate: roundToTwoDecimals(Math.abs(rate)),
+    direction: delta > 0 ? "up" : delta < 0 ? "down" : "flat",
+  };
+};
+
+const getStartOfWeek = (date) => {
+  // Use Monday as first day of week for admin reporting.
+  const startOfDay = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+  const day = startOfDay.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  startOfDay.setDate(startOfDay.getDate() + diff);
+  return startOfDay;
+};
+
 export const getRevenueSummaryService = async (orders = []) => {
   try {
     // Build the current date once to keep all time filters consistent.
@@ -24,6 +71,29 @@ export const getRevenueSummaryService = async (orders = []) => {
       now.getDate() + 1,
     );
 
+    // Previous day boundaries.
+    const startOfYesterday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1,
+    );
+    const endOfYesterday = startOfToday;
+
+    // Current and previous week boundaries.
+    const startOfThisWeek = getStartOfWeek(now);
+    const startOfLastWeek = new Date(startOfThisWeek);
+    startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
+    const endOfLastWeek = startOfThisWeek;
+
+    // Current and previous month boundaries.
+    const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = startOfThisMonth;
+
+    // Current and previous year boundaries.
+    const startOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
+    const endOfLastYear = startOfYear;
+
     // Start date for "last 6 months" window.
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
@@ -45,6 +115,10 @@ export const getRevenueSummaryService = async (orders = []) => {
           accumulator.thisYearRevenue += orderAmount;
         }
 
+        if (paidAt >= startOfLastYear && paidAt < endOfLastYear) {
+          accumulator.lastYearRevenue += orderAmount;
+        }
+
         if (paidAt >= sixMonthsAgo) {
           accumulator.lastSixMonthsRevenue += orderAmount;
         }
@@ -53,21 +127,64 @@ export const getRevenueSummaryService = async (orders = []) => {
           accumulator.todayRevenue += orderAmount;
         }
 
+        if (paidAt >= startOfYesterday && paidAt < endOfYesterday) {
+          accumulator.yesterdayRevenue += orderAmount;
+        }
+
+        if (paidAt >= startOfThisWeek) {
+          accumulator.thisWeekRevenue += orderAmount;
+        }
+
+        if (paidAt >= startOfLastWeek && paidAt < endOfLastWeek) {
+          accumulator.lastWeekRevenue += orderAmount;
+        }
+
+        if (paidAt >= startOfThisMonth) {
+          accumulator.thisMonthRevenue += orderAmount;
+        }
+
+        if (paidAt >= startOfLastMonth && paidAt < endOfLastMonth) {
+          accumulator.lastMonthRevenue += orderAmount;
+        }
+
         return accumulator;
       },
       {
         totalRevenue: 0,
         thisYearRevenue: 0,
+        lastYearRevenue: 0,
         lastSixMonthsRevenue: 0,
         todayRevenue: 0,
+        yesterdayRevenue: 0,
+        thisWeekRevenue: 0,
+        lastWeekRevenue: 0,
+        thisMonthRevenue: 0,
+        lastMonthRevenue: 0,
       },
     );
+
+    const comparisons = {
+      day: getTrendFromPeriods(summary.todayRevenue, summary.yesterdayRevenue),
+      week: getTrendFromPeriods(summary.thisWeekRevenue, summary.lastWeekRevenue),
+      month: getTrendFromPeriods(
+        summary.thisMonthRevenue,
+        summary.lastMonthRevenue,
+      ),
+      year: getTrendFromPeriods(summary.thisYearRevenue, summary.lastYearRevenue),
+    };
 
     return {
       totalRevenue: roundToTwoDecimals(summary.totalRevenue),
       thisYearRevenue: roundToTwoDecimals(summary.thisYearRevenue),
+      lastYearRevenue: roundToTwoDecimals(summary.lastYearRevenue),
       lastSixMonthsRevenue: roundToTwoDecimals(summary.lastSixMonthsRevenue),
+      thisMonthRevenue: roundToTwoDecimals(summary.thisMonthRevenue),
+      lastMonthRevenue: roundToTwoDecimals(summary.lastMonthRevenue),
+      thisWeekRevenue: roundToTwoDecimals(summary.thisWeekRevenue),
+      lastWeekRevenue: roundToTwoDecimals(summary.lastWeekRevenue),
       todayRevenue: roundToTwoDecimals(summary.todayRevenue),
+      yesterdayRevenue: roundToTwoDecimals(summary.yesterdayRevenue),
+      comparisons,
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch revenue summary");
