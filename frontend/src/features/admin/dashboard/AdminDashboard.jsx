@@ -34,7 +34,10 @@ const AdminDashboard = () => {
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 md:gap-6">
             <TabsContent value="revenue" className="space-y-6 overflow-auto">
-              <DashboardCards data={dashboardRevenue(revenue)} />
+              <DashboardCards
+                data={dashboardRevenue(revenue)}
+                metricName="Revenue"
+              />
               <div className="px-4 lg:px-6">
                 <DashboardCharts
                   chartData={revenueChartData(revenue?.revenue?.summary)}
@@ -44,7 +47,10 @@ const AdminDashboard = () => {
               </div>
             </TabsContent>
             <TabsContent value="customers" className="space-y-6">
-              <DashboardCards data={dashboardCustomerSummary(customers)} />
+              <DashboardCards
+                data={dashboardCustomerSummary(customers)}
+                metricName="Visitors"
+              />
               <div className="px-4 lg:px-6">
                 <DashboardCharts
                   chartData={getCustomerSummaryChartData(
@@ -56,7 +62,10 @@ const AdminDashboard = () => {
               </div>
             </TabsContent>
             <TabsContent value="performance" className="space-y-6">
-              <DashboardCards data={dashboardPerformaceSummary(performance)} />
+              <DashboardCards
+                data={dashboardPerformaceSummary(performance)}
+                metricName="Orders"
+              />
               <div className="px-4 lg:px-6">
                 <DashboardCharts
                   chartData={getPerformanceSummaryChartData(
