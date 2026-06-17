@@ -334,22 +334,291 @@ export const getCustomerSummaryService = async (
 
 export async function getDashboardPerformanceSummaryHelper(orders = []) {
   try {
-    const summary = orders.reduce((accumulator, currentOrder) => {
-      const status = currentOrder?.status;
-      accumulator[status] = (accumulator[status] || 0) + 1;
-      return accumulator;
-    }, {});
+    const now = new Date();
+
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
+    const endOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+    );
+
+    const startOfYesterday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1,
+    );
+    const endOfYesterday = startOfToday;
+
+    const startOfThisWeek = getStartOfWeek(now);
+    const startOfLastWeek = new Date(startOfThisWeek);
+    startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
+    const endOfLastWeek = startOfThisWeek;
+
+    const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = startOfThisMonth;
+
+    const startOfThisSixMonths = new Date(now);
+    startOfThisSixMonths.setMonth(startOfThisSixMonths.getMonth() - 6);
+    const startOfLastSixMonths = new Date(startOfThisSixMonths);
+    startOfLastSixMonths.setMonth(startOfLastSixMonths.getMonth() - 6);
+    const endOfLastSixMonths = startOfThisSixMonths;
+
+    const startOfThisYear = new Date(now.getFullYear(), 0, 1);
+    const startOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
+    const endOfLastYear = startOfThisYear;
+
+    const statusBucket = {
+      delivered: "completedOrders",
+      pending: "pendingOrders",
+      cancelled: "cancelledOrders",
+    };
+
+    const summary = orders.reduce(
+      (accumulator, currentOrder) => {
+        const status = currentOrder?.status;
+        const updatedAt = currentOrder?.updatedAt
+          ? new Date(currentOrder.updatedAt)
+          : null;
+        const statusKey = statusBucket[status];
+
+        accumulator.totalOrders += 1;
+        if (statusKey) {
+          accumulator[statusKey] += 1;
+        }
+
+        if (!updatedAt || Number.isNaN(updatedAt.getTime())) {
+          return accumulator;
+        }
+
+        const isToday = updatedAt >= startOfToday && updatedAt < endOfToday;
+        const isYesterday = updatedAt >= startOfYesterday && updatedAt < endOfYesterday;
+        const isThisWeek = updatedAt >= startOfThisWeek;
+        const isLastWeek = updatedAt >= startOfLastWeek && updatedAt < endOfLastWeek;
+        const isThisMonth = updatedAt >= startOfThisMonth;
+        const isLastMonth = updatedAt >= startOfLastMonth && updatedAt < endOfLastMonth;
+        const isThisSixMonths = updatedAt >= startOfThisSixMonths;
+        const isLastSixMonths =
+          updatedAt >= startOfLastSixMonths && updatedAt < endOfLastSixMonths;
+        const isThisYear = updatedAt >= startOfThisYear;
+        const isLastYear = updatedAt >= startOfLastYear && updatedAt < endOfLastYear;
+
+        if (isToday) {
+          accumulator.todayOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}Today`] += 1;
+          }
+        }
+
+        if (isYesterday) {
+          accumulator.yesterdayOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}Yesterday`] += 1;
+          }
+        }
+
+        if (isThisWeek) {
+          accumulator.thisWeekOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}ThisWeek`] += 1;
+          }
+        }
+
+        if (isLastWeek) {
+          accumulator.lastWeekOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}LastWeek`] += 1;
+          }
+        }
+
+        if (isThisMonth) {
+          accumulator.thisMonthOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}ThisMonth`] += 1;
+          }
+        }
+
+        if (isLastMonth) {
+          accumulator.lastMonthOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}LastMonth`] += 1;
+          }
+        }
+
+        if (isThisSixMonths) {
+          accumulator.thisSixMonthsOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}ThisSixMonths`] += 1;
+          }
+        }
+
+        if (isLastSixMonths) {
+          accumulator.lastSixMonthsOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}LastSixMonths`] += 1;
+          }
+        }
+
+        if (isThisYear) {
+          accumulator.thisYearOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}ThisYear`] += 1;
+          }
+        }
+
+        if (isLastYear) {
+          accumulator.lastYearOrders += 1;
+          if (statusKey) {
+            accumulator[`${statusKey}LastYear`] += 1;
+          }
+        }
+
+        return accumulator;
+      },
+      {
+        totalOrders: 0,
+        completedOrders: 0,
+        pendingOrders: 0,
+        cancelledOrders: 0,
+        todayOrders: 0,
+        yesterdayOrders: 0,
+        thisWeekOrders: 0,
+        lastWeekOrders: 0,
+        thisMonthOrders: 0,
+        lastMonthOrders: 0,
+        thisSixMonthsOrders: 0,
+        lastSixMonthsOrders: 0,
+        thisYearOrders: 0,
+        lastYearOrders: 0,
+        completedOrdersToday: 0,
+        completedOrdersYesterday: 0,
+        completedOrdersThisWeek: 0,
+        completedOrdersLastWeek: 0,
+        completedOrdersThisMonth: 0,
+        completedOrdersLastMonth: 0,
+        completedOrdersThisSixMonths: 0,
+        completedOrdersLastSixMonths: 0,
+        completedOrdersThisYear: 0,
+        completedOrdersLastYear: 0,
+        pendingOrdersToday: 0,
+        pendingOrdersYesterday: 0,
+        pendingOrdersThisWeek: 0,
+        pendingOrdersLastWeek: 0,
+        pendingOrdersThisMonth: 0,
+        pendingOrdersLastMonth: 0,
+        pendingOrdersThisSixMonths: 0,
+        pendingOrdersLastSixMonths: 0,
+        pendingOrdersThisYear: 0,
+        pendingOrdersLastYear: 0,
+        cancelledOrdersToday: 0,
+        cancelledOrdersYesterday: 0,
+        cancelledOrdersThisWeek: 0,
+        cancelledOrdersLastWeek: 0,
+        cancelledOrdersThisMonth: 0,
+        cancelledOrdersLastMonth: 0,
+        cancelledOrdersThisSixMonths: 0,
+        cancelledOrdersLastSixMonths: 0,
+        cancelledOrdersThisYear: 0,
+        cancelledOrdersLastYear: 0,
+      },
+    );
+
+    const comparisons = {
+      total: {
+        day: getTrendFromPeriods(summary.todayOrders, summary.yesterdayOrders),
+        week: getTrendFromPeriods(summary.thisWeekOrders, summary.lastWeekOrders),
+        month: getTrendFromPeriods(summary.thisMonthOrders, summary.lastMonthOrders),
+        sixMonths: getTrendFromPeriods(
+          summary.thisSixMonthsOrders,
+          summary.lastSixMonthsOrders,
+        ),
+        year: getTrendFromPeriods(summary.thisYearOrders, summary.lastYearOrders),
+      },
+      completed: {
+        day: getTrendFromPeriods(
+          summary.completedOrdersToday,
+          summary.completedOrdersYesterday,
+        ),
+        week: getTrendFromPeriods(
+          summary.completedOrdersThisWeek,
+          summary.completedOrdersLastWeek,
+        ),
+        month: getTrendFromPeriods(
+          summary.completedOrdersThisMonth,
+          summary.completedOrdersLastMonth,
+        ),
+        sixMonths: getTrendFromPeriods(
+          summary.completedOrdersThisSixMonths,
+          summary.completedOrdersLastSixMonths,
+        ),
+        year: getTrendFromPeriods(
+          summary.completedOrdersThisYear,
+          summary.completedOrdersLastYear,
+        ),
+      },
+      pending: {
+        day: getTrendFromPeriods(
+          summary.pendingOrdersToday,
+          summary.pendingOrdersYesterday,
+        ),
+        week: getTrendFromPeriods(
+          summary.pendingOrdersThisWeek,
+          summary.pendingOrdersLastWeek,
+        ),
+        month: getTrendFromPeriods(
+          summary.pendingOrdersThisMonth,
+          summary.pendingOrdersLastMonth,
+        ),
+        sixMonths: getTrendFromPeriods(
+          summary.pendingOrdersThisSixMonths,
+          summary.pendingOrdersLastSixMonths,
+        ),
+        year: getTrendFromPeriods(
+          summary.pendingOrdersThisYear,
+          summary.pendingOrdersLastYear,
+        ),
+      },
+      cancelled: {
+        day: getTrendFromPeriods(
+          summary.cancelledOrdersToday,
+          summary.cancelledOrdersYesterday,
+        ),
+        week: getTrendFromPeriods(
+          summary.cancelledOrdersThisWeek,
+          summary.cancelledOrdersLastWeek,
+        ),
+        month: getTrendFromPeriods(
+          summary.cancelledOrdersThisMonth,
+          summary.cancelledOrdersLastMonth,
+        ),
+        sixMonths: getTrendFromPeriods(
+          summary.cancelledOrdersThisSixMonths,
+          summary.cancelledOrdersLastSixMonths,
+        ),
+        year: getTrendFromPeriods(
+          summary.cancelledOrdersThisYear,
+          summary.cancelledOrdersLastYear,
+        ),
+      },
+    };
 
     return {
-      completedOrders: summary.delivered || 0,
-      pendingOrders: summary.pending || 0,
-      cancelledOrders: summary.cancelled || 0,
+      totalOrders: summary.totalOrders,
+      completedOrders: summary.completedOrders,
+      pendingOrders: summary.pendingOrders,
+      cancelledOrders: summary.cancelledOrders,
       completedOrdersRate: orders.length
-        ? roundToTwoDecimals(((summary.delivered || 0) / orders.length) * 100)
+        ? roundToTwoDecimals((summary.completedOrders / orders.length) * 100)
         : 0,
       cancelledOrdersRate: orders.length
-        ? roundToTwoDecimals(((summary.cancelled || 0) / orders.length) * 100)
+        ? roundToTwoDecimals((summary.cancelledOrders / orders.length) * 100)
         : 0,
+      comparisons,
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch performance summary");
