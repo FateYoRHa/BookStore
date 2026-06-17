@@ -74,6 +74,43 @@ const buildPerformanceComparisonText = (comparisons) => {
     .join(", ");
 };
 
+const buildCustomerComparisonText = (comparison, cardLabel) => {
+  if (!comparison) {
+    return "";
+  }
+
+  const intervalMap = {
+    "Total Customers": "year",
+    "New Customers This Year": "year",
+    "New Customers This 6 Months": "sixMonths",
+    "New Customers This Month": "month",
+    "New Customers This Week": "week",
+    "New Customers Today": "day",
+  };
+
+  const period = intervalMap[cardLabel] || "day";
+  const labelMap = {
+    day: "yesterday",
+    week: "last week",
+    month: "last month",
+    sixMonths: "prior 6 months",
+    year: "last year",
+  };
+
+  const periodComparison = comparison[period];
+  if (!periodComparison) {
+    return "";
+  }
+
+  return getComparisonText(
+    periodComparison.direction,
+    periodComparison.changeRate || 0,
+    labelMap[period],
+    periodComparison.currentValue,
+    periodComparison.previousValue,
+  );
+};
+
 export const dashboardRevenue = (revenue) => {
   const revenueData = revenue?.revenue;
   return [
@@ -174,22 +211,66 @@ export const dashboardCustomerSummary = (customers) => [
   {
     label: "Total Customers",
     value: customers?.customerSummary?.totalCustomers || 0,
+    comparisonText: buildCustomerComparisonText(
+      customers?.customerSummary?.comparisons?.total,
+    ),
+    type: mapTrendDirectionToType(
+      customers?.customerSummary?.comparisons?.total?.day?.direction,
+    ),
   },
   {
     label: "New Customers This Year",
     value: customers?.customerSummary?.newCustomersThisYear || 0,
+    comparisonText: buildCustomerComparisonText(
+      customers?.customerSummary?.comparisons?.total,
+    ),
+    type: mapTrendDirectionToType(
+      customers?.customerSummary?.comparisons?.total?.year?.direction,
+    ),
   },
   {
-    label: "New Customers Last 6 Months",
-    value: customers?.customerSummary?.newCustomersLastSixMonths || 0,
+    label: "New Customers This 6 Months",
+    value: customers?.customerSummary?.newCustomersThisSixMonths || 0,
+    comparisonText: buildCustomerComparisonText(
+      customers?.customerSummary?.comparisons?.total,
+      "New Customers This 6 Months",
+    ),
+    type: mapTrendDirectionToType(
+      customers?.customerSummary?.comparisons?.total?.sixMonths?.direction,
+    ),
   },
   {
-    label: "New Customers Last 7 Days",
-    value: customers?.customerSummary?.newCustomersLastSevenDays || 0,
+    label: "New Customers This Month",
+    value: customers?.customerSummary?.newCustomersThisMonth || 0,
+    comparisonText: buildCustomerComparisonText(
+      customers?.customerSummary?.comparisons?.total,
+      "New Customers This Month",
+    ),
+    type: mapTrendDirectionToType(
+      customers?.customerSummary?.comparisons?.total?.month?.direction,
+    ),
+  },
+  {
+    label: "New Customers This Week",
+    value: customers?.customerSummary?.newCustomersThisWeek || 0,
+    comparisonText: buildCustomerComparisonText(
+      customers?.customerSummary?.comparisons?.total,
+      "New Customers This Week",
+    ),
+    type: mapTrendDirectionToType(
+      customers?.customerSummary?.comparisons?.total?.week?.direction,
+    ),
   },
   {
     label: "New Customers Today",
     value: customers?.customerSummary?.newCustomersToday || 0,
+    comparisonText: buildCustomerComparisonText(
+      customers?.customerSummary?.comparisons?.total,
+      "New Customers Today",
+    ),
+    type: mapTrendDirectionToType(
+      customers?.customerSummary?.comparisons?.total?.day?.direction,
+    ),
   },
   {
     label: "Active Customers",
