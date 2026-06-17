@@ -232,9 +232,35 @@ export const getCustomerSummaryService = async (
       now.getDate() + 1,
     );
 
-    // Start date for "last 6 months" window.
-    const sixMonthsAgo = new Date(now);
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    // Previous day boundaries.
+    const startOfYesterday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1,
+    );
+    const endOfYesterday = startOfToday;
+
+    // Current and previous week boundaries.
+    const startOfThisWeek = getStartOfWeek(now);
+    const startOfLastWeek = new Date(startOfThisWeek);
+    startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
+    const endOfLastWeek = startOfThisWeek;
+
+    // Current and previous month boundaries.
+    const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = startOfThisMonth;
+
+    // Current and previous 6-month boundaries.
+    const startOfThisSixMonths = new Date(now);
+    startOfThisSixMonths.setMonth(startOfThisSixMonths.getMonth() - 6);
+    const startOfLastSixMonths = new Date(startOfThisSixMonths);
+    startOfLastSixMonths.setMonth(startOfLastSixMonths.getMonth() - 6);
+    const endOfLastSixMonths = startOfThisSixMonths;
+
+    // Current and previous year boundaries.
+    const startOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
+    const endOfLastYear = startOfYear;
 
     // Start date for a 90-day window used to mark returning customers.
     const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
@@ -286,7 +312,15 @@ export const getCustomerSummaryService = async (
           accumulator.newCustomersThisYear += 1;
         }
 
-        if (createdAt >= sixMonthsAgo) {
+        if (createdAt >= startOfLastYear && createdAt < endOfLastYear) {
+          accumulator.newCustomersLastYear += 1;
+        }
+
+        if (createdAt >= startOfThisSixMonths) {
+          accumulator.newCustomersThisSixMonths += 1;
+        }
+
+        if (createdAt >= startOfLastSixMonths && createdAt < endOfLastSixMonths) {
           accumulator.newCustomersLastSixMonths += 1;
         }
 
@@ -296,6 +330,26 @@ export const getCustomerSummaryService = async (
 
         if (createdAt >= startOfToday && createdAt < endOfToday) {
           accumulator.newCustomersToday += 1;
+        }
+
+        if (createdAt >= startOfYesterday && createdAt < endOfYesterday) {
+          accumulator.newCustomersYesterday += 1;
+        }
+
+        if (createdAt >= startOfThisWeek) {
+          accumulator.newCustomersThisWeek += 1;
+        }
+
+        if (createdAt >= startOfLastWeek && createdAt < endOfLastWeek) {
+          accumulator.newCustomersLastWeek += 1;
+        }
+
+        if (createdAt >= startOfThisMonth) {
+          accumulator.newCustomersThisMonth += 1;
+        }
+
+        if (createdAt >= startOfLastMonth && createdAt < endOfLastMonth) {
+          accumulator.newCustomersLastMonth += 1;
         }
 
         // Active and Returning Customers Section
@@ -312,20 +366,48 @@ export const getCustomerSummaryService = async (
         activeCustomers: 0,
         returningCustomers: 0,
         newCustomersThisYear: 0,
+        newCustomersLastYear: 0,
+        newCustomersThisSixMonths: 0,
         newCustomersLastSixMonths: 0,
+        newCustomersThisMonth: 0,
+        newCustomersLastMonth: 0,
+        newCustomersThisWeek: 0,
+        newCustomersLastWeek: 0,
         newCustomersLastSevenDays: 0,
+        newCustomersYesterday: 0,
         newCustomersToday: 0,
       },
     );
+
+    const comparisons = {
+      total: {
+        day: getTrendFromPeriods(summary.newCustomersToday, summary.newCustomersYesterday),
+        week: getTrendFromPeriods(summary.newCustomersThisWeek, summary.newCustomersLastWeek),
+        month: getTrendFromPeriods(summary.newCustomersThisMonth, summary.newCustomersLastMonth),
+        sixMonths: getTrendFromPeriods(
+          summary.newCustomersThisSixMonths,
+          summary.newCustomersLastSixMonths,
+        ),
+        year: getTrendFromPeriods(summary.newCustomersThisYear, summary.newCustomersLastYear),
+      },
+    };
 
     return {
       activeCustomers: summary.activeCustomers,
       returningCustomers: summary.returningCustomers,
       totalCustomers: summary.totalCustomers,
       newCustomersThisYear: summary.newCustomersThisYear,
+      newCustomersLastYear: summary.newCustomersLastYear,
+      newCustomersThisSixMonths: summary.newCustomersThisSixMonths,
       newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
+      newCustomersThisMonth: summary.newCustomersThisMonth,
+      newCustomersLastMonth: summary.newCustomersLastMonth,
+      newCustomersThisWeek: summary.newCustomersThisWeek,
+      newCustomersLastWeek: summary.newCustomersLastWeek,
       newCustomersLastSevenDays: summary.newCustomersLastSevenDays,
+      newCustomersYesterday: summary.newCustomersYesterday,
       newCustomersToday: summary.newCustomersToday,
+      comparisons,
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch customer summary");
