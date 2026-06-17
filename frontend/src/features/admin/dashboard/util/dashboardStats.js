@@ -211,18 +211,13 @@ export const dashboardCustomerSummary = (customers) => [
   {
     label: "Total Customers",
     value: customers?.customerSummary?.totalCustomers || 0,
-    comparisonText: buildCustomerComparisonText(
-      customers?.customerSummary?.comparisons?.total,
-    ),
-    type: mapTrendDirectionToType(
-      customers?.customerSummary?.comparisons?.total?.day?.direction,
-    ),
   },
   {
     label: "New Customers This Year",
     value: customers?.customerSummary?.newCustomersThisYear || 0,
     comparisonText: buildCustomerComparisonText(
       customers?.customerSummary?.comparisons?.total,
+      "New Customers This Year",
     ),
     type: mapTrendDirectionToType(
       customers?.customerSummary?.comparisons?.total?.year?.direction,
