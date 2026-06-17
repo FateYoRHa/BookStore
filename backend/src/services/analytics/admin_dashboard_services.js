@@ -97,11 +97,19 @@ export async function getDashboardCustomerSummaryService() {
       customers,
       totalCustomers,
       newCustomersThisYear: summary.newCustomersThisYear,
+      newCustomersLastYear: summary.newCustomersLastYear,
+      newCustomersThisSixMonths: summary.newCustomersThisSixMonths,
       newCustomersLastSixMonths: summary.newCustomersLastSixMonths,
+      newCustomersThisMonth: summary.newCustomersThisMonth,
+      newCustomersLastMonth: summary.newCustomersLastMonth,
+      newCustomersThisWeek: summary.newCustomersThisWeek,
+      newCustomersLastWeek: summary.newCustomersLastWeek,
       newCustomersLastSevenDays: summary.newCustomersLastSevenDays,
+      newCustomersYesterday: summary.newCustomersYesterday,
       newCustomersToday: summary.newCustomersToday,
       activeCustomers: summary.activeCustomers,
       returningCustomers: summary.returningCustomers,
+      comparisons: summary.comparisons,
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch customer summary");
