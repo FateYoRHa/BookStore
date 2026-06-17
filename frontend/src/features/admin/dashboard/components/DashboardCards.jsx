@@ -16,44 +16,31 @@ const badgeClassByType = {
 };
 
 const highlightPercentage = (text, type) => {
-  // Parse comparison text and highlight all percentage values only.
-  const percentPattern = /(\d+\.?\d*)%/g;
+  // Parse comparison text and highlight only the percentage value.
+  const percentPattern = /(\d+\.?\d*)%/;
+  const match = text.match(percentPattern);
+
+  if (!match) {
+    return text;
+  }
+
+  const [fullMatch, percentValue] = match;
+  const beforePercent = text.substring(0, match.index);
+  const afterPercent = text.substring(match.index + fullMatch.length);
+
   const percentHighlightColor = {
     negative: "text-destructive font-bold",
     neutral: "text-muted-foreground font-bold",
     positive: "text-[var(--color-positive)] font-bold",
   };
 
-  const parts = [];
-  let lastIndex = 0;
-  let match;
-
-  while ((match = percentPattern.exec(text)) !== null) {
-    const [fullMatch, percentValue] = match;
-    parts.push({ text: text.substring(lastIndex, match.index), isPercent: false });
-    parts.push({ text: `${percentValue}%`, isPercent: true });
-    lastIndex = match.index + fullMatch.length;
-  }
-
-  if (parts.length === 0) {
-    return text;
-  }
-
-  parts.push({ text: text.substring(lastIndex), isPercent: false });
-
   return (
     <>
-      {parts.map((part, index) =>
-        part.isPercent ? (
-          <span
-            key={index}
-            className={percentHighlightColor[type] || percentHighlightColor.positive}>
-            {part.text}
-          </span>
-        ) : (
-          <span key={index}>{part.text}</span>
-        ),
-      )}
+      {beforePercent}
+      <span className={percentHighlightColor[type] || percentHighlightColor.positive}>
+        {percentValue}%
+      </span>
+      {afterPercent}
     </>
   );
 };
@@ -79,7 +66,7 @@ const getFooterTitle = (cardLabel = "", metricName = "Metric") => {
     return `Total ${metricName.toLowerCase()} snapshot`;
   }
 
-  return `${cardLabel} overview`;
+  return `${metricName} overview`;
 };
 
 const DashboardCards = ({ data, metricName = "Metric" }) => {
@@ -88,7 +75,7 @@ const DashboardCards = ({ data, metricName = "Metric" }) => {
       {data?.map((card) => (
         <Card
           key={card.label}
-          className="rounded-lg shadow-md p-6 bg-card text-card-foreground border border-border">
+          className="rounded-lg shadow-md p-6 bg-[var(--card)] text-[var(--card-foreground)] border border-[var(--border)]">
           <CardHeader>
             <CardDescription>{card.label}</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">

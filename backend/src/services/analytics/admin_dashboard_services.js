@@ -124,7 +124,6 @@ export async function getDashboardPerformanceSummaryService() {
       pendingOrders: performanceSummary.pendingOrders,
       completedOrdersRate: performanceSummary.completedOrdersRate,
       cancelledOrdersRate: performanceSummary.cancelledOrdersRate,
-      comparisons: performanceSummary.comparisons,
     };
   } catch (error) {
     throw new Error(error.message || "Failed to fetch performance summary");
