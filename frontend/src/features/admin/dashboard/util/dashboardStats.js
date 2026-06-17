@@ -42,6 +42,38 @@ const getComparisonText = (
   return `${trendText} compared to ${comparisonPeriod}`;
 };
 
+const buildPerformanceComparisonText = (comparisons) => {
+  if (!comparisons) {
+    return "";
+  }
+
+  const intervalLabels = {
+    day: "yesterday",
+    week: "last week",
+    month: "last month",
+    sixMonths: "prior 6 months",
+    year: "last year",
+  };
+
+  return Object.entries(intervalLabels)
+    .map(([period, label]) => {
+      const comparison = comparisons[period];
+      if (!comparison) {
+        return null;
+      }
+
+      return getComparisonText(
+        comparison.direction,
+        comparison.changeRate || 0,
+        label,
+        comparison.currentValue,
+        comparison.previousValue,
+      );
+    })
+    .filter(Boolean)
+    .join(", ");
+};
+
 export const dashboardRevenue = (revenue) => {
   const revenueData = revenue?.revenue;
   return [
@@ -180,22 +212,44 @@ export const dashboardPerformaceSummary = (performance) => [
   {
     label: "Total Orders",
     value: performance?.performanceSummary?.totalOrders || 0,
+    comparisonText: buildPerformanceComparisonText(
+      performance?.performanceSummary?.comparisons?.total,
+    ),
+    type: mapTrendDirectionToType(
+      performance?.performanceSummary?.comparisons?.total?.day?.direction,
+    ),
   },
   {
     label: "Completed Orders",
     value: performance?.performanceSummary?.completedOrders || 0,
     rate: performance?.performanceSummary?.completedOrdersRate || 0,
-    type: "positive",
+    type: mapTrendDirectionToType(
+      performance?.performanceSummary?.comparisons?.completed?.day?.direction,
+    ),
+    comparisonText: buildPerformanceComparisonText(
+      performance?.performanceSummary?.comparisons?.completed,
+    ),
   },
   {
     label: "Pending Orders",
     value: performance?.performanceSummary?.pendingOrders || 0,
+    comparisonText: buildPerformanceComparisonText(
+      performance?.performanceSummary?.comparisons?.pending,
+    ),
+    type: mapTrendDirectionToType(
+      performance?.performanceSummary?.comparisons?.pending?.day?.direction,
+    ),
   },
   {
     label: "Cancelled Orders",
     value: performance?.performanceSummary?.cancelledOrders || 0,
     rate: performance?.performanceSummary?.cancelledOrdersRate || 0,
-    type: "negative",
+    type: mapTrendDirectionToType(
+      performance?.performanceSummary?.comparisons?.cancelled?.day?.direction,
+    ),
+    comparisonText: buildPerformanceComparisonText(
+      performance?.performanceSummary?.comparisons?.cancelled,
+    ),
   },
 ];
 
